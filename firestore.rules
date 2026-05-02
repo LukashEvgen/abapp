@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if the request is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: check if the authenticated user is a lawyer (admin)
+    function isLawyer() {
+      return isAuth() && exists(/databases/$(database)/documents/lawyers/$(request.auth.uid));
+    }
+
+    // Helper: check if the user owns the client document
+    function ownsClient(clientId) {
+      return isAuth() && request.auth.uid == clientId;
+    }
+
+    // --- Clients collection ---
+    // Lawyers can read/write any client. Clients can read/write only their own document.
+    match /clients/{clientId} {
+      allow read, write: if isLawyer() || ownsClient(clientId);
+    }
+
+    // --- Sub-collections under a client (cases, invoices, inspections, messages, documents) ---
+    // Same ownership model applies recursively.
+    match /clients/{clientId}/{document=**} {
+      allow read, write: if isLawyer() || ownsClient(clientId);
+    }
+
+    // --- Inquiries collection (public write, admin read) ---
+    // Anyone (even unauthenticated) can create an inquiry.
+    // Only lawyers can read or update inquiries. Deletion is forbidden for everyone.
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update: if isLawyer();
+      allow delete: if false;
+    }
+
+    // --- Lawyers collection ---
+    // Only lawyers can read the lawyers list. Writing is restricted (managed via Firebase Admin SDK or Console).
+    match /lawyers/{lawyerId} {
+      allow read: if isLawyer();
+      allow write: if false;
+    }
+  }
+}
