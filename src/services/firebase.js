@@ -9,7 +9,9 @@ export const getClients = async () => {
 
 export const getClientById = async clientId => {
   const doc = await firestore().collection('clients').doc(clientId).get();
-  if (!doc.exists) return null;
+  if (!doc.exists) {
+    return null;
+  }
   return {id: doc.id, ...doc.data()};
 };
 
@@ -36,7 +38,9 @@ export const getCaseById = async (clientId, caseId) => {
     .collection('cases')
     .doc(caseId)
     .get();
-  if (!doc.exists) return null;
+  if (!doc.exists) {
+    return null;
+  }
   return {id: doc.id, ...doc.data()};
 };
 
@@ -112,7 +116,13 @@ export const getDocuments = async (clientId, caseId) => {
   return snapshot.docs.map(d => ({id: d.id, ...d.data()}));
 };
 
-export const uploadDocument = async (clientId, caseId, filePath, name, onProgress) => {
+export const uploadDocument = async (
+  clientId,
+  caseId,
+  filePath,
+  name,
+  onProgress,
+) => {
   const storagePath = `clients/${clientId}/cases/${caseId}/documents/${name}`;
   const ref = storage().ref(storagePath);
   const task = ref.putFile(filePath);
@@ -153,17 +163,21 @@ export const getInvoices = async clientId => {
 };
 
 export const createInvoice = async (clientId, data) => {
-  const ref = firestore()
-    .collection('clients')
-    .doc(clientId)
-    .collection('invoices')
-    .doc();
-  await ref.set({
-    ...data,
-    status: 'pending',
-    createdAt: firestore.FieldValue.serverTimestamp(),
-  });
-  return ref.id;
+  try {
+    const ref = firestore()
+      .collection('clients')
+      .doc(clientId)
+      .collection('invoices')
+      .doc();
+    await ref.set({
+      ...data,
+      status: 'pending',
+      createdAt: firestore.FieldValue.serverTimestamp(),
+    });
+    return ref.id;
+  } catch (error) {
+    throw new Error(error.message || 'Помилка при створенні рахунку');
+  }
 };
 
 export const getInspections = async clientId => {
@@ -183,7 +197,9 @@ export const getInspectionById = async (clientId, inspectionId) => {
     .collection('inspections')
     .doc(inspectionId)
     .get();
-  if (!doc.exists) return null;
+  if (!doc.exists) {
+    return null;
+  }
   return {id: doc.id, ...doc.data()};
 };
 
@@ -251,7 +267,10 @@ export const getInquiries = async () => {
 // --- Admin functions ---
 
 export const getAllClients = async () => {
-  const snapshot = await firestore().collection('clients').orderBy('createdAt', 'desc').get();
+  const snapshot = await firestore()
+    .collection('clients')
+    .orderBy('createdAt', 'desc')
+    .get();
   return snapshot.docs.map(d => ({id: d.id, ...d.data()}));
 };
 

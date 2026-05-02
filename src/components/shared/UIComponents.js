@@ -1,8 +1,8 @@
 import React from 'react';
-import {TextInput} from 'react-native';
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
@@ -62,9 +62,7 @@ export const GoldButton = ({
 export const Card = ({children, onPress, style}) => {
   const Wrapper = onPress ? TouchableOpacity : View;
   return (
-    <Wrapper
-      onPress={onPress}
-      style={[styles.card, style]}>
+    <Wrapper onPress={onPress} style={[styles.card, style]}>
       {children}
     </Wrapper>
   );
@@ -74,7 +72,14 @@ export const SectionLabel = ({text}) => (
   <Text style={styles.sectionLabel}>{text}</Text>
 );
 
-export const Input = ({placeholder, value, onChangeText, multiline, numberOfLines, style}) => (
+export const Input = ({
+  placeholder,
+  value,
+  onChangeText,
+  multiline,
+  numberOfLines,
+  style,
+}) => (
   <View style={[styles.inputWrap, style]}>
     <TextInput
       placeholder={placeholder}
@@ -85,7 +90,10 @@ export const Input = ({placeholder, value, onChangeText, multiline, numberOfLine
       numberOfLines={numberOfLines || 1}
       style={[
         styles.input,
-        multiline && {minHeight: (numberOfLines || 4) * 20, textAlignVertical: 'top'},
+        multiline && {
+          minHeight: (numberOfLines || 4) * 20,
+          textAlignVertical: 'top',
+        },
       ]}
     />
   </View>
@@ -100,7 +108,9 @@ export const AlertBanner = ({type, text, onPress}) => {
   }[type] || {bg: 'rgba(201,168,76,0.15)', color: colors.gold};
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.alertBanner, {backgroundColor: palette.bg}]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.alertBanner, {backgroundColor: palette.bg}]}>
       <Text style={[styles.alertText, {color: palette.color}]}>{text}</Text>
       <Text style={[styles.alertArrow, {color: palette.color}]}>→</Text>
     </TouchableOpacity>

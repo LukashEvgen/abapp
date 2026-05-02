@@ -1,7 +1,16 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Alert, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {useAuth} from '../context/AuthContext';
 import {colors, spacing, radius, globalStyles} from '../utils/theme';
+import {validatePhoneUA, validateCode} from '../utils/helpers';
 import {GoldButton} from '../components/shared/UIComponents';
 
 export default function LoginScreen() {
@@ -9,11 +18,14 @@ export default function LoginScreen() {
   const [code, setCode] = useState('');
   const [step, setStep] = useState('phone');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
   const {loginWithPhone, confirmCode} = useAuth();
 
   const handleSendCode = async () => {
-    if (!phone.trim()) {
-      Alert.alert('Помилка', 'Введіть номер телефону');
+    setError(undefined);
+    const phoneError = validatePhoneUA(phone);
+    if (phoneError) {
+      setError({field: 'phone', message: phoneError});
       return;
     }
     setLoading(true);
@@ -21,22 +33,28 @@ export default function LoginScreen() {
       await loginWithPhone(phone.trim());
       setStep('code');
     } catch (e) {
-      Alert.alert('Помилка', e.message || 'Не вдалося надіслати SMS');
+      const msg = e?.message || 'Не вдалося надіслати SMS';
+      setError({field: 'phone', message: msg});
+      Alert.alert('Помилка', msg);
     } finally {
       setLoading(false);
     }
   };
 
   const handleVerify = async () => {
-    if (!code.trim()) {
-      Alert.alert('Помилка', 'Введіть код з SMS');
+    setError(undefined);
+    const codeError = validateCode(code);
+    if (codeError) {
+      setError({field: 'code', message: codeError});
       return;
     }
     setLoading(true);
     try {
       await confirmCode(code.trim());
     } catch (e) {
-      Alert.alert('Помилка', e.message || 'Невірний код');
+      const msg = e?.message || 'Невірний код';
+      setError({field: 'code', message: msg});
+      Alert.alert('Помилка', msg);
     } finally {
       setLoading(false);
     }
@@ -54,24 +72,42 @@ export default function LoginScreen() {
             : 'Введіть код з SMS'}
         </Text>
 
+        {error?.message && (
+          <Text style={styles.errorText}>{error.message}</Text>
+        )}
+
         {step === 'phone' ? (
-          <View style={styles.inputWrap}>
+          <View
+            style={[
+              styles.inputWrap,
+              error?.field === 'phone' && styles.inputError,
+            ]}>
             <TextInput
               placeholder="+380..."
               placeholderTextColor={colors.muted}
               value={phone}
-              onChangeText={setPhone}
+              onChangeText={text => {
+                setPhone(text);
+                if (error?.field === 'phone') setError(undefined);
+              }}
               keyboardType="phone-pad"
               style={styles.input}
             />
           </View>
         ) : (
-          <View style={styles.inputWrap}>
+          <View
+            style={[
+              styles.inputWrap,
+              error?.field === 'code' && styles.inputError,
+            ]}>
             <TextInput
               placeholder="Код"
               placeholderTextColor={colors.muted}
               value={code}
-              onChangeText={setCode}
+              onChangeText={text => {
+                setCode(text);
+                if (error?.field === 'code') setError(undefined);
+              }}
               keyboardType="number-pad"
               style={styles.input}
             />
@@ -111,8 +147,17 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     marginBottom: spacing.lg,
   },
+  inputError: {
+    borderColor: colors.danger,
+  },
   input: {
     color: colors.text,
     fontSize: 16,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: spacing.md,
   },
 });

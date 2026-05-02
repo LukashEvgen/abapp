@@ -29,11 +29,26 @@ export const radius = {
 };
 
 export const typography = {
-  h1: {fontSize: 28, fontWeight: '700', color: colors.text, letterSpacing: 0.5},
-  h2: {fontSize: 22, fontWeight: '600', color: colors.text, letterSpacing: 0.3},
+  h1: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text,
+    letterSpacing: 0.5,
+  },
+  h2: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: colors.text,
+    letterSpacing: 0.3,
+  },
   h3: {fontSize: 18, fontWeight: '600', color: colors.text},
   body: {fontSize: 14, fontWeight: '400', color: colors.text, lineHeight: 20},
-  caption: {fontSize: 12, fontWeight: '400', color: colors.muted, lineHeight: 16},
+  caption: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.muted,
+    lineHeight: 16,
+  },
   label: {
     fontSize: 11,
     fontWeight: '600',
@@ -55,7 +70,11 @@ export const globalStyles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   row: {flexDirection: 'row', alignItems: 'center'},
-  rowBetween: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   center: {alignItems: 'center', justifyContent: 'center'},
   text: {color: colors.text, fontSize: 14},
   mutedText: {color: colors.muted, fontSize: 12},
