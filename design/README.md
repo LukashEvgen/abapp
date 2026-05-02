@@ -6,6 +6,9 @@
 |------|-------------|
 | `design/tokens.json` | Джерело правди всіх токенів (кольори, типографіка, spacing, radius, shadows). Читається `src/utils/theme.js`. **Не імпортуйте напряму з екранів — використовуйте `theme.js`.** |
 | `src/utils/theme.js` | Програмний шар: експортує `colors`, `spacing`, `radius`, `typography`, `shadows`, `globalStyles`. Зберігає legacy flat-поля (`colors.bg`, `colors.text`, …) для сумісності з поточним кодом. |
+| `design/palette-v2-preview.html` | Інтерактивний перегляд палітри (відкривайте в браузері) |
+| `design/mockups-preview.html` | Галерея всіх екранів-мокапів додатку (відкривайте в браузері) |
+| `design/mockups/` | PNG-екрани додатку (canonical) |
 
 ## Кольорова палітра — Версія 2 (Palette V2)
 
@@ -89,5 +92,6 @@ Legacy alias: `xs=4`, `sm=8`, `md=16`, `lg=24`, `xl=32`.
 
 ## Mockups
 
-- `mockups/` — усі PNG-мокапи екранів додатку.
-- [`design/mockups-preview.html`](mockups-preview.html) — інтерактивна галерея всіх екранів у браузері (відкривайте локально або через GitHub Pages).
+- `design/mockups/` — canonical PNG-мокапи екранів додатку (source of truth).
+- `mockups/` — legacy PNG-мокапи (mirror для сумісності).
+- [`design/mockups-preview.html`](mockups-preview.html) — інтерактивна галерея всіх екранів (відкривайте локально або через raw GitHub).

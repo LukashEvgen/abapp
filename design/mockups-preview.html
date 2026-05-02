@@ -10,242 +10,141 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #0A0D0E;
     color: #F0F1F2;
+    padding: 32px 24px;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: #161A1B;
-    border-bottom: 1px solid #2A3132;
-    padding: 24px 48px;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px;
+  header { text-align: center; margin-bottom: 40px; }
+  header h1 { font-size: 28px; margin-bottom: 8px; color: #41A9A5; }
+  header p { color: #8A9496; font-size: 14px; }
+
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #41A9A5;
+    border-bottom: 1px solid #1E2324;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  header h1 { font-size: 22px; color: #F0F1F2; }
-  header .brand { color: #41A9A5; font-weight: 700; }
-  header .subtitle { font-size: 13px; color: #8A9496; }
-  .container { max-width: 1400px; margin: 0 auto; padding: 24px 48px 64px; }
-  details { margin-bottom: 32px; }
-  details > summary {
-    cursor: pointer; list-style: none;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid #2A3132;
-    font-size: 18px; font-weight: 600; color: #F0F1F2;
-    user-select: none;
+  .section-title .badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(65,169,165,0.15);
+    color: #41A9A5;
   }
-  details > summary::-webkit-details-marker { display: none; }
-  details > summary::after {
-    content: '▼'; font-size: 12px; color: #8A9496; transition: transform .2s;
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
   }
-  details[open] > summary::after { transform: rotate(-180deg); }
-  .screens {
-    display: flex; flex-wrap: wrap; gap: 20px;
-    padding: 20px 0;
-    justify-content: flex-start;
-  }
-  .screen {
-    flex: 0 1 calc(20% - 16px); min-width: 180px; max-width: 260px;
-    background: #161A1B;
-    border: 1px solid #2A3132;
-    border-radius: 16px;
+  .card {
+    background: #101314;
+    border: 1px solid #1E2324;
+    border-radius: 12px;
     overflow: hidden;
-    transition: border-color .2s;
+    transition: transform .15s ease, box-shadow .15s ease;
   }
-  .screen:hover { border-color: #41A9A5; }
-  .screen a { display: block; text-decoration: none; color: inherit; }
-  .screen img {
-    width: 100%; display: block;
-    aspect-ratio: 9 / 20;
-    object-fit: cover; background: #0A0D0E;
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   }
-  .screen .meta {
+  .card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #161A1B;
+  }
+  .card .label {
     padding: 12px 14px;
-    font-size: 13px; font-weight: 600; color: #F0F1F2;
-    border-top: 1px solid #2A3132;
+    font-size: 13px;
+    font-weight: 600;
+    color: #D8DBDC;
+    text-align: center;
+    border-top: 1px solid #1E2324;
   }
-  .screen .meta span { display: block; font-size: 11px; font-weight: 400; color: #8A9496; margin-top: 2px; }
-  .footer {
-    text-align: center; margin-top: 48px; font-size: 12px; color: #6A7A7C;
+
+  .count { color: #8A9496; font-weight: 500; }
+
+  footer {
+    text-align: center;
+    padding: 32px 0 16px;
+    color: #6A7A7C;
+    font-size: 12px;
+    border-top: 1px solid #1E2324;
+    margin-top: 16px;
   }
-  @media (max-width: 1200px) { .screen { flex: 0 1 calc(25% - 15px); } }
-  @media (max-width: 900px) { .screen { flex: 0 1 calc(33.33% - 14px); } }
-  @media (max-width: 640px) { .screen { flex: 0 1 calc(50% - 10px); } }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>LexTrack <span class="brand">Mockups Preview</span></h1>
-    <div class="subtitle">Візуальна документація екранів додатку — React Native</div>
-  </div>
+  <h1>LexTrack — Mockup Gallery</h1>
+  <p>Візуальна навігація по екранах додатку LexTrack</p>
 </header>
 
-<div class="container">
-
-<details open>
-  <summary>Client (Клієнт)</summary>
-  <div class="screens">
-    <div class="screen">
-      <a href="../mockups/login.png" target="_blank">
-        <img src="../mockups/login.png" alt="Login" loading="lazy">
-        <div class="meta">Login <span>Аутентифікація</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/client_dashboard.png" target="_blank">
-        <img src="../mockups/client_dashboard.png" alt="Client Dashboard" loading="lazy">
-        <div class="meta">Client Dashboard <span>Головна панель</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/my_cases.png" target="_blank">
-        <img src="../mockups/my_cases.png" alt="My Cases" loading="lazy">
-        <div class="meta">My Cases <span>Список справ</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/case_detail.png" target="_blank">
-        <img src="../mockups/case_detail.png" alt="Case Detail" loading="lazy">
-        <div class="meta">Case Detail <span>Деталі справи</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/casedetail.png" target="_blank">
-        <img src="../mockups/casedetail.png" alt="Case Detail V2" loading="lazy">
-        <div class="meta">Case Detail V2 <span>Альтернативна версія</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/mycases.png" target="_blank">
-        <img src="../mockups/mycases.png" alt="My Cases V2" loading="lazy">
-        <div class="meta">My Cases V2 <span>Альтернативна версія</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/chat.png" target="_blank">
-        <img src="../mockups/chat.png" alt="Chat" loading="lazy">
-        <div class="meta">Chat <span>Чат з юристом</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/my_documents.png" target="_blank">
-        <img src="../mockups/my_documents.png" alt="My Documents" loading="lazy">
-        <div class="meta">My Documents <span>Документи</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/scanner.png" target="_blank">
-        <img src="../mockups/scanner.png" alt="Scanner" loading="lazy">
-        <div class="meta">Scanner <span>Сканер документів</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/my_invoices.png" target="_blank">
-        <img src="../mockups/my_invoices.png" alt="My Invoices" loading="lazy">
-        <div class="meta">My Invoices <span>Рахунки</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/my_inspections.png" target="_blank">
-        <img src="../mockups/my_inspections.png" alt="My Inspections" loading="lazy">
-        <div class="meta">My Inspections <span>Інспекції</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/inspection_detail.png" target="_blank">
-        <img src="../mockups/inspection_detail.png" alt="Inspection Detail" loading="lazy">
-        <div class="meta">Inspection Detail <span>Деталі інспекції</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/bureau.png" target="_blank">
-        <img src="../mockups/bureau.png" alt="Bureau" loading="lazy">
-        <div class="meta">Bureau <span>Кредитний бюро</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/registry_search.png" target="_blank">
-        <img src="../mockups/registry_search.png" alt="Registry Search" loading="lazy">
-        <div class="meta">Registry Search <span>Пошук у реєстрах</span></div>
-      </a>
-    </div>
+<div class="section">
+  <h2 class="section-title">Спільні <span class="badge">Shared</span></h2>
+  <div class="grid">
+    <div class="card"><img src="mockups/login.png" alt="Login" loading="lazy"><div class="label">Login</div></div>
   </div>
-</details>
-
-<details open>
-  <summary>Admin (Юрист)</summary>
-  <div class="screens">
-    <div class="screen">
-      <a href="../mockups/admin_dashboard.png" target="_blank">
-        <img src="../mockups/admin_dashboard.png" alt="Admin Dashboard" loading="lazy">
-        <div class="meta">Admin Dashboard <span>Панель юриста</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/clients_list.png" target="_blank">
-        <img src="../mockups/clients_list.png" alt="Clients List" loading="lazy">
-        <div class="meta">Clients List <span>Список клієнтів</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/admin_client_detail.png" target="_blank">
-        <img src="../mockups/admin_client_detail.png" alt="Admin Client Detail" loading="lazy">
-        <div class="meta">Admin Client Detail <span>Деталі клієнта</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/admin_case_detail.png" target="_blank">
-        <img src="../mockups/admin_case_detail.png" alt="Admin Case Detail" loading="lazy">
-        <div class="meta">Admin Case Detail <span>Деталі справи (адмін)</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/create_invoice.png" target="_blank">
-        <img src="../mockups/create_invoice.png" alt="Create Invoice" loading="lazy">
-        <div class="meta">Create Invoice <span>Створення рахунку</span></div>
-      </a>
-    </div>
-    <div class="screen">
-      <a href="../mockups/admin_chat.png" target="_blank">
-        <img src="../mockups/admin_chat.png" alt="Admin Chat" loading="lazy">
-        <div class="meta">Admin Chat <span>Чат з клієнтом</span></div>
-      </a>
-    </div>
-  </div>
-</details>
-
-<details>
-  <summary>Design / mockups (extra copies)</summary>
-  <div class="screens">
-    <div class="screen"><a href="mockups/client_dashboard.png" target="_blank"><img src="mockups/client_dashboard.png" alt="Client Dashboard" loading="lazy"><div class="meta">Client Dashboard</div></a></div>
-    <div class="screen"><a href="mockups/admin_dashboard.png" target="_blank"><img src="mockups/admin_dashboard.png" alt="Admin Dashboard" loading="lazy"><div class="meta">Admin Dashboard</div></a></div>
-    <div class="screen"><a href="mockups/login.png" target="_blank"><img src="mockups/login.png" alt="Login" loading="lazy"><div class="meta">Login</div></a></div>
-    <div class="screen"><a href="mockups/my_cases.png" target="_blank"><img src="mockups/my_cases.png" alt="My Cases" loading="lazy"><div class="meta">My Cases</div></a></div>
-    <div class="screen"><a href="mockups/case_detail.png" target="_blank"><img src="mockups/case_detail.png" alt="Case Detail" loading="lazy"><div class="meta">Case Detail</div></a></div>
-    <div class="screen"><a href="mockups/casedetail.png" target="_blank"><img src="mockups/casedetail.png" alt="Case Detail V2" loading="lazy"><div class="meta">Case Detail V2</div></a></div>
-    <div class="screen"><a href="mockups/mycases.png" target="_blank"><img src="mockups/mycases.png" alt="My Cases V2" loading="lazy"><div class="meta">My Cases V2</div></a></div>
-    <div class="screen"><a href="mockups/clients_list.png" target="_blank"><img src="mockups/clients_list.png" alt="Clients List" loading="lazy"><div class="meta">Clients List</div></a></div>
-    <div class="screen"><a href="mockups/admin_client_detail.png" target="_blank"><img src="mockups/admin_client_detail.png" alt="Admin Client Detail" loading="lazy"><div class="meta">Admin Client Detail</div></a></div>
-    <div class="screen"><a href="mockups/admin_case_detail.png" target="_blank"><img src="mockups/admin_case_detail.png" alt="Admin Case Detail" loading="lazy"><div class="meta">Admin Case Detail</div></a></div>
-    <div class="screen"><a href="mockups/admin_chat.png" target="_blank"><img src="mockups/admin_chat.png" alt="Admin Chat" loading="lazy"><div class="meta">Admin Chat</div></a></div>
-    <div class="screen"><a href="mockups/chat.png" target="_blank"><img src="mockups/chat.png" alt="Chat" loading="lazy"><div class="meta">Chat</div></a></div>
-    <div class="screen"><a href="mockups/my_documents.png" target="_blank"><img src="mockups/my_documents.png" alt="My Documents" loading="lazy"><div class="meta">My Documents</div></a></div>
-    <div class="screen"><a href="mockups/scanner.png" target="_blank"><img src="mockups/scanner.png" alt="Scanner" loading="lazy"><div class="meta">Scanner</div></a></div>
-    <div class="screen"><a href="mockups/create_invoice.png" target="_blank"><img src="mockups/create_invoice.png" alt="Create Invoice" loading="lazy"><div class="meta">Create Invoice</div></a></div>
-    <div class="screen"><a href="mockups/my_invoices.png" target="_blank"><img src="mockups/my_invoices.png" alt="My Invoices" loading="lazy"><div class="meta">My Invoices</div></a></div>
-    <div class="screen"><a href="mockups/my_inspections.png" target="_blank"><img src="mockups/my_inspections.png" alt="My Inspections" loading="lazy"><div class="meta">My Inspections</div></a></div>
-    <div class="screen"><a href="mockups/inspection_detail.png" target="_blank"><img src="mockups/inspection_detail.png" alt="Inspection Detail" loading="lazy"><div class="meta">Inspection Detail</div></a></div>
-    <div class="screen"><a href="mockups/bureau.png" target="_blank"><img src="mockups/bureau.png" alt="Bureau" loading="lazy"><div class="meta">Bureau</div></a></div>
-    <div class="screen"><a href="mockups/registry_search.png" target="_blank"><img src="mockups/registry_search.png" alt="Registry Search" loading="lazy"><div class="meta">Registry Search</div></a></div>
-  </div>
-</details>
-
-<p class="footer">
-  Перегляд онлайн (GitHub Pages): <a style="color:#41A9A5;" href="https://lukashevgen.github.io/abapp/design/mockups-preview.html">design/mockups-preview.html</a>
-</p>
-
 </div>
+
+<div class="section">
+  <h2 class="section-title">Адміністратор <span class="badge">Admin</span></h2>
+  <div class="grid">
+    <div class="card"><img src="mockups/admin_dashboard.png" alt="Admin Dashboard" loading="lazy"><div class="label">Admin Dashboard</div></div>
+    <div class="card"><img src="mockups/clients_list.png" alt="Clients List" loading="lazy"><div class="label">Clients List</div></div>
+    <div class="card"><img src="mockups/admin_client_detail.png" alt="Admin Client Detail" loading="lazy"><div class="label">Admin Client Detail</div></div>
+    <div class="card"><img src="mockups/admin_case_detail.png" alt="Admin Case Detail" loading="lazy"><div class="label">Admin Case Detail</div></div>
+    <div class="card"><img src="mockups/create_invoice.png" alt="Create Invoice" loading="lazy"><div class="label">Create Invoice</div></div>
+    <div class="card"><img src="mockups/admin_chat.png" alt="Admin Chat" loading="lazy"><div class="label">Admin Chat</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">Клієнт <span class="badge">Client</span></h2>
+  <div class="grid">
+    <div class="card"><img src="mockups/client_dashboard.png" alt="Client Dashboard" loading="lazy"><div class="label">Client Dashboard</div></div>
+    <div class="card"><img src="mockups/my_cases.png" alt="My Cases" loading="lazy"><div class="label">My Cases</div></div>
+    <div class="card"><img src="mockups/case_detail.png" alt="Case Detail" loading="lazy"><div class="label">Case Detail</div></div>
+    <div class="card"><img src="mockups/casedetail.png" alt="CaseDetail" loading="lazy"><div class="label">CaseDetail</div></div>
+    <div class="card"><img src="mockups/my_documents.png" alt="My Documents" loading="lazy"><div class="label">My Documents</div></div>
+    <div class="card"><img src="mockups/scanner.png" alt="Scanner" loading="lazy"><div class="label">Scanner</div></div>
+    <div class="card"><img src="mockups/my_invoices.png" alt="My Invoices" loading="lazy"><div class="label">My Invoices</div></div>
+    <div class="card"><img src="mockups/my_inspections.png" alt="My Inspections" loading="lazy"><div class="label">My Inspections</div></div>
+    <div class="card"><img src="mockups/inspection_detail.png" alt="Inspection Detail" loading="lazy"><div class="label">Inspection Detail</div></div>
+    <div class="card"><img src="mockups/bureau.png" alt="Bureau" loading="lazy"><div class="label">Bureau</div></div>
+    <div class="card"><img src="mockups/registry_search.png" alt="Registry Search" loading="lazy"><div class="label">Registry Search</div></div>
+    <div class="card"><img src="mockups/chat.png" alt="Chat" loading="lazy"><div class="label">Chat</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">Індекс <span class="badge">Legacy mockups/</span></h2>
+  <p style="color:#8A9496;font-size:13px;margin-bottom:16px;
+    Повний індекс файлів у папці <code>mockups/</code> (legacy) та <code>design/mockups/</code> (canonical):</p>
+  <div class="grid">
+    <div class="card"><img src="mockups/dashboard.png" alt="Dashboard" loading="lazy"><div class="label">dashboard.png</div></div>
+    <div class="card"><img src="mockups/mycases.png" alt="MyCases" loading="lazy"><div class="label">mycases.png</div></div>
+  </div>
+</div>
+
+<footer>
+  LexTrack Design System — Palette V2 — Dark theme
+</footer>
 
 </body>
 </html>
