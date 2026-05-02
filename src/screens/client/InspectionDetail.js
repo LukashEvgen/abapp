@@ -1,15 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {getInspectionById} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
 import {formatDate} from '../../utils/helpers';
-import {Badge, SectionLabel, GoldButton, Card} from '../../components/shared/UIComponents';
+import {
+  Badge,
+  SectionLabel,
+  GoldButton,
+  Card,
+} from '../../components/shared/UIComponents';
 
 export default function InspectionDetail({route, navigation}) {
   const {inspectionId} = route.params;
@@ -19,20 +25,36 @@ export default function InspectionDetail({route, navigation}) {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      if (!user?.uid) return;
+      if (!user?.uid) {
+        return;
+      }
       const data = await getInspectionById(user.uid, inspectionId);
-      if (mounted) setInspection(data);
+      if (mounted) {
+        setInspection(data);
+      }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [inspectionId, user]);
 
-  if (!inspection) return null;
+  if (!inspection) {
+    return null;
+  }
 
   const risk = inspection.risk || 'low';
-  const riskTitle = {low: 'Низький', medium: 'Середній', high: 'Високий', critical: 'Критичний'}[risk] || risk;
+  const riskTitle =
+    {
+      low: 'Низький',
+      medium: 'Середній',
+      high: 'Високий',
+      critical: 'Критичний',
+    }[risk] || risk;
 
   return (
-    <ScrollView style={globalStyles.container} contentContainerStyle={{padding: spacing.md}}>
+    <ScrollView
+      style={globalStyles.container}
+      contentContainerStyle={{padding: spacing.md}}>
       <View style={globalStyles.rowBetween}>
         <Text style={styles.title}>{inspection.organ}</Text>
         <Badge status={risk} />
@@ -40,12 +62,36 @@ export default function InspectionDetail({route, navigation}) {
 
       <Text style={styles.meta}>{inspection.type}</Text>
       <Text style={styles.meta}>
-        Період: {formatDate(inspection.dateStart)} — {inspection.dateEnd ? formatDate(inspection.dateEnd) : 'триває'}
+        Період: {formatDate(inspection.dateStart)} —{' '}
+        {inspection.dateEnd ? formatDate(inspection.dateEnd) : 'триває'}
       </Text>
 
       <SectionLabel text="Рівень ризику" />
-      <Card style={{borderColor: colors[risk === 'critical' ? 'danger' : risk === 'high' ? 'warning' : 'success']}}>
-        <Text style={[styles.riskValue, {color: colors[risk === 'critical' ? 'danger' : risk === 'high' ? 'warning' : 'success'] || colors.gold}]}>
+      <Card
+        style={{
+          borderColor:
+            colors[
+              risk === 'critical'
+                ? 'danger'
+                : risk === 'high'
+                ? 'warning'
+                : 'success'
+            ],
+        }}>
+        <Text
+          style={[
+            styles.riskValue,
+            {
+              color:
+                colors[
+                  risk === 'critical'
+                    ? 'danger'
+                    : risk === 'high'
+                    ? 'warning'
+                    : 'success'
+                ] || colors.gold,
+            },
+          ]}>
           {riskTitle}
         </Text>
         <Text style={styles.riskDesc}>

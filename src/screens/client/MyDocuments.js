@@ -9,9 +9,20 @@ import {
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {getDocuments} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
 import {formatDate} from '../../utils/helpers';
-import {Card, SectionLabel, GoldButton, EmptyState} from '../../components/shared/UIComponents';
+import {
+  Card,
+  SectionLabel,
+  GoldButton,
+  EmptyState,
+} from '../../components/shared/UIComponents';
 
 export default function MyDocuments({route, navigation}) {
   const {caseId} = route.params;
@@ -19,7 +30,9 @@ export default function MyDocuments({route, navigation}) {
   const [docs, setDocs] = useState([]);
 
   useEffect(() => {
-    if (!user?.uid || !caseId) return;
+    if (!user?.uid || !caseId) {
+      return;
+    }
     getDocuments(user.uid, caseId).then(setDocs);
   }, [user, caseId]);
 
@@ -31,7 +44,9 @@ export default function MyDocuments({route, navigation}) {
           <Text style={styles.open}>Відкрити</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.meta}>{formatDate(item.uploadedAt)} · {item.type}</Text>
+      <Text style={styles.meta}>
+        {formatDate(item.uploadedAt)} · {item.type}
+      </Text>
     </Card>
   );
 
@@ -39,12 +54,20 @@ export default function MyDocuments({route, navigation}) {
     <View style={globalStyles.container}>
       <View style={globalStyles.screen}>
         <Text style={styles.header}>Документи</Text>
-        <Text style={styles.security}>🔒 AES-256 · Доступ: клієнт + адвокат</Text>
+        <Text style={styles.security}>
+          🔒 AES-256 · Доступ: клієнт + адвокат
+        </Text>
         <FlatList
           data={docs}
           keyExtractor={item => item.id}
           renderItem={renderItem}
-          ListEmptyComponent={<EmptyState icon="📄" title="Немає документів" subtitle="Завантажте перший документ через сканер" />}
+          ListEmptyComponent={
+            <EmptyState
+              icon="📄"
+              title="Немає документів"
+              subtitle="Завантажте перший документ через сканер"
+            />
+          }
           contentContainerStyle={{paddingBottom: spacing.lg}}
         />
         <GoldButton

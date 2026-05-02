@@ -9,8 +9,14 @@ import {
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {getInspections} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
-import {formatDate} from '../../utils/helpers';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
+import {formatDate, statusColors, statusBgColors} from '../../utils/helpers';
 import {Card, Badge, EmptyState} from '../../components/shared/UIComponents';
 
 export default function MyInspections({navigation}) {
@@ -19,12 +25,16 @@ export default function MyInspections({navigation}) {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
     const data = await getInspections(user.uid);
     setInspections(data);
   }, [user]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -33,17 +43,23 @@ export default function MyInspections({navigation}) {
   };
 
   const renderItem = ({item}) => (
-    <Card onPress={() => navigation.navigate('InspectionDetail', {inspectionId: item.id})}>
+    <Card
+      onPress={() =>
+        navigation.navigate('InspectionDetail', {inspectionId: item.id})
+      }>
       <View style={globalStyles.rowBetween}>
         <Text style={styles.organ}>{item.organ}</Text>
         <Badge status={item.risk || 'low'} />
       </View>
       <Text style={styles.meta}>
-        {formatDate(item.dateStart)} — {item.dateEnd ? formatDate(item.dateEnd) : 'триває'}
+        {formatDate(item.dateStart)} —{' '}
+        {item.dateEnd ? formatDate(item.dateEnd) : 'триває'}
       </Text>
       <Text style={styles.type}>{item.type}</Text>
       {item.recommendation && (
-        <Text style={styles.recommendation} numberOfLines={2}>{item.recommendation}</Text>
+        <Text style={styles.recommendation} numberOfLines={2}>
+          {item.recommendation}
+        </Text>
       )}
     </Card>
   );
@@ -60,9 +76,15 @@ export default function MyInspections({navigation}) {
             style={styles.criticalBanner}
             onPress={() => {
               const first = inspections.find(i => i.risk === 'critical');
-              if (first) navigation.navigate('InspectionDetail', {inspectionId: first.id});
+              if (first) {
+                navigation.navigate('InspectionDetail', {
+                  inspectionId: first.id,
+                });
+              }
             }}>
-            <Text style={styles.criticalText}>⚠️ Критичних перевірок: {criticalCount}</Text>
+            <Text style={styles.criticalText}>
+              ⚠️ Критичних перевірок: {criticalCount}
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -70,7 +92,13 @@ export default function MyInspections({navigation}) {
           data={inspections}
           keyExtractor={item => item.id}
           renderItem={renderItem}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.gold}
+            />
+          }
           ListEmptyComponent={
             <EmptyState
               icon="🔍"
@@ -91,7 +119,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   criticalBanner: {
-    backgroundColor: 'rgba(192,57,43,0.15)',
+    backgroundColor: colors.semantic.dangerBg,
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,

@@ -1,8 +1,42 @@
 # LexTrack
 
-Мобільний додаток для юридичного трекінгу (React Native 0.73.6 + Firebase).
+Мобільний додаток для юридичного трекінгу на базі **React Native 0.73.6** та **Firebase**.
+
+LexTrack дозволяє юристам керувати клієнтами, справами, документами та рахунками, а клієнтам — відстежувати свої справи, переглядати документи, рахунки та спілкуватися з адвокатом.
+
+## Зміст
+
+- [Функціонал](#функціонал)
+- [Клонування та встановлення](#клонування-та-встановлення)
+- [Firebase налаштування](#firebase-налаштування)
+- [Запуск](#запуск)
+- [Структура проєкту](#структура-проєкту)
+- [Ролі користувачів](#ролі-користувачів)
+- [Ліцензія](#ліцензія)
+
+## Функціонал
+
+- **Аутентифікація** — вхід за номером телефону через Firebase Authentication.
+- **Розділення ролей** — два типи користувачів: адміністратор (юрист) та клієнт.
+- **Управління справами** — створення, перегляд та оновлення статусів справ.
+- **Документи** — завантаження та перегляд документів.
+- **Рахунки** — створення рахунків адміністратором та перегляд клієнтом.
+- **Перевірки** — перевірки (інспекції) з деталізацією.
+- **Реєстри** — пошук та робота з реєстрами.
+- **Бюро кредитних історій** — перевірка кредитних історій.
+- **Чат** — обмін повідомленнями між адміністратором та клієнтом.
+- **Push-повідомлення** — інтеграція з Firebase Cloud Messaging.
 
 ## Клонування та встановлення
+
+### Вимоги
+
+- Node.js `>= 18`
+- Java Development Kit (JDK) 17
+- Android SDK (для Android-сборки)
+- React Native CLI
+
+### Встановлення залежностей
 
 ```bash
 git clone <repository-url>
@@ -15,22 +49,41 @@ npm install
 1. Перейдіть до [Firebase Console](https://console.firebase.google.com/) та створіть проєкт.
 2. Додайте Android-додаток із пакетом `com.lextrack`.
 3. Завантажте файл `google-services.json` і замініть ним `android/app/google-services.json` у проєкті.
-4. Увімкніть Authentication (Phone), Firestore Database та Cloud Storage.
-5. Розгорніть правила безпеки Firestore: у Firebase Console перейдіть до Firestore Database → Rules та вставте вміст файлу `firestore.rules`.
+4. Увімкніть в Firebase Console:
+   - **Authentication** (метод: Phone)
+   - **Firestore Database**
+   - **Cloud Storage**
+   - **Cloud Messaging** (для push-сповіщень)
+5. Розгорніть правила безпеки Firestore: перейдіть до Firestore Database → Rules та вставте вміст файлу `firestore.rules`.
+
+> **Примітка:** Файл `android/app/google-services.json` не повинен потрапляти у публічний репозиторій. Він вже доданий до `.gitignore`.
 
 ## Запуск
 
+### Скрипти
+
+| Скрипт | Призначення |
+|--------|-------------|
+| `npm start` | Запуск Metro bundler |
+| `npm run android` | Запуск Android-додатку (потрібен емулятор або пристрій) |
+| `npm run ios` | Запуск iOS-додатку (доступно лише на macOS) |
+| `npm test` | Запуск тестів Jest |
+| `npm run lint` | Перевірка коду ESLint |
+
 ### Metro bundler
+
 ```bash
 npm start
 ```
 
 ### Android (потрібен емулятор або пристрій)
+
 ```bash
 npm run android
 ```
 
 Або вручну через Gradle:
+
 ```bash
 cd android
 ./gradlew assembleDebug
@@ -38,7 +91,65 @@ cd android
 
 ## Структура проєкту
 
-- `src/` — вихідний код додатку
-- `android/` — нативна Android-конфігурація
-- `firestore.rules` — правила безпеки Firestore
-- `android/app/google-services.json` — конфігурація Firebase (потрібно замінити на справжній файл)
+```
+├── android/                        # Нативна Android-конфігурація
+├── src/                            # Вихідний код додатку
+│   ├── App.js                      # Кореневий компонент додатку
+│   ├── components/shared/          # Спільні UI-компоненти
+│   ├── context/                    # React Context (AuthContext)
+│   ├── navigation/                 # Навігація (стекові та таб-навігатори)
+│   ├── screens/
+│   │   ├── admin/                  # Екрани для адміністратора (юриста)
+│   │   │   ├── AdminDashboard.js
+│   │   │   ├── ClientsList.js
+│   │   │   ├── AdminClientDetail.js
+│   │   │   ├── AdminCaseDetail.js
+│   │   │   ├── CreateInvoice.js
+│   │   │   └── AdminChat.js
+│   │   ├── client/                 # Екрани для клієнта
+│   │   │   ├── ClientDashboard.js
+│   │   │   ├── MyCases.js
+│   │   │   ├── CaseDetail.js
+│   │   │   ├── MyDocuments.js
+│   │   │   ├── ScannerScreen.js
+│   │   │   ├── MyInvoices.js
+│   │   │   ├── MyInspections.js
+│   │   │   ├── InspectionDetail.js
+│   │   │   ├── RegistrySearch.js
+│   │   │   ├── BureauScreen.js
+│   │   │   └── ChatScreen.js
+│   │   └── shared/                 # Спільні екрани
+│   │       └── LoginScreen.js
+│   ├── services/                   # Сервіси (Firebase ініціалізація)
+│   └── utils/                      # Утиліти, теми, хелпери
+├── firestore.rules                 # Правила безпеки Firestore
+├── package.json
+├── metro.config.js
+├── babel.config.js
+└── index.js
+```
+
+## Ролі користувачів
+
+### Адміністратор (юрист)
+
+- Перегляд головної панелі
+- Управління списком клієнтів
+- Перегляд деталей клієнта та його справ
+- Створення рахунків
+- Комунікація через чат
+
+### Клієнт
+
+- Перегляд особистої панелі
+- Перегляд своїх справ та їх деталей
+- Перегляд документів та сканування
+- Перегляд рахунків
+- Перегляд перевірок (інспекцій)
+- Пошук у реєстрах
+- Перевірка кредитних історій через бюро
+- Комунікація через чат з юристом
+
+## Ліцензія
+
+Цей проєкт є приватним та призначений для внутрішнього використання.

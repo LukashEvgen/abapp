@@ -4,6 +4,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {useAuth} from '../context/AuthContext';
 
+import {colors} from '../utils/theme';
+
 import LoginScreen from '../screens/shared/LoginScreen';
 
 import ClientDashboard from '../screens/client/ClientDashboard';
@@ -15,7 +17,7 @@ import MyInvoices from '../screens/client/MyInvoices';
 import MyInspections from '../screens/client/MyInspections';
 import InspectionDetail from '../screens/client/InspectionDetail';
 import RegistrySearch from '../screens/client/RegistrySearch';
-import ChatScreen from '../screens/client/ChatScreen';
+import ChatScreen from '../screens/shared/ChatScreen';
 import BureauScreen from '../screens/client/BureauScreen';
 
 import AdminDashboard from '../screens/admin/AdminDashboard';
@@ -33,9 +35,9 @@ function ClientTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {backgroundColor: '#0C0F0A', borderTopColor: '#252C1C'},
-        tabBarActiveTintColor: '#C9A84C',
-        tabBarInactiveTintColor: '#7A7A6A',
+        tabBarStyle: {backgroundColor: colors.bg, borderTopColor: colors.border},
+        tabBarActiveTintColor: colors.gold,
+        tabBarInactiveTintColor: colors.muted,
       }}>
       <Tab.Screen
         name="Home"
@@ -97,18 +99,39 @@ function BureauStack() {
   );
 }
 
+function AdminChatsStack() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="ClientsList" component={ClientsList} />
+      <Stack.Screen name="AdminChatDetail" component={AdminChat} />
+    </Stack.Navigator>
+  );
+}
+
 function AdminTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {backgroundColor: '#0C0F0A', borderTopColor: '#252C1C'},
-        tabBarActiveTintColor: '#C9A84C',
-        tabBarInactiveTintColor: '#7A7A6A',
+        tabBarStyle: {backgroundColor: colors.bg, borderTopColor: colors.border},
+        tabBarActiveTintColor: colors.gold,
+        tabBarInactiveTintColor: colors.muted,
       }}>
-      <Tab.Screen name="AdminHome" component={AdminDashboard} options={{tabBarLabel: 'Головна'}} />
-      <Tab.Screen name="Clients" component={AdminClientsStack} options={{tabBarLabel: 'Клієнти'}} />
-      <Tab.Screen name="AdminChats" component={AdminChat} options={{tabBarLabel: 'Чати'}} />
+      <Tab.Screen
+        name="AdminHome"
+        component={AdminDashboard}
+        options={{tabBarLabel: 'Головна'}}
+      />
+      <Tab.Screen
+        name="Clients"
+        component={AdminClientsStack}
+        options={{tabBarLabel: 'Клієнти'}}
+      />
+      <Tab.Screen
+        name="AdminChats"
+        component={AdminChatsStack}
+        options={{tabBarLabel: 'Чати'}}
+      />
     </Tab.Navigator>
   );
 }
@@ -128,7 +151,9 @@ function AdminClientsStack() {
 export default function AppNavigator() {
   const {user, initializing, isLawyer} = useAuth();
 
-  if (initializing) return null;
+  if (initializing) {
+    return null;
+  }
 
   return (
     <NavigationContainer>

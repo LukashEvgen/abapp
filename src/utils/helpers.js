@@ -1,5 +1,6 @@
 import {format, parseISO} from 'date-fns';
 import {uk} from 'date-fns/locale';
+import {colors} from './theme';
 
 export const formatDate = (dateInput, pattern = 'dd MMM yyyy') => {
   if (!dateInput) {
@@ -30,29 +31,29 @@ export const formatCurrency = amount => {
 };
 
 export const statusColors = {
-  Розглядається: '#C9A84C',
-  'Очікує рішення': '#D4831A',
-  Вирішено: '#27AE60',
-  pending: '#D4831A',
-  paid: '#27AE60',
-  new: '#C9A84C',
-  low: '#27AE60',
-  medium: '#D4831A',
-  high: '#C0392B',
-  critical: '#C0392B',
+  Розглядається: colors.gold,
+  'Очікує рішення': colors.warning,
+  Вирішено: colors.success,
+  pending: colors.warning,
+  paid: colors.success,
+  new: colors.gold,
+  low: colors.success,
+  medium: colors.warning,
+  high: colors.danger,
+  critical: colors.danger,
 };
 
 export const statusBgColors = {
-  Розглядається: 'rgba(201,168,76,0.15)',
-  'Очікує рішення': 'rgba(212,131,26,0.15)',
-  Вирішено: 'rgba(39,174,96,0.15)',
-  pending: 'rgba(212,131,26,0.15)',
-  paid: 'rgba(39,174,96,0.15)',
-  new: 'rgba(201,168,76,0.15)',
-  low: 'rgba(39,174,96,0.15)',
-  medium: 'rgba(212,131,26,0.15)',
-  high: 'rgba(192,57,43,0.15)',
-  critical: 'rgba(192,57,43,0.15)',
+  Розглядається: colors.brand.primaryMuted,
+  'Очікує рішення': colors.semantic.warningBg,
+  Вирішено: colors.semantic.successBg,
+  pending: colors.semantic.warningBg,
+  paid: colors.semantic.successBg,
+  new: colors.brand.primaryMuted,
+  low: colors.semantic.successBg,
+  medium: colors.semantic.warningBg,
+  high: colors.semantic.dangerBg,
+  critical: colors.semantic.dangerBg,
 };
 
 export const initials = fullName => {
@@ -91,7 +92,10 @@ export const validateCode = code => {
 };
 
 export const validateRequired = (value, label) => {
-  if (!value || !String(value).trim()) {
+  if (value === null || value === undefined) {
+    return `${label} є обовʼязковим`;
+  }
+  if (String(value).trim() === '') {
     return `${label} є обовʼязковим`;
   }
   return null;

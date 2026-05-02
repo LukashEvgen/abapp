@@ -8,10 +8,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getClientById, getCases, getInspections, getInvoices} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
+import {
+  getClientById,
+  getCases,
+  getInspections,
+  getInvoices,
+} from '../../services/firebase';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
 import {formatDate, formatCurrency, initials} from '../../utils/helpers';
-import {Card, SectionLabel, AlertBanner, StatCard, ProgressBar, Badge} from '../../components/shared/UIComponents';
+import {
+  Card,
+  SectionLabel,
+  AlertBanner,
+  StatCard,
+  ProgressBar,
+  Badge,
+} from '../../components/shared/UIComponents';
 
 export default function ClientDashboard({navigation}) {
   const {user} = useAuth();
@@ -22,7 +40,9 @@ export default function ClientDashboard({navigation}) {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
     const c = await getClientById(user.uid);
     setClient(c);
     if (c) {
@@ -37,7 +57,9 @@ export default function ClientDashboard({navigation}) {
     }
   }, [user]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -55,8 +77,13 @@ export default function ClientDashboard({navigation}) {
     <ScrollView
       style={globalStyles.container}
       contentContainerStyle={{padding: spacing.md}}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
-    >
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.gold}
+        />
+      }>
       <Text style={styles.greeting}>
         Привіт, {client?.name || 'клієнте'} 👋
       </Text>
@@ -65,22 +92,36 @@ export default function ClientDashboard({navigation}) {
         <AlertBanner
           type="danger"
           text={`Критична перевірка: ${criticalInspections[0].organ}`}
-          onPress={() => navigation.navigate('Inspections', {screen: 'InspectionDetail', params: {inspectionId: criticalInspections[0].id}})}
+          onPress={() =>
+            navigation.navigate('Inspections', {
+              screen: 'InspectionDetail',
+              params: {inspectionId: criticalInspections[0].id},
+            })
+          }
         />
       )}
 
       {upcomingHearings.length > 0 && (
         <AlertBanner
           type="gold"
-          text={`Наступне засідання: ${formatDate(upcomingHearings[0].nextHearing)}`}
-          onPress={() => navigation.navigate('Cases', {screen: 'CaseDetail', params: {caseId: upcomingHearings[0].id}})}
+          text={`Наступне засідання: ${formatDate(
+            upcomingHearings[0].nextHearing,
+          )}`}
+          onPress={() =>
+            navigation.navigate('Cases', {
+              screen: 'CaseDetail',
+              params: {caseId: upcomingHearings[0].id},
+            })
+          }
         />
       )}
 
       {openCases.length > 0 && (
         <AlertBanner
           type="warning"
-          text={`Неоплачено: ${formatCurrency(openCases.reduce((s, i) => s + (i.amount || 0), 0))}`}
+          text={`Неоплачено: ${formatCurrency(
+            openCases.reduce((s, i) => s + (i.amount || 0), 0),
+          )}`}
           onPress={() => navigation.navigate('Cases', {screen: 'MyInvoices'})}
         />
       )}
@@ -95,17 +136,33 @@ export default function ClientDashboard({navigation}) {
       <View style={styles.quickGrid}>
         {[
           {label: 'Справи', icon: '⚖', screen: 'Cases', target: 'MyCases'},
-          {label: 'Перевірки', icon: '🔍', screen: 'Inspections', target: 'MyInspections'},
-          {label: 'Реєстри', icon: '🗂', screen: 'Registry', target: 'RegistrySearch'},
+          {
+            label: 'Перевірки',
+            icon: '🔍',
+            screen: 'Inspections',
+            target: 'MyInspections',
+          },
+          {
+            label: 'Реєстри',
+            icon: '🗂',
+            screen: 'Registry',
+            target: 'RegistrySearch',
+          },
           {label: 'Бюро', icon: '👨‍⚖️', screen: 'Bureau', target: 'Bureau'},
           {label: 'Чат', icon: '💬', screen: 'Cases', target: 'Chat'},
-          {label: 'Документи', icon: '📄', screen: 'Cases', target: 'MyDocuments'},
+          {
+            label: 'Документи',
+            icon: '📄',
+            screen: 'Cases',
+            target: 'MyDocuments',
+          },
         ].map(item => (
           <TouchableOpacity
             key={item.label}
             style={styles.quickButton}
-            onPress={() => navigation.navigate(item.screen, {screen: item.target})}
-          >
+            onPress={() =>
+              navigation.navigate(item.screen, {screen: item.target})
+            }>
             <Text style={styles.quickIcon}>{item.icon}</Text>
             <Text style={styles.quickLabel}>{item.label}</Text>
           </TouchableOpacity>
@@ -114,17 +171,32 @@ export default function ClientDashboard({navigation}) {
 
       <SectionLabel text="Активні справи" />
       {cases.slice(0, 3).map(c => (
-        <Card key={c.id} onPress={() => navigation.navigate('Cases', {screen: 'CaseDetail', params: {caseId: c.id}})}>
+        <Card
+          key={c.id}
+          onPress={() =>
+            navigation.navigate('Cases', {
+              screen: 'CaseDetail',
+              params: {caseId: c.id},
+            })
+          }>
           <View style={globalStyles.rowBetween}>
             <Text style={styles.caseTitle}>{c.title}</Text>
             <Badge status={c.status} />
           </View>
-          <Text style={styles.caseMeta}>{c.court} · {c.caseNumber}</Text>
-          {c.nextHearing && <Text style={styles.caseMeta}>Засідання: {formatDate(c.nextHearing)}</Text>}
+          <Text style={styles.caseMeta}>
+            {c.court} · {c.caseNumber}
+          </Text>
+          {c.nextHearing && (
+            <Text style={styles.caseMeta}>
+              Засідання: {formatDate(c.nextHearing)}
+            </Text>
+          )}
           <ProgressBar progress={c.progress || 0} />
         </Card>
       ))}
-      {cases.length === 0 && <Text style={styles.empty}>Немає активних справ</Text>}
+      {cases.length === 0 && (
+        <Text style={styles.empty}>Немає активних справ</Text>
+      )}
     </ScrollView>
   );
 }

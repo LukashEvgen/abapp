@@ -19,8 +19,7 @@ import {formatDateTime} from '../../utils/helpers';
 import {EmptyState} from '../../components/shared/UIComponents';
 import {chatStyles} from '../../styles/chatStyles';
 
-export default function AdminChat({route}) {
-  const {clientId} = route?.params || {};
+export default function ChatScreen() {
   const {user} = useAuth();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -29,16 +28,16 @@ export default function AdminChat({route}) {
   const unsubscribeRef = useRef(null);
 
   useEffect(() => {
-    if (!clientId) {
+    if (!user?.uid) {
       return;
     }
-    unsubscribeRef.current = getMessages(clientId, msgs => {
+    unsubscribeRef.current = getMessages(user.uid, msgs => {
       setMessages(msgs);
       const unread = msgs
-        .filter(m => m.from === 'client' && !m.read)
+        .filter(m => m.from === 'lawyer' && !m.read)
         .map(m => m.id);
       if (unread.length > 0) {
-        markMessagesRead(clientId, unread).catch(() => {});
+        markMessagesRead(user.uid, unread).catch(() => {});
       }
     });
     return () => {
@@ -46,7 +45,7 @@ export default function AdminChat({route}) {
         unsubscribeRef.current();
       }
     };
-  }, [clientId]);
+  }, [user]);
 
   useEffect(() => {
     if (messages.length > 0 && listRef.current) {
@@ -56,22 +55,22 @@ export default function AdminChat({route}) {
 
   const onSend = useCallback(async () => {
     const trimmed = text.trim();
-    if (!trimmed || !clientId) {
+    if (!trimmed || !user?.uid) {
       return;
     }
     setSending(true);
     setText('');
     try {
-      await sendMessage(clientId, trimmed, 'lawyer');
+      await sendMessage(user.uid, trimmed, 'client');
     } catch (e) {
       setText(trimmed);
     } finally {
       setSending(false);
     }
-  }, [text, clientId]);
+  }, [text, user]);
 
   const renderItem = ({item}) => {
-    const isMe = item.from === 'lawyer';
+    const isMe = item.from === 'client';
     return (
       <View
         style={[
@@ -114,7 +113,7 @@ export default function AdminChat({route}) {
           <EmptyState
             icon="💬"
             title="Почніть спілкування"
-            subtitle="Повідомлення з клієнтом з’являться тут"
+            subtitle="Ваші повідомлення з адвокатом з’являться тут"
           />
         }
       />

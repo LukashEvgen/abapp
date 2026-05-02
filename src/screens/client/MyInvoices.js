@@ -10,9 +10,20 @@ import {
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {getInvoices} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
 import {formatDate, formatCurrency} from '../../utils/helpers';
-import {Card, Badge, EmptyState, GoldButton} from '../../components/shared/UIComponents';
+import {
+  Card,
+  Badge,
+  EmptyState,
+  GoldButton,
+} from '../../components/shared/UIComponents';
 
 export default function MyInvoices({navigation}) {
   const {user} = useAuth();
@@ -22,12 +33,16 @@ export default function MyInvoices({navigation}) {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
     const data = await getInvoices(user.uid);
     setInvoices(data);
   }, [user]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   useEffect(() => {
     if (filter === 'all') {
@@ -53,7 +68,9 @@ export default function MyInvoices({navigation}) {
         <Text style={styles.title}>{item.title || 'Рахунок'}</Text>
         <Badge status={item.status} />
       </View>
-      <Text style={styles.meta}>№ {item.number || item.id.slice(-6)} · {formatDate(item.createdAt)}</Text>
+      <Text style={styles.meta}>
+        № {item.number || item.id.slice(-6)} · {formatDate(item.createdAt)}
+      </Text>
       <Text style={styles.amount}>{formatCurrency(item.amount)}</Text>
       {item.status === 'pending' || item.status === 'overdue' ? (
         <GoldButton
@@ -74,7 +91,10 @@ export default function MyInvoices({navigation}) {
     <TouchableOpacity
       onPress={() => setFilter(value)}
       style={[styles.chip, filter === value && styles.chipActive]}>
-      <Text style={[styles.chipText, filter === value && styles.chipTextActive]}>{label}</Text>
+      <Text
+        style={[styles.chipText, filter === value && styles.chipTextActive]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -86,7 +106,9 @@ export default function MyInvoices({navigation}) {
         {totalPending > 0 && (
           <View style={styles.summary}>
             <Text style={styles.summaryLabel}>До сплати</Text>
-            <Text style={styles.summaryValue}>{formatCurrency(totalPending)}</Text>
+            <Text style={styles.summaryValue}>
+              {formatCurrency(totalPending)}
+            </Text>
           </View>
         )}
 
@@ -101,7 +123,13 @@ export default function MyInvoices({navigation}) {
           data={filtered}
           keyExtractor={item => item.id}
           renderItem={renderItem}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.gold}
+            />
+          }
           ListEmptyComponent={
             <EmptyState
               icon="💰"

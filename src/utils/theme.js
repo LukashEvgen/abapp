@@ -1,66 +1,116 @@
 import {StyleSheet} from 'react-native';
+import tokens from '../../design/tokens.json';
 
+// ---------------------------------------------------------------------------
+// Colors — legacy flat keys preserved for backward compatibility.
+// New semantic access via colors.neutral / brand / semantic / surface / textSemantic.
+// ---------------------------------------------------------------------------
 export const colors = {
-  bg: '#0C0F0A',
-  surface: '#13160F',
-  card: '#181C13',
-  border: '#252C1C',
-  gold: '#C9A84C',
-  green: '#2D5016',
-  danger: '#C0392B',
-  warning: '#D4831A',
-  success: '#27AE60',
-  text: '#F0EDE4',
-  muted: '#7A7A6A',
+  // --- legacy primitive keys ---
+  bg: tokens.colors.surface.bg,
+  surface: tokens.colors.surface.base,
+  card: tokens.colors.surface.raised,
+  border: tokens.colors.border.subtle,
+  gold: tokens.colors.brand.primary,
+  green: tokens.colors.semantic.successDark,
+  danger: tokens.colors.semantic.danger,
+  warning: tokens.colors.semantic.warning,
+  success: tokens.colors.semantic.success,
+  text: tokens.colors.text.primary,
+  muted: tokens.colors.text.secondary,
+
+  // --- new systematic palettes ---
+  brand: tokens.colors.brand,
+  semantic: tokens.colors.semantic,
+  neutral: tokens.colors.neutral,
+  surfaceSemantic: tokens.colors.surface,
+  borderSemantic: tokens.colors.border,
+  textSemantic: tokens.colors.text,
 };
 
+// ---------------------------------------------------------------------------
+// Spacing — legacy alias keys preserved.
+// ---------------------------------------------------------------------------
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  xs: tokens.spacing.alias.xs,
+  sm: tokens.spacing.alias.sm,
+  md: tokens.spacing.alias.md,
+  lg: tokens.spacing.alias.lg,
+  xl: tokens.spacing.alias.xl,
 };
 
+// ---------------------------------------------------------------------------
+// Radius — legacy keys preserved.
+// ---------------------------------------------------------------------------
 export const radius = {
-  sm: 6,
-  md: 10,
-  lg: 16,
+  sm: tokens.radius.sm,
+  md: tokens.radius.md,
+  lg: tokens.radius.lg,
 };
 
+// ---------------------------------------------------------------------------
+// Typography — aligned to token scale for hierarchy and consistency.
+// ---------------------------------------------------------------------------
 export const typography = {
   h1: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: tokens.typography.size['2xl'],
+    fontWeight: tokens.typography.weight.bold,
     color: colors.text,
-    letterSpacing: 0.5,
+    letterSpacing: tokens.typography.letterSpacing.wide,
+    lineHeight:
+      tokens.typography.size['2xl'] * tokens.typography.lineHeight.tight,
   },
   h2: {
-    fontSize: 22,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.xl,
+    fontWeight: tokens.typography.weight.semibold,
     color: colors.text,
-    letterSpacing: 0.3,
+    letterSpacing: tokens.typography.letterSpacing.wide,
+    lineHeight: tokens.typography.size.xl * tokens.typography.lineHeight.snug,
   },
-  h3: {fontSize: 18, fontWeight: '600', color: colors.text},
-  body: {fontSize: 14, fontWeight: '400', color: colors.text, lineHeight: 20},
+  h3: {
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.semibold,
+    color: colors.text,
+    lineHeight: tokens.typography.size.lg * tokens.typography.lineHeight.normal,
+  },
+  body: {
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.regular,
+    color: colors.text,
+    lineHeight:
+      tokens.typography.size.base * tokens.typography.lineHeight.normal,
+  },
   caption: {
-    fontSize: 12,
-    fontWeight: '400',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.regular,
     color: colors.muted,
-    lineHeight: 16,
+    lineHeight: tokens.typography.size.sm * tokens.typography.lineHeight.normal,
   },
   label: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.xs,
+    fontWeight: tokens.typography.weight.semibold,
     color: colors.gold,
     textTransform: 'uppercase',
-    letterSpacing: 1.2,
+    letterSpacing: tokens.typography.letterSpacing.wider,
+    lineHeight: tokens.typography.size.xs * tokens.typography.lineHeight.tight,
   },
 };
 
+// ---------------------------------------------------------------------------
+// Shadows — token-powered map for iOS / Android parity.
+// ---------------------------------------------------------------------------
+export const shadows = tokens.shadows;
+
+// ---------------------------------------------------------------------------
+// Global Styles (backward compatible; prefer composing from tokens).
+// ---------------------------------------------------------------------------
 export const globalStyles = StyleSheet.create({
   container: {flex: 1, backgroundColor: colors.bg},
-  screen: {flex: 1, backgroundColor: colors.bg, padding: spacing.md},
+  screen: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    padding: spacing.md,
+  },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.md,
@@ -76,7 +126,14 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   center: {alignItems: 'center', justifyContent: 'center'},
-  text: {color: colors.text, fontSize: 14},
-  mutedText: {color: colors.muted, fontSize: 12},
-  goldText: {color: colors.gold, fontSize: 14, fontWeight: '600'},
+  text: {color: colors.text, fontSize: tokens.typography.size.base},
+  mutedText: {
+    color: colors.muted,
+    fontSize: tokens.typography.size.sm,
+  },
+  goldText: {
+    color: colors.gold,
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
+  },
 });

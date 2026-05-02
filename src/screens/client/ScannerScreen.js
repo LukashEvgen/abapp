@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import {View, Text, Image, StyleSheet, Alert} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useAuth} from '../../context/AuthContext';
 import {uploadDocument} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
-import {GoldButton, ProgressBar, Card} from '../../components/shared/UIComponents';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
+import {
+  GoldButton,
+  ProgressBar,
+  Card,
+} from '../../components/shared/UIComponents';
 
 export default function ScannerScreen({route, navigation}) {
   const {caseId} = route.params;
@@ -22,35 +26,65 @@ export default function ScannerScreen({route, navigation}) {
   const [uploading, setUploading] = useState(false);
 
   const pickCamera = () => {
-    launchCamera({mediaType: 'photo', quality: 0.9, includeBase64: false}, res => {
-      if (res.didCancel || res.errorCode) return;
-      const asset = res.assets?.[0];
-      if (asset) setFile({name: asset.fileName || 'photo.jpg', uri: asset.uri, type: asset.type, size: asset.fileSize});
-      setStep(2);
-    });
+    launchCamera(
+      {mediaType: 'photo', quality: 0.9, includeBase64: false},
+      res => {
+        if (res.didCancel || res.errorCode) {
+          return;
+        }
+        const asset = res.assets?.[0];
+        if (asset) {
+          setFile({
+            name: asset.fileName || 'photo.jpg',
+            uri: asset.uri,
+            type: asset.type,
+            size: asset.fileSize,
+          });
+        }
+        setStep(2);
+      },
+    );
   };
 
   const pickGallery = () => {
-    launchImageLibrary({mediaType: 'photo', quality: 0.9, includeBase64: false}, res => {
-      if (res.didCancel || res.errorCode) return;
-      const asset = res.assets?.[0];
-      if (asset) setFile({name: asset.fileName || 'image.jpg', uri: asset.uri, type: asset.type, size: asset.fileSize});
-      setStep(2);
-    });
+    launchImageLibrary(
+      {mediaType: 'photo', quality: 0.9, includeBase64: false},
+      res => {
+        if (res.didCancel || res.errorCode) {
+          return;
+        }
+        const asset = res.assets?.[0];
+        if (asset) {
+          setFile({
+            name: asset.fileName || 'image.jpg',
+            uri: asset.uri,
+            type: asset.type,
+            size: asset.fileSize,
+          });
+        }
+        setStep(2);
+      },
+    );
   };
 
   const pickDocument = async () => {
     try {
-      const res = await DocumentPicker.pickSingle({type: [DocumentPicker.types.allFiles]});
+      const res = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.allFiles],
+      });
       setFile({name: res.name, uri: res.uri, type: res.type, size: res.size});
       setStep(2);
     } catch (e) {
-      if (!DocumentPicker.isCancel(e)) Alert.alert('Помилка', e.message);
+      if (!DocumentPicker.isCancel(e)) {
+        Alert.alert('Помилка', e.message);
+      }
     }
   };
 
   const startUpload = async () => {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     setUploading(true);
     setStep(3);
     try {
@@ -70,9 +104,22 @@ export default function ScannerScreen({route, navigation}) {
         {step === 1 && (
           <>
             <Text style={styles.subtitle}>Оберіть джерело</Text>
-            <GoldButton title="📷 Камера" onPress={pickCamera} style={{marginBottom: spacing.md}} />
-            <GoldButton title="🖼 Галерея" onPress={pickGallery} variant="ghost" style={{marginBottom: spacing.md}} />
-            <GoldButton title="📁 Файл" onPress={pickDocument} variant="ghost" />
+            <GoldButton
+              title="📷 Камера"
+              onPress={pickCamera}
+              style={{marginBottom: spacing.md}}
+            />
+            <GoldButton
+              title="🖼 Галерея"
+              onPress={pickGallery}
+              variant="ghost"
+              style={{marginBottom: spacing.md}}
+            />
+            <GoldButton
+              title="📁 Файл"
+              onPress={pickDocument}
+              variant="ghost"
+            />
           </>
         )}
 
@@ -84,13 +131,23 @@ export default function ScannerScreen({route, navigation}) {
               <Text style={styles.label}>Тип</Text>
               <Text style={styles.value}>{file.type || '—'}</Text>
               <Text style={styles.label}>Розмір</Text>
-              <Text style={styles.value}>{file.size ? (file.size / 1024).toFixed(1) + ' KB' : '—'}</Text>
+              <Text style={styles.value}>
+                {file.size ? (file.size / 1024).toFixed(1) + ' KB' : '—'}
+              </Text>
             </Card>
             {file.uri && file.type?.startsWith('image') && (
-              <Image source={{uri: file.uri}} style={styles.preview} resizeMode="contain" />
+              <Image
+                source={{uri: file.uri}}
+                style={styles.preview}
+                resizeMode="contain"
+              />
             )}
             <View style={styles.row}>
-              <GoldButton title="Повторити" variant="ghost" onPress={() => setStep(1)} />
+              <GoldButton
+                title="Повторити"
+                variant="ghost"
+                onPress={() => setStep(1)}
+              />
               <View style={{width: spacing.md}} />
               <GoldButton title="Завантажити" onPress={startUpload} />
             </View>

@@ -42,7 +42,9 @@ export const AuthProvider = ({children}) => {
   };
 
   const confirmCode = async code => {
-    if (!confirm) throw new Error('No confirmation in progress');
+    if (!confirm) {
+      throw new Error('No confirmation in progress');
+    }
     const result = await confirm.confirm(code);
     setUser(result.user);
     return result.user;
@@ -57,7 +59,14 @@ export const AuthProvider = ({children}) => {
 
   return (
     <AuthContext.Provider
-      value={{user, initializing, isLawyer, loginWithPhone, confirmCode, logout}}>
+      value={{
+        user,
+        initializing,
+        isLawyer,
+        loginWithPhone,
+        confirmCode,
+        logout,
+      }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,11 +8,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import {colors, spacing, radius, typography} from '../utils/theme';
-import {statusColors, statusBgColors} from '../utils/helpers';
+import {statusColors, statusBgColors, initials} from '../utils/helpers';
 
 export const Badge = ({status}) => {
   const color = statusColors[status] || colors.muted;
-  const bg = statusBgColors[status] || 'rgba(122,122,106,0.15)';
+  const bg = statusBgColors[status] || colors.semantic.warningBg;
   return (
     <View style={[styles.badge, {backgroundColor: bg}]}>
       <View style={[styles.dot, {backgroundColor: color}]} />
@@ -101,11 +101,11 @@ export const Input = ({
 
 export const AlertBanner = ({type, text, onPress}) => {
   const palette = {
-    danger: {bg: 'rgba(192,57,43,0.15)', color: colors.danger},
-    warning: {bg: 'rgba(212,131,26,0.15)', color: colors.warning},
-    gold: {bg: 'rgba(201,168,76,0.15)', color: colors.gold},
-    success: {bg: 'rgba(39,174,96,0.15)', color: colors.success},
-  }[type] || {bg: 'rgba(201,168,76,0.15)', color: colors.gold};
+    danger: {bg: colors.semantic.dangerBg, color: colors.danger},
+    warning: {bg: colors.semantic.warningBg, color: colors.warning},
+    gold: {bg: colors.brand.primaryMuted, color: colors.gold},
+    success: {bg: colors.semantic.successBg, color: colors.success},
+  }[type] || {bg: colors.brand.primaryMuted, color: colors.gold};
 
   return (
     <TouchableOpacity

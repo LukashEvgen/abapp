@@ -7,26 +7,68 @@ import {
   Linking,
   TouchableOpacity,
 } from 'react-native';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
-import {Card, SectionLabel, GoldButton, Input} from '../../components/shared/UIComponents';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
+import {
+  Card,
+  SectionLabel,
+  GoldButton,
+  Input,
+} from '../../components/shared/UIComponents';
 import {submitInquiry} from '../../services/firebase';
 
 const SERVICES = [
-  {icon: '⚖️', title: 'Судовий супровід', desc: 'Повний цикл представництва в суді'},
-  {icon: '📋', title: 'Консультації', desc: 'Усні та письмові правові висновки'},
-  {icon: '🏢', title: 'Реєстрація бізнесу', desc: 'Відкриття ФОП/ТОВ, зміни, ліквідація'},
-  {icon: '📑', title: 'Договірна робота', desc: 'Розробка та експертиза договорів'},
-  {icon: '🔍', title: 'Due Diligence', desc: 'Перевірка контрагентів та активів'},
-  {icon: '🛡️', title: 'Захист бізнесу', desc: 'Антирейдерська підтримка, скарги'},
+  {
+    icon: '⚖️',
+    title: 'Судовий супровід',
+    desc: 'Повний цикл представництва в суді',
+  },
+  {
+    icon: '📋',
+    title: 'Консультації',
+    desc: 'Усні та письмові правові висновки',
+  },
+  {
+    icon: '🏢',
+    title: 'Реєстрація бізнесу',
+    desc: 'Відкриття ФОП/ТОВ, зміни, ліквідація',
+  },
+  {
+    icon: '📑',
+    title: 'Договірна робота',
+    desc: 'Розробка та експертиза договорів',
+  },
+  {
+    icon: '🔍',
+    title: 'Due Diligence',
+    desc: 'Перевірка контрагентів та активів',
+  },
+  {
+    icon: '🛡️',
+    title: 'Захист бізнесу',
+    desc: 'Антирейдерська підтримка, скарги',
+  },
 ];
 
 export default function BureauScreen({navigation}) {
-  const [form, setForm] = useState({name: '', email: '', phone: '', message: ''});
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async () => {
-    if (!form.name.trim() || !form.message.trim()) return;
+    if (!form.name.trim() || !form.message.trim()) {
+      return;
+    }
     setSubmitting(true);
     try {
       await submitInquiry({...form, source: 'app'});
@@ -40,17 +82,22 @@ export default function BureauScreen({navigation}) {
   };
 
   return (
-    <ScrollView style={globalStyles.container} contentContainerStyle={{padding: spacing.md}}>
+    <ScrollView
+      style={globalStyles.container}
+      contentContainerStyle={{padding: spacing.md}}>
       <Text style={styles.header}>Юридичне бюро</Text>
 
       <Card>
         <Text style={styles.bureauName}>LexTrack Legal</Text>
-        <Text style={styles.bureauMeta}>м. Київ, вул. Хрещатик, 15, оф. 42</Text>
+        <Text style={styles.bureauMeta}>
+          м. Київ, вул. Хрещатик, 15, оф. 42
+        </Text>
         <Text style={styles.bureauMeta}>Пн–Пт: 09:00 – 18:00</Text>
         <TouchableOpacity onPress={() => Linking.openURL('tel:+380441234567')}>
           <Text style={styles.bureauLink}>+38 (044) 123-45-67</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('mailto:info@lextrack.ua')}>
+        <TouchableOpacity
+          onPress={() => Linking.openURL('mailto:info@lextrack.ua')}>
           <Text style={styles.bureauLink}>info@lextrack.ua</Text>
         </TouchableOpacity>
       </Card>
@@ -70,9 +117,16 @@ export default function BureauScreen({navigation}) {
       {submitted ? (
         <Card>
           <Text style={styles.successTitle}>✅ Дякуємо!</Text>
-          <Text style={styles.successText}>Ваше звернення прийнято. Ми зв’яжемося з вами найближчим часом.</Text>
+          <Text style={styles.successText}>
+            Ваше звернення прийнято. Ми зв’яжемося з вами найближчим часом.
+          </Text>
           <View style={{height: spacing.sm}} />
-          <GoldButton title="Надіслати ще" variant="ghost" size="small" onPress={() => setSubmitted(false)} />
+          <GoldButton
+            title="Надіслати ще"
+            variant="ghost"
+            size="small"
+            onPress={() => setSubmitted(false)}
+          />
         </Card>
       ) : (
         <>

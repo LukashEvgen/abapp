@@ -1,15 +1,25 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  RefreshControl,
-} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, RefreshControl} from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getAllClients, getInquiries, getAdminMessagesSummary} from '../../services/firebase';
-import {colors, spacing, radius, typography, globalStyles} from '../../utils/theme';
-import {Card, SectionLabel, StatCard, AlertBanner, EmptyState} from '../../components/shared/UIComponents';
+import {
+  getAllClients,
+  getInquiries,
+  getAdminMessagesSummary,
+} from '../../services/firebase';
+import {
+  colors,
+  spacing,
+  radius,
+  typography,
+  globalStyles,
+} from '../../utils/theme';
+import {
+  Card,
+  SectionLabel,
+  StatCard,
+  AlertBanner,
+  EmptyState,
+} from '../../components/shared/UIComponents';
 
 export default function AdminDashboard({navigation}) {
   const {user} = useAuth();
@@ -33,7 +43,9 @@ export default function AdminDashboard({navigation}) {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -48,7 +60,13 @@ export default function AdminDashboard({navigation}) {
     <ScrollView
       style={globalStyles.container}
       contentContainerStyle={{padding: spacing.md}}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}>
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.gold}
+        />
+      }>
       <Text style={styles.header}>Адмін-панель</Text>
 
       <View style={styles.statsRow}>
@@ -60,7 +78,10 @@ export default function AdminDashboard({navigation}) {
       {unreadChats.length > 0 && (
         <AlertBanner
           type="warning"
-          text={`Непрочитаних повідомлень: ${unreadChats.reduce((s, c) => s + c.unreadCount, 0)}`}
+          text={`Непрочитаних повідомлень: ${unreadChats.reduce(
+            (s, c) => s + c.unreadCount,
+            0,
+          )}`}
           onPress={() => navigation.navigate('AdminChats')}
         />
       )}
@@ -69,21 +90,40 @@ export default function AdminDashboard({navigation}) {
         <AlertBanner
           type="gold"
           text={`Нових звернень: ${newInquiries.length}`}
-          onPress={() => navigation.navigate('Clients', {screen: 'ClientsList'})}
+          onPress={() =>
+            navigation.navigate('Clients', {screen: 'ClientsList'})
+          }
         />
       )}
 
       <SectionLabel text="Останні чати" />
       {summaries.slice(0, 5).map(s => (
-        <Card key={s.clientId} onPress={() => navigation.navigate('Clients', {screen: 'AdminChatDetail', params: {clientId: s.clientId}})}>
+        <Card
+          key={s.clientId}
+          onPress={() =>
+            navigation.navigate('Clients', {
+              screen: 'AdminChatDetail',
+              params: {clientId: s.clientId},
+            })
+          }>
           <View style={globalStyles.rowBetween}>
             <Text style={styles.clientName}>{s.name}</Text>
-            {s.unreadCount > 0 && <Text style={styles.unreadBadge}>{s.unreadCount}</Text>}
+            {s.unreadCount > 0 && (
+              <Text style={styles.unreadBadge}>{s.unreadCount}</Text>
+            )}
           </View>
-          <Text style={styles.lastMsg} numberOfLines={1}>{s.lastMessage || 'Немає повідомлень'}</Text>
+          <Text style={styles.lastMsg} numberOfLines={1}>
+            {s.lastMessage || 'Немає повідомлень'}
+          </Text>
         </Card>
       ))}
-      {summaries.length === 0 && <EmptyState icon="💬" title="Немає чатів" subtitle="Чати з клієнтами з’являться тут" />}
+      {summaries.length === 0 && (
+        <EmptyState
+          icon="💬"
+          title="Немає чатів"
+          subtitle="Чати з клієнтами з’являться тут"
+        />
+      )}
     </ScrollView>
   );
 }

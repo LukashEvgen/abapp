@@ -274,36 +274,6 @@ export const getAllClients = async () => {
   return snapshot.docs.map(d => ({id: d.id, ...d.data()}));
 };
 
-export const sendMessageAsLawyer = async (clientId, text) => {
-  const ref = firestore()
-    .collection('clients')
-    .doc(clientId)
-    .collection('messages')
-    .doc();
-  await ref.set({
-    text,
-    from: 'lawyer',
-    timestamp: firestore.FieldValue.serverTimestamp(),
-    read: false,
-  });
-  return ref.id;
-};
-
-export const getMessagesForClient = (clientId, callback) => {
-  return firestore()
-    .collection('clients')
-    .doc(clientId)
-    .collection('messages')
-    .orderBy('timestamp', 'asc')
-    .onSnapshot(snapshot => {
-      const messages = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-      }));
-      callback(messages);
-    });
-};
-
 export const getAdminMessagesSummary = async () => {
   const snapshot = await firestore().collection('clients').get();
   const summaries = [];

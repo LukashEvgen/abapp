@@ -2,44 +2,91 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper: check if the request is authenticated
+    // ========== Helpers ==========
+
     function isAuth() {
       return request.auth != null;
     }
 
-    // Helper: check if the authenticated user is a lawyer (admin)
     function isLawyer() {
       return isAuth() && exists(/databases/$(database)/documents/lawyers/$(request.auth.uid));
     }
 
-    // Helper: check if the user owns the client document
-    function ownsClient(clientId) {
+    function isOwner(clientId) {
       return isAuth() && request.auth.uid == clientId;
     }
 
-    // --- Clients collection ---
-    // Lawyers can read/write any client. Clients can read/write only their own document.
+    function isDocSizeValid() {
+      return request.writeSize <= 524288;
+    }
+
+    function isValidClientCreate() {
+      return request.resource.data.keys().hasAll(['name', 'phone'])
+             && request.resource.data.name is string
+             && request.resource.data.phone is string
+             && isDocSizeValid();
+    }
+
+    function isValidInquiryCreate() {
+      return request.resource.data.keys().hasAll(['name', 'phone', 'text'])
+             && request.resource.data.name is string
+             && request.resource.data.phone is string
+             && request.resource.data.text is string
+             && request.resource.data.status == 'new'
+             && isDocSizeValid();
+    }
+
+    // ========== Clients collection ==========
     match /clients/{clientId} {
-      allow read, write: if isLawyer() || ownsClient(clientId);
+      allow read: if isLawyer() || isOwner(clientId);
+      allow create: if isLawyer() && isDocSizeValid();
+      allow update: if (isLawyer() || isOwner(clientId))
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'phone', 'updatedAt'])
+                      && isDocSizeValid();
+      allow delete: if isLawyer();
     }
 
-    // --- Sub-collections under a client (cases, invoices, inspections, messages, documents) ---
-    // Same ownership model applies recursively.
-    match /clients/{clientId}/{document=**} {
-      allow read, write: if isLawyer() || ownsClient(clientId);
+    // ========== Sub-collections under a client ==========
+
+    match /clients/{clientId}/cases/{caseId} {
+      allow read, delete: if isLawyer() || isOwner(clientId);
+      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
     }
 
-    // --- Inquiries collection (public write, admin read) ---
-    // Anyone (even unauthenticated) can create an inquiry.
-    // Only lawyers can read or update inquiries. Deletion is forbidden for everyone.
+    match /clients/{clientId}/cases/{caseId}/events/{eventId} {
+      allow read, delete: if isLawyer() || isOwner(clientId);
+      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+    }
+
+    match /clients/{clientId}/cases/{caseId}/documents/{documentId} {
+      allow read, delete: if isLawyer() || isOwner(clientId);
+      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+    }
+
+    match /clients/{clientId}/invoices/{invoiceId} {
+      allow read: if isLawyer() || isOwner(clientId);
+      allow create, update: if isLawyer() && isDocSizeValid();
+      allow delete: if isLawyer();
+    }
+
+    match /clients/{clientId}/inspections/{inspectionId} {
+      allow read, delete: if isLawyer() || isOwner(clientId);
+      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+    }
+
+    match /clients/{clientId}/messages/{messageId} {
+      allow read, delete: if isLawyer() || isOwner(clientId);
+      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+    }
+
+    // ========== Inquiries collection (public write, admin read) ==========
     match /inquiries/{inquiryId} {
-      allow create: if true;
-      allow read, update: if isLawyer();
+      allow create: if isValidInquiryCreate();
+      allow read, update: if isLawyer() && isDocSizeValid();
       allow delete: if false;
     }
 
-    // --- Lawyers collection ---
-    // Only lawyers can read the lawyers list. Writing is restricted (managed via Firebase Admin SDK or Console).
+    // ========== Lawyers collection ==========
     match /lawyers/{lawyerId} {
       allow read: if isLawyer();
       allow write: if false;
