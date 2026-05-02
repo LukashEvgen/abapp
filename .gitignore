@@ -1,2 +1,8 @@
 node_modules/
 package-lock.json
+coverage/
+*.iml
+.gradle/
+.idea/
+vscode/
+android/app/google-services.json
