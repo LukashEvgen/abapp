@@ -7,26 +7,40 @@
 | `design/tokens.json` | Джерело правди всіх токенів (кольори, типографіка, spacing, radius, shadows). Читається `src/utils/theme.js`. **Не імпортуйте напряму з екранів — використовуйте `theme.js`.** |
 | `src/utils/theme.js` | Програмний шар: експортує `colors`, `spacing`, `radius`, `typography`, `shadows`, `globalStyles`. Зберігає legacy flat-поля (`colors.bg`, `colors.text`, …) для сумісності з поточним кодом. |
 
-## Кольорова палітра
+## Кольорова палітра — Версія 2 (Palette V2)
 
 ### Brand
-`#C9A84C` — золотий primary. Використовуйте для CTA, акцентів, активних станів. Має світліші/темніші похідні та прозорий muted-варіант для фонів.
+`#41A9A5` — бірюзово-синій primary (CMYK C:69 M:19 Y:21 K:18; Pantone 7459 C). Використовуйте для CTA, акцентів, активних станів. Має світліший `#68C4C0`, темніший `#2E8582` та прозорий muted-варіант для фонів.
+
+### Additional
+`#6A7A7C` — додатковий сірий (CMYK C:46 M:38 Y:37 K:23; Pantone 444 C). Використовуйте для вторинних елементів, статусів, нейтральних акцентів.
 
 ### Semantic
-- **success** `#27AE60` — позитивні статуси, inline validation OK
-- **warning** `#D4831A` — небезпечний стан, потребує уваги
-- **danger** `#C0392B` — помилки, деструктивні дії (завжди з undo/confirm)
-- **info** `#4A90D9` — сервісні сповіщення, help hints (Pragnanz — виділяється, не конкуруючи з brand)
+- **success** `#3CB46E` — позитивні статуси, inline validation OK
+- **warning** `#E6A03C` — стан, що потребує уваги
+- **danger** `#DC4B4B` — помилки, деструктивні дії (завжди з undo/confirm)
+- **info** `#4696DC` — сервісні сповіщення, help hints (Pragnanz — виділяється, не конкуруючи з brand)
 
-Кожен semantic колір має `Bg`-аналог (15 % opacity) для банерів і бейджів.
+Кожен semantic колір має `Bg`-аналог (14 % opacity) для банерів і бейджів.
 
-### Neutral (Olive Dark)
-Побудований за 11-ступеневою шкалою від `#FFFFFF` до `#0C0F0A`. Використовуйте для:
+### Neutral (Cool Dark)
+Побудований за 11-ступеневою шкалою від `#FFFFFF` до `#0A0D0E`. Використовуйте для:
 - фонів (bg → base → raised)
 - текстів (primary → secondary → disabled)
 - бордерів (subtle → default → strong)
 
-> **Aesthetic-Usability Effect** + **WCAG contrast**: типографія primary на bg дотримується контрасту > 12:1. Secondary на bg — > 4.5:1.
+> **Aesthetic-Usability Effect** + **WCAG contrast**: типографія primary на bg дотримується контрасту > 15:1. Secondary на bg — > 6:1. Для danger/text: 4.73:1 — дотримується межі AA для звичайного тексту.
+
+## Алерти (Alert Palette)
+
+| Роль | Основний | Текст/іконка | Фон (soft) |
+|------|----------|--------------|------------|
+| Error | `#DC4B4B` | `#F07878` | `rgba(220,75,75,0.14)` |
+| Warning | `#E6A03C` | `#F5BE64` | `rgba(230,160,60,0.14)` |
+| Success | `#3CB46E` | `#6ED296` | `rgba(60,180,110,0.14)` |
+| Info | `#4696DC` | `#82B9EB` | `rgba(70,150,220,0.14)` |
+
+Застосовуйте `Bg`-варіанти для `AlertBanner` та `Badge`-фонів. Основний колір — для іконок, текстів, індикаторів. Світліший — для hover/press станів (якщо підтримуються у React Native).
 
 ## Типографіка
 
@@ -48,7 +62,7 @@ Legacy alias: `xs=4`, `sm=8`, `md=16`, `lg=24`, `xl=32`.
 
 ## Radius і Shadows
 
-- **Radius**: 6 / 10 / 16 / 24 / 9999 (full). Платформні обмеження React Native враховані.
+- **Radius**: 6 / 10 / 16 / 24 / 9999 (full). Платфорні обмеження React Native враховані.
 - **Shadows**: 0–3 рівні з `elevation` (Android) та `shadowOffset/Radius` (iOS) у tokens.json для паритету.
 
 ## Як мігрувати
@@ -71,3 +85,4 @@ Legacy alias: `xs=4`, `sm=8`, `md=16`, `lg=24`, `xl=32`.
 - Не хардкодьте HEX поза `tokens.json`.
 - Якщо потрібен новий колір — спершу додайте в `tokens.json`, потім реекспортуйте в `theme.js`.
 - Для accessibility: всі semantic кольори розгорнуті як `Bg`-сполучення; не вигадайте нові opacity-комбінації в рантаймі.
+- **Кольори не мають бути єдиним індикатором стану** (color-independence): поєднуйте колір з іконкою або текстом (наприклад, бейджі містять і текст, і точку-індикатор).

@@ -80,18 +80,18 @@ describe('formatCurrency', () => {
 });
 
 describe('statusColors', () => {
-  it('contains expected keys', () => {
-    expect(statusColors['Розглядається']).toBe('#C9A84C');
-    expect(statusColors.pending).toBe('#D4831A');
-    expect(statusColors.paid).toBe('#27AE60');
-    expect(statusColors.critical).toBe('#C0392B');
+  it('contains expected keys matching Palette V2', () => {
+    expect(statusColors['Розглядається']).toBe('#41A9A5');
+    expect(statusColors.pending).toBe('#E6A03C');
+    expect(statusColors.paid).toBe('#3CB46E');
+    expect(statusColors.critical).toBe('#DC4B4B');
   });
 });
 
 describe('statusBgColors', () => {
-  it('contains expected keys with rgba values', () => {
-    expect(statusBgColors['Вирішено']).toBe('rgba(39,174,96,0.15)');
-    expect(statusBgColors.high).toBe('rgba(192,57,43,0.15)');
+  it('contains expected keys with rgba values matching Palette V2', () => {
+    expect(statusBgColors['Вирішено']).toBe('rgba(60,180,110,0.14)');
+    expect(statusBgColors.high).toBe('rgba(220,75,75,0.14)');
   });
 });
 

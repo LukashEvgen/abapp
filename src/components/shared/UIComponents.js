@@ -44,7 +44,7 @@ export const GoldButton = ({
         style,
       ]}>
       {loading ? (
-        <ActivityIndicator color={isGhost ? colors.gold : colors.bg} />
+        <ActivityIndicator color={isGhost ? colors.primary : colors.bg} />
       ) : (
         <Text
           style={[

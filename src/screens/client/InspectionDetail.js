@@ -70,7 +70,7 @@ export default function InspectionDetail({route, navigation}) {
       <Card
         style={{
           borderColor:
-            colors[
+            colors.semantic[
               risk === 'critical'
                 ? 'danger'
                 : risk === 'high'
@@ -82,14 +82,14 @@ export default function InspectionDetail({route, navigation}) {
           style={[
             styles.riskValue,
             {
-              color:
-                colors[
-                  risk === 'critical'
-                    ? 'danger'
-                    : risk === 'high'
-                    ? 'warning'
-                    : 'success'
-                ] || colors.gold,
+          color:
+            colors.semantic[
+              risk === 'critical'
+                ? 'danger'
+                : risk === 'high'
+                ? 'warning'
+                : 'success'
+            ] || colors.brand.primary,
             },
           ]}>
           {riskTitle}
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   meta: {
-    color: colors.muted,
+    color: colors.textSemantic.secondary,
     fontSize: 13,
     marginTop: spacing.xs,
   },
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   riskDesc: {
-    color: colors.text,
+    color: colors.textSemantic.primary,
     fontSize: 14,
     lineHeight: 20,
   },
   body: {
-    color: colors.text,
+    color: colors.textSemantic.primary,
     fontSize: 14,
     lineHeight: 20,
   },

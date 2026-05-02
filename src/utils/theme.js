@@ -6,16 +6,18 @@ import tokens from '../../design/tokens.json';
 // New semantic access via colors.neutral / brand / semantic / surface / textSemantic.
 // ---------------------------------------------------------------------------
 export const colors = {
-  // --- legacy primitive keys ---
+  // --- legacy primitive keys (V2 values; names kept for backward compat) ---
   bg: tokens.colors.surface.bg,
   surface: tokens.colors.surface.base,
   card: tokens.colors.surface.raised,
   border: tokens.colors.border.subtle,
+  primary: tokens.colors.brand.primary,
   gold: tokens.colors.brand.primary,
-  green: tokens.colors.semantic.successDark,
+  green: tokens.colors.brand.primaryDark,
   danger: tokens.colors.semantic.danger,
   warning: tokens.colors.semantic.warning,
   success: tokens.colors.semantic.success,
+  info: tokens.colors.semantic.info,
   text: tokens.colors.text.primary,
   muted: tokens.colors.text.secondary,
 

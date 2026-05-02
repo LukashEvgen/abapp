@@ -33,6 +33,23 @@ describe('theme', () => {
       expect(colors.gold).toMatch(/^#/);
       expect(colors.text).toMatch(/^#/);
     });
+
+    it('exposes Palette V2 primary, info, and semantic keys', () => {
+      expect(colors.primary).toBe('#41A9A5');
+      expect(colors.info).toBe('#4696DC');
+      expect(colors.danger).toBe('#DC4B4B');
+      expect(colors.warning).toBe('#E6A03C');
+      expect(colors.success).toBe('#3CB46E');
+    });
+
+    it('exposes V2 nested palettes (brand, semantic, neutral)', () => {
+      expect(typeof colors.brand).toBe('object');
+      expect(colors.brand.primary).toBe('#41A9A5');
+      expect(typeof colors.semantic).toBe('object');
+      expect(colors.semantic.info).toBe('#4696DC');
+      // neutral surface bg
+      expect(colors.surfaceSemantic.bg).toBe('#0A0D0E');
+    });
   });
 
   describe('spacing', () => {

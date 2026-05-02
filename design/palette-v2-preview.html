@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>LexTrack Palette V2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #0A0D0E;
+    color: #F0F1F2;
+    padding: 48px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 32px; margin-bottom: 8px; }
+  h2 { font-size: 22px; margin: 40px 0 16px; color: #41A9A5; border-bottom: 1px solid #1E2324; padding-bottom: 8px; }
+  h3 { font-size: 16px; margin: 24px 0 12px; color: #8A9496; }
+  .subtitle { color: #8A9496; font-size: 14px; margin-bottom: 32px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+  .swatch {
+    width: 140px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #1E2324;
+    background: #101314;
+  }
+  .swatch-color { height: 80px; width: 100%; position: relative; }
+  .swatch-name { font-size: 12px; font-weight: 600; padding: 8px 10px 2px; color: #F0F1F2; }
+  .swatch-hex { font-size: 11px; padding: 0 10px 8px; color: #8A9496; font-family: monospace; }
+  .tag {
+    position: absolute; bottom: 6px; right: 6px;
+    font-size: 10px; padding: 2px 6px; border-radius: 4px;
+    background: rgba(0,0,0,0.6); color: #fff;
+  }
+  .section-note { font-size: 13px; color: #6A7A7C; margin-bottom: 16px; }
+  .ui-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+  .alert-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-radius: 10px; min-width: 260px;
+    font-size: 14px; font-weight: 600;
+  }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 3px; }
+  .btn { padding: 10px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; border: none; cursor: default; }
+  .btn-ghost { background: transparent; border: 1px solid currentColor; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th, td { text-align: left; padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #1E2324; }
+  th { color: #8A9496; font-weight: 600; }
+  .contrast-pass { color: #3CB46E; }
+  .contrast-fail { color: #DC4B4B; }
+  .contrast-large { color: #E6A03C; }
+  .compare { display: flex; gap: 0; margin-bottom: 6px; }
+  .compare .old, .compare .new { width: 50%; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>LexTrack Design Tokens — Palette V2</h1>
+<p class="subtitle">Бірюзово-синій + сірий. Темна тема. WCAG AA.</p>
+
+<h2>Brand</h2>
+<div class="grid">
+  <div class="swatch">
+    <div class="swatch-color" style="background:#41A9A5;">
+      <span class="tag">6.91:1 AA</span>
+    </div>
+    <div class="swatch-name">Primary</div>
+    <div class="swatch-hex">#41A9A5<br>CMYK 69·19·21·18</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#68C4C0;">
+      <span class="tag">9.51:1 AA</span>
+    </div>
+    <div class="swatch-name">Primary Light</div>
+    <div class="swatch-hex">#68C4C0</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#2E8582;">
+      <span class="tag">4.45:1 large</span>
+    </div>
+    <div class="swatch-name">Primary Dark</div>
+    <div class="swatch-hex">#2E8582</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:rgba(65,169,165,0.15);">
+      <span class="tag">soft</span>
+    </div>
+    <div class="swatch-name">Primary Muted</div>
+    <div class="swatch-hex">rgba(65,169,165,0.15)</div>
+  </div>
+</div>
+
+<h2>Additional (Grey)</h2>
+<div class="grid">
+  <div class="swatch">
+    <div class="swatch-color" style="background:#6A7A7C;">
+      <span class="tag">4.35:1 large</span>
+    </div>
+    <div class="swatch-name">Grey</div>
+    <div class="swatch-hex">#6A7A7C<br>CMYK 46·38·37·23</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#8A9A9C;">
+      <span class="tag">6.67:1 AA</span>
+    </div>
+    <div class="swatch-name">Grey Light</div>
+    <div class="swatch-hex">#8A9A9C</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#4E5A5C;">
+      <span class="tag">2.73:1 fail</span>
+    </div>
+    <div class="swatch-name">Grey Dark</div>
+    <div class="swatch-hex">#4E5A5C</div>
+  </div>
+</div>
+<p class="section-note">
+  Grey Dark не використовується як текст на bg. Призначення: для неактивних іконок/бордерів.
+</p>
+
+<h2>Semantic — Alerts</h2>
+<div class="grid">
+  <div class="swatch">
+    <div class="swatch-color" style="background:#DC4B4B;">
+      <span class="tag">4.73:1 AA</span>
+    </div>
+    <div class="swatch-name">Danger</div>
+    <div class="swatch-hex">#DC4B4B</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#E6A03C;">
+      <span class="tag">8.69:1 AA</span>
+    </div>
+    <div class="swatch-name">Warning</div>
+    <div class="swatch-hex">#E6A03C</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#3CB46E;">
+      <span class="tag">7.30:1 AA</span>
+    </div>
+    <div class="swatch-name">Success</div>
+    <div class="swatch-hex">#3CB46E</div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#4696DC;">
+      <span class="tag">6.12:1 AA</span>
+    </div>
+    <div class="swatch-name">Info</div>
+    <div class="swatch-hex">#4696DC</div>
+  </div>
+</div>
+
+<h2>AlertBanner зразки</h2>
+<div class="ui-row">
+  <div class="alert-banner" style="background:rgba(220,75,75,0.14); color:#DC4B4B;">
+    <span>❌ Помилка зʼєднання</span>
+    <span>→</span>
+  </div>
+  <div class="alert-banner" style="background:rgba(230,160,60,0.14); color:#E6A03C;">
+    <span>⚠️ Очікує рішення</span>
+    <span>→</span>
+  </div>
+  <div class="alert-banner" style="background:rgba(60,180,110,0.14); color:#3CB46E;">
+    <span>✅ Оплачено</span>
+    <span>→</span>
+  </div>
+  <div class="alert-banner" style="background:rgba(70,150,220,0.14); color:#4696DC;">
+    <span>ℹ️ Оновлення застосунку</span>
+    <span>→</span>
+  </div>
+</div>
+
+<h2>Badge зразки</h2>
+<div class="ui-row">
+  <div class="badge" style="background:rgba(220,75,75,0.14); color:#DC4B4B;">
+    <span class="badge-dot" style="background:#DC4B4B;"></span> Критичний
+  </div>
+  <div class="badge" style="background:rgba(230,160,60,0.14); color:#E6A03C;">
+    <span class="badge-dot" style="background:#E6A03C;"></span> Очікує
+  </div>
+  <div class="badge" style="background:rgba(60,180,110,0.14); color:#3CB46E;">
+    <span class="badge-dot" style="background:#3CB46E;"></span> Вирішено
+  </div>
+  <div class="badge" style="background:rgba(65,169,165,0.15); color:#41A9A5;">
+    <span class="badge-dot" style="background:#41A9A5;"></span> Розглядається
+  </div>
+</div>
+
+<h2>Кнопки</h2>
+<div class="ui-row">
+  <button class="btn" style="background:#41A9A5; color:#0A0D0E;">Primary CTA</button>
+  <button class="btn btn-ghost" style="color:#41A9A5; border-color:#41A9A5;">Ghost</button>
+  <button class="btn" style="background:#DC4B4B; color:#0A0D0E;">Danger</button>
+  <button class="btn" style="opacity:0.4; background:#41A9A5; color:#0A0D0E;">Disabled</button>
+</div>
+
+<h2>Neutral Scale</h2>
+<table>
+  <tr><th>Token</th><th>HEX</th><th>Контраст на bg</th><th>Відмінність від V1</th></tr>
+  <tr><td>neutral.0</td><td>#FFFFFF</td><td class="contrast-pass">19.50:1</td><td>немає</td></tr>
+  <tr><td>neutral.50</td><td>#F0F1F2</td><td class="contrast-pass">17.24:1</td><td>змінено (було #F0EDE4)</td></tr>
+  <tr><td>neutral.100</td><td>#D8DBDC</td><td class="contrast-pass">14.01:1</td><td>змінено (було #D8D5CC)</td></tr>
+  <tr><td>neutral.200</td><td>#B0B5B7</td><td class="contrast-pass">9.42:1</td><td>змінено (було #B0ACA2)</td></tr>
+  <tr><td>neutral.300</td><td>#8A9496</td><td class="contrast-pass">6.27:1</td><td>змінено (було #8C8C7A)</td></tr>
+  <tr><td>neutral.400</td><td>#6A7A7C</td><td class="contrast-large">4.35:1</td><td>змінено (було #7A7A6A)</td></tr>
+  <tr><td>neutral.500</td><td>#505C5E</td><td class="contrast-fail">2.82:1</td><td>змінено (було #5C5C4E)</td></tr>
+  <tr><td>neutral.600</td><td>#3D4648</td><td class="contrast-fail">2.01:1</td><td>змінено (було #47473C)</td></tr>
+  <tr><td>neutral.700</td><td>#2A3132</td><td class="contrast-fail">1.47:1</td><td>змінено (було #31362B)</td></tr>
+  <tr><td>neutral.800</td><td>#1E2324</td><td class="contrast-fail">1.23:1</td><td>змінено (було #252C1C)</td></tr>
+  <tr><td>neutral.900</td><td>#161A1B</td><td class="contrast-fail">1.11:1</td><td>змінено (було #181C13)</td></tr>
+  <tr><td>neutral.950</td><td>#101314</td><td class="contrast-fail">1.05:1</td><td>змінено (було #13160F)</td></tr>
+  <tr><td>neutral.1000</td><td>#0A0D0E</td><td class="contrast-fail">1.00:1</td><td>змінено (було #0C0F0A)</td></tr>
+</table>
+<p class="section-note">
+  Значення з «fail» — поверхневі тони (фони,.border). Не використовуються як звичайний текст.
+</p>
+
+<h2>Порівняння V1 → V2 (Key Colors)</h2>
+<div style="margin-bottom:24px;">
+  <div class="compare">
+    <div class="old" style="background:#C9A84C; color:#0C0F0A;">V1 Primary #C9A84C</div>
+    <div class="new" style="background:#41A9A5; color:#0A0D0E;">V2 Primary #41A9A5</div>
+  </div>
+  <div class="compare">
+    <div class="old" style="background:#C0392B; color:#fff;">V1 Danger #C0392B</div>
+    <div class="new" style="background:#DC4B4B; color:#fff;">V2 Danger #DC4B4B</div>
+  </div>
+  <div class="compare">
+    <div class="old" style="background:#27AE60; color:#fff;">V1 Success #27AE60</div>
+    <div class="new" style="background:#3CB46E; color:#fff;">V2 Success #3CB46E</div>
+  </div>
+  <div class="compare">
+    <div class="old" style="background:#D4831A; color:#fff;">V1 Warning #D4831A</div>
+    <div class="new" style="background:#E6A03C; color:#fff;">V2 Warning #E6A03C</div>
+  </div>
+  <div class="compare">
+    <div class="old" style="background:#0C0F0A; color:#F0EDE4;">V1 bg #0C0F0A</div>
+    <div class="new" style="background:#0A0D0E; color:#F0F1F2;">V2 bg #0A0D0E</div>
+  </div>
+</div>
+
+<h2>Нові поля theme.js (legacy-compatible)</h2>
+<table>
+  <tr><th>Legacy key</th><th>V2 mapping</th><th>Примітка</th></tr>
+  <tr><td><code>colors.gold</code></td><td><code>tokens.colors.brand.primary</code> (#41A9A5)</td><td>Безперервна сумісність — перенаправлено</td></tr>
+  <tr><td><code>colors.danger</code></td><td><code>tokens.colors.semantic.danger</code> (#DC4B4B)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.success</code></td><td><code>tokens.colors.semantic.success</code> (#3CB46E)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.warning</code></td><td><code>tokens.colors.semantic.warning</code> (#E6A03C)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.bg</code></td><td><code>tokens.colors.surface.bg</code> (#0A0D0E)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.text</code></td><td><code>tokens.colors.text.primary</code> (#F0F1F2)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.muted</code></td><td><code>tokens.colors.text.secondary</code> (#8A9496)</td><td>Оновлено</td></tr>
+  <tr><td><code>colors.grey</code> (new)</td><td><code>tokens.colors.neutral['400']</code> (#6A7A7C)</td><td>Доступний з V2</td></tr>
+</table>
+
+</body>
+</html>
