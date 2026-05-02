@@ -49,7 +49,7 @@ export default function ClientDashboard({navigation}) {
   const criticalInspections = inspections.filter(i => i.risk === 'critical');
   const upcomingHearings = cases
     .filter(c => c.nextHearing)
-    .sort((a, b) => (a.nextHearingless ? -1 : 1));
+    .sort((a, b) => (a.nextHearing < b.nextHearing ? -1 : 1));
 
   return (
     <ScrollView

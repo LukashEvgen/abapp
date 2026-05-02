@@ -64,6 +64,15 @@ export const updateCaseProgress = async (clientId, caseId, progress) => {
     .update({progress});
 };
 
+export const updateCase = async (clientId, caseId, data) => {
+  await firestore()
+    .collection('clients')
+    .doc(clientId)
+    .collection('cases')
+    .doc(caseId)
+    .update(data);
+};
+
 export const getCaseEvents = async (clientId, caseId) => {
   const snapshot = await firestore()
     .collection('clients')
@@ -237,4 +246,70 @@ export const getInquiries = async () => {
     .orderBy('createdAt', 'desc')
     .get();
   return snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+};
+
+// --- Admin functions ---
+
+export const getAllClients = async () => {
+  const snapshot = await firestore().collection('clients').orderBy('createdAt', 'desc').get();
+  return snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+};
+
+export const sendMessageAsLawyer = async (clientId, text) => {
+  const ref = firestore()
+    .collection('clients')
+    .doc(clientId)
+    .collection('messages')
+    .doc();
+  await ref.set({
+    text,
+    from: 'lawyer',
+    timestamp: firestore.FieldValue.serverTimestamp(),
+    read: false,
+  });
+  return ref.id;
+};
+
+export const getMessagesForClient = (clientId, callback) => {
+  return firestore()
+    .collection('clients')
+    .doc(clientId)
+    .collection('messages')
+    .orderBy('timestamp', 'asc')
+    .onSnapshot(snapshot => {
+      const messages = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+      }));
+      callback(messages);
+    });
+};
+
+export const getAdminMessagesSummary = async () => {
+  const snapshot = await firestore().collection('clients').get();
+  const summaries = [];
+  for (const doc of snapshot.docs) {
+    const client = {id: doc.id, ...doc.data()};
+    const msgSnap = await firestore()
+      .collection('clients')
+      .doc(doc.id)
+      .collection('messages')
+      .orderBy('timestamp', 'desc')
+      .limit(1)
+      .get();
+    const unreadSnap = await firestore()
+      .collection('clients')
+      .doc(doc.id)
+      .collection('messages')
+      .where('read', '==', false)
+      .where('from', '==', 'client')
+      .get();
+    summaries.push({
+      clientId: doc.id,
+      name: client.name || 'Без імені',
+      lastMessage: msgSnap.docs[0]?.data()?.text || '',
+      unreadCount: unreadSnap.docs.length,
+    });
+  }
+  return summaries;
 };

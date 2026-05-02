@@ -43,7 +43,7 @@ export default function CaseDetail({route, navigation}) {
         <Text style={styles.title}>{c.title}</Text>
         <Badge status={c.status} />
       </View>
-      <Text style={styles.meta}>{court: {c.court}} · Номер: {c.caseNumber}</Text>
+      <Text style={styles.meta}>{c.court} · Номер: {c.caseNumber}</Text>
       <Text style={styles.meta}>Категорія: {c.category} · Інстанція: {c.instance}</Text>
 
       <SectionLabel text="Прогрес" />
