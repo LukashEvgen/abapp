@@ -27,6 +27,7 @@ import AdminClientDetail from '../screens/admin/AdminClientDetail';
 import AdminCaseDetail from '../screens/admin/AdminCaseDetail';
 import CreateInvoice from '../screens/admin/CreateInvoice';
 import AdminChat from '../screens/admin/AdminChat';
+import DocumentDetail from '../screens/shared/DocumentDetail';
 import DiiaSignScreen from '../screens/shared/DiiaSignScreen';
 import SignResultScreen from '../screens/shared/SignResultScreen';
 
@@ -38,7 +39,10 @@ function ClientTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {backgroundColor: colors.bg, borderTopColor: colors.border},
+        tabBarStyle: {
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
+        },
         tabBarActiveTintColor: colors.gold,
         tabBarInactiveTintColor: colors.muted,
       }}>
@@ -77,6 +81,7 @@ function ClientCasesStack() {
       <Stack.Screen name="MyCases" component={MyCases} />
       <Stack.Screen name="CaseDetail" component={CaseDetail} />
       <Stack.Screen name="MyDocuments" component={MyDocuments} />
+      <Stack.Screen name="DocumentDetail" component={DocumentDetail} />
       <Stack.Screen name="ScannerScreen" component={ScannerScreen} />
       <Stack.Screen name="MyInvoices" component={MyInvoices} />
       <Stack.Screen name="Chat" component={ChatScreen} />
@@ -127,7 +132,10 @@ function AdminTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {backgroundColor: colors.bg, borderTopColor: colors.border},
+        tabBarStyle: {
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
+        },
         tabBarActiveTintColor: colors.gold,
         tabBarInactiveTintColor: colors.muted,
       }}>
@@ -156,6 +164,7 @@ function AdminClientsStack() {
       <Stack.Screen name="ClientsList" component={ClientsList} />
       <Stack.Screen name="AdminClientDetail" component={AdminClientDetail} />
       <Stack.Screen name="AdminCaseDetail" component={AdminCaseDetail} />
+      <Stack.Screen name="DocumentDetail" component={DocumentDetail} />
       <Stack.Screen name="CreateInvoice" component={CreateInvoice} />
       <Stack.Screen name="AdminChatDetail" component={ChatScreen} />
       <Stack.Screen name="DiiaSign" component={DiiaSignScreen} />

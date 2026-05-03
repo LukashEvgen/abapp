@@ -81,7 +81,8 @@ export default function DocumentDetail({route, navigation}) {
       caseId,
       documentId,
       documentName: document?.name || 'Документ',
-      documentHash: document?.sha256 || 'sha256-placeholder',
+      documentHash: document?.sha256 || '',
+      storagePath: document?.storagePath || '',
       onComplete: () => {
         // Realtime listener will update signatures automatically
       },

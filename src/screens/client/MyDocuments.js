@@ -83,7 +83,8 @@ export default function MyDocuments({route, navigation}) {
       caseId,
       documentId: item.id,
       documentName: item.name,
-      documentHash: item.sha256 || 'sha256-placeholder',
+      documentHash: item.sha256 || '',
+      storagePath: item.storagePath || '',
       onComplete: sig => {
         if (sig) {
           setSignaturesMap(prev => ({
