@@ -10,7 +10,7 @@ const {
   updateDoc,
   deleteDoc,
 } = require('firebase/firestore');
-const {ref, uploadBytes} = require('firebase/storage');
+  const {ref, uploadBytes, getDownloadURL} = require('firebase/storage');
 const fs = require('fs');
 
 const PROJECT_ID = 'lextrack-test';
@@ -176,6 +176,26 @@ describe('Firestore rules', () => {
       await assertSucceeds(getDoc(caseRef));
       await assertSucceeds(updateDoc(caseRef, {progress: 50}));
       await assertSucceeds(deleteDoc(caseRef));
+    });
+
+    it('allows lawyer update without touching status', async () => {
+      await seedLawyer('lawyer_1');
+      await testEnv.withSecurityRulesDisabled(async ctx => {
+        await setDoc(
+          doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1'),
+          {title: 'Spravka', status: 'in_progress', progress: 0},
+        );
+      });
+      const ctx = lawyerCtx('lawyer_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
+      await assertSucceeds(updateDoc(caseRef, {title: 'Updated title'}));
+      await assertSucceeds(updateDoc(caseRef, {progress: 42}));
     });
 
     it('allows client read but not write', async () => {
@@ -379,6 +399,19 @@ describe('Storage rules', () => {
       await assertFails(
         uploadBytes(sRef, data, {contentType: 'application/x-msdownload'}),
       );
+    });
+
+    it('denies read for unscanned file', async () => {
+      const ctx = clientCtx('client_1');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test.pdf',
+      );
+      const data = new Uint8Array(Buffer.from('pdf content'));
+      await assertSucceeds(
+        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
+      );
+      await assertFails(getDownloadURL(sRef));
     });
   });
 });
