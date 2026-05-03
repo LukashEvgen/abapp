@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-
 admin.initializeApp();
 
 import {onMessageCreateHandler, onMessageUpdateHandler} from './messages';
@@ -20,27 +19,87 @@ import {
   exchangeKEPCodeHandler,
   getKEPTokenHandler,
 } from './kepAuth';
+import {onDocumentUploadHandler} from './storageTriggers';
+
 
 // ---------------------------------------------------------------------------
 // Summaries callable function
 // ---------------------------------------------------------------------------
+const MESSAGES_PAGE_SIZE = 20;
+
 export const getAdminMessagesSummary = functions
   .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
-  .https.onCall(async (_data, _context) => {
-    const snapshot = await admin
+  .https.onCall(async (data, context) => {
+    // 1. Auth check
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'Користувач не автентифікований',
+      );
+    }
+
+    // 2. Role check (must exist in lawyers collection)
+    const lawyerDoc = await admin
+      .firestore()
+      .collection('lawyers')
+      .doc(context.auth.uid)
+      .get();
+    if (!lawyerDoc.exists) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'Доступ дозволено лише адвокатам',
+      );
+    }
+
+    // 3. Pagination cursor / limit
+    const cursor: string | undefined = data?.cursor;
+
+    let q: admin.firestore.Query = admin
       .firestore()
       .collection('clients')
-      .orderBy('lastMessageAt', 'desc')
-      .get();
-    return snapshot.docs.map(d => {
-      const data = d.data();
+      .orderBy('lastMessageAt', 'desc');
+
+    if (cursor) {
+      const cursorDoc = await admin
+        .firestore()
+        .collection('clients')
+        .doc(cursor)
+        .get();
+      if (!cursorDoc.exists) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'Невірний pagination cursor',
+        );
+      }
+      q = q.startAfter(cursorDoc);
+    }
+
+    const snapshot = await q.limit(MESSAGES_PAGE_SIZE).get();
+    const items = snapshot.docs.map(d => {
+      const docData = d.data();
       return {
         clientId: d.id,
-        name: data.name || 'Без імені',
-        lastMessage: data.lastMessage || '',
-        unreadCount: data.unreadCount || 0,
+        name: docData.name || 'Без імені',
+        lastMessage: docData.lastMessage || '',
+        unreadCount: docData.unreadCount || 0,
       };
     });
+
+    const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+    return {
+      items,
+      nextCursor: lastDoc ? lastDoc.id : null,
+      hasMore: snapshot.docs.length === MESSAGES_PAGE_SIZE,
+    } as {
+      items: {
+        clientId: string;
+        name: string;
+        lastMessage: string;
+        unreadCount: number;
+      }[];
+      nextCursor: string | null;
+      hasMore: boolean;
+    };
   });
 
 // ---------------------------------------------------------------------------
@@ -151,3 +210,11 @@ export const getKEPToken = functions
 export const scanDocument = functions
   .runWith({maxInstances: 10, timeoutSeconds: 60, memory: '512MB', enforceAppCheck: true})
   .https.onCall(scanDocumentHandler);
+
+// ---------------------------------------------------------------------------
+// Storage triggers
+// ---------------------------------------------------------------------------
+export const onDocumentUpload = functions
+  .runWith({maxInstances: 10, timeoutSeconds: 60, memory: '512MB'})
+  .storage.object()
+  .onFinalize(onDocumentUploadHandler);

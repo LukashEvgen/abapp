@@ -29,7 +29,11 @@ import {
   Case,
   CaseEvent,
 } from '../services/cases';
-import {getDocumentsPaginated, uploadDocument} from '../services/documents';
+import {
+  getDocumentsPaginated,
+  getDocumentById,
+  uploadDocument,
+} from '../services/documents';
 import {
   getInvoicesPaginated,
   createInvoice,
@@ -158,6 +162,33 @@ export function useCase(
     queryKey: ['case', clientId, caseId],
     queryFn: () => getCaseById(clientId!, caseId!),
     enabled: !!clientId && !!caseId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useClientCases(clientId: string | undefined) {
+  return useQuery({
+    queryKey: ['casesFirstPage', clientId],
+    queryFn: () => getCasesPaginated(clientId!),
+    enabled: !!clientId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useClientInvoices(clientId: string | undefined) {
+  return useQuery({
+    queryKey: ['invoicesFirstPage', clientId],
+    queryFn: () => getInvoicesPaginated(clientId!),
+    enabled: !!clientId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useClientInspections(clientId: string | undefined) {
+  return useQuery({
+    queryKey: ['inspectionsFirstPage', clientId],
+    queryFn: () => getInspectionsPaginated(clientId!),
+    enabled: !!clientId,
     staleTime: 1000 * 60 * 5,
   });
 }
@@ -331,7 +362,7 @@ export function useAddCaseEvent() {
 }
 
 // ---------------------------------------------------------------------------
-// Realtime listeners (bridge onSnapshot → RQ cache)
+// Realtime listeners (bridge onSnapshot -> RQ cache)
 // ---------------------------------------------------------------------------
 
 export function useCaseByIdRealtime(
@@ -371,6 +402,19 @@ export function useCaseEventsRealtime(
 // ---------------------------------------------------------------------------
 // Documents
 // ---------------------------------------------------------------------------
+
+export function useDocument(
+  clientId: string | undefined,
+  caseId: string | undefined,
+  documentId: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['document', clientId, caseId, documentId],
+    queryFn: () => getDocumentById(clientId!, caseId!, documentId!),
+    enabled: !!clientId && !!caseId && !!documentId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
 
 export function useDocumentsInfinite(
   clientId: string | undefined,

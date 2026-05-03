@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useMemo, useCallback} from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getClientById} from '../../services/clients';
-import {getCasesPaginated} from '../../services/cases';
-import {getInvoicesPaginated} from '../../services/invoices';
-import {getInspectionsPaginated} from '../../services/inspections';
+import {
+  useClient,
+  useClientCases,
+  useClientInvoices,
+  useClientInspections,
+} from '../../hooks/useFirebaseQueries';
 import {
   colors,
   spacing,
@@ -31,39 +33,45 @@ import {
 
 export default function ClientDashboard({navigation}) {
   const {user} = useAuth();
-  const [client, setClient] = useState(null);
-  const [cases, setCases] = useState([]);
-  const [inspections, setInspections] = useState([]);
-  const [invoices, setInvoices] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const uid = user?.uid;
 
-  const load = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-    const c = await getClientById(user.uid);
-    setClient(c);
-    if (c) {
-      const [cs, ins, inv] = await Promise.all([
-        getCasesPaginated(user.uid),
-        getInspectionsPaginated(user.uid),
-        getInvoicesPaginated(user.uid),
-      ]);
-      setCases(cs.data);
-      setInspections(ins.data);
-      setInvoices(inv.data);
-    }
-  }, [user]);
+  const {
+    data: client,
+    isFetching: clientFetching,
+    refetch: refetchClient,
+  } = useClient(uid);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  const {
+    data: casesPage,
+    isFetching: casesFetching,
+    refetch: refetchCases,
+  } = useClientCases(uid);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
-  };
+  const {
+    data: inspectionsPage,
+    isFetching: inspectionsFetching,
+    refetch: refetchInspections,
+  } = useClientInspections(uid);
+
+  const {
+    data: invoicesPage,
+    isFetching: invoicesFetching,
+    refetch: refetchInvoices,
+  } = useClientInvoices(uid);
+
+  const cases = casesPage?.data ?? [];
+  const inspections = inspectionsPage?.data ?? [];
+  const invoices = invoicesPage?.data ?? [];
+
+  const isRefreshing =
+    clientFetching || casesFetching || inspectionsFetching || invoicesFetching;
+
+  const onRefresh = useCallback(() => {
+    refetchClient();
+    refetchCases();
+    refetchInspections();
+    refetchInvoices();
+  }, [refetchClient, refetchCases, refetchInspections, refetchInvoices]);
 
   const openCases = invoices.filter(i => i.status === 'pending');
   const criticalInspections = inspections.filter(i => i.risk === 'critical');
@@ -77,7 +85,7 @@ export default function ClientDashboard({navigation}) {
       contentContainerStyle={{padding: spacing.md}}
       refreshControl={
         <RefreshControl
-          refreshing={refreshing}
+          refreshing={isRefreshing}
           onRefresh={onRefresh}
           tintColor={colors.gold}
         />

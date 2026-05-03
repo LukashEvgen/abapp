@@ -17,12 +17,12 @@ export interface Client {
 
 export interface PaginatedResult<T> {
   data: T[];
-  nextCursor: FirebaseFirestoreTypes.DocumentSnapshot | null;
+  nextCursor: string | null;
   hasMore: boolean;
 }
 
 export async function getClientsPaginated(
-  cursor?: FirebaseFirestoreTypes.DocumentSnapshot,
+  cursor?: string,
 ): Promise<PaginatedResult<Client>> {
   let q: FirebaseFirestoreTypes.Query = firestore()
     .collection('clients')
@@ -35,7 +35,7 @@ export async function getClientsPaginated(
   const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
   return {
     data,
-    nextCursor: lastDoc,
+    nextCursor: lastDoc ? lastDoc.id : null,
     hasMore: snapshot.docs.length === PAGE_SIZE,
   };
 }
@@ -80,30 +80,15 @@ export async function getAllClients(): Promise<Client[]> {
 }
 
 export async function getAdminMessagesSummaryPaginated(
-  cursor?: FirebaseFirestoreTypes.DocumentSnapshot,
+  cursor?: string,
 ): Promise<PaginatedResult<AdminMessageSummary>> {
-  let q: FirebaseFirestoreTypes.Query = firestore()
-    .collection('clients')
-    .orderBy('lastMessageAt', 'desc');
-  if (cursor) {
-    q = q.startAfter(cursor);
-  }
-  const snapshot = await q.limit(PAGE_SIZE).get();
-  const data = snapshot.docs.map(d => {
-    const docData = d.data();
-    return {
-      clientId: d.id,
-      name: docData.name || 'Без імені',
-      lastMessage: docData.lastMessage || '',
-      unreadCount: docData.unreadCount || 0,
-    };
-  });
-  const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
-  return {
-    data,
-    nextCursor: lastDoc,
-    hasMore: snapshot.docs.length === PAGE_SIZE,
+  const result = await functions().httpsCallable('getAdminMessagesSummary')({cursor});
+  const {items, nextCursor, hasMore} = result.data as {
+    items: AdminMessageSummary[];
+    nextCursor: string | null;
+    hasMore: boolean;
   };
+  return {data: items, nextCursor, hasMore};
 }
 
 export interface AdminMessageSummary {
@@ -117,7 +102,7 @@ export async function getAdminMessagesSummary(): Promise<
   AdminMessageSummary[]
 > {
   const result = await functions().httpsCallable('getAdminMessagesSummary')();
-  return result.data as AdminMessageSummary[];
+  return (result.data as {items: AdminMessageSummary[]}).items;
 }
 
 export function getClientsRealtime(

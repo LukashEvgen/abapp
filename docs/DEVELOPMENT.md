@@ -169,7 +169,7 @@ npm run test:rules    # Firestore Rules unit tests
 1. **Створіть файл** у відповідній папці (`screens/client/` або `screens/admin/`).
 2. **Використовуйте токени** для всіх стилів.
 3. **Додайте навігацію** в `AppNavigator.js` (Stack або BottomTab).
-4. **Підключіть Firebase** через `services/firebase.js` (не пишіть raw Firebase-код на екрані).
+4. **Підключіть Firebase** через відповідний сервіс (`services/clients.ts`, `services/cases.ts`, `services/documents.ts` тощо), а не через `services/firebase.js` (не пишіть raw Firebase-код на екрані).
 5. **Додайте тести** за потреби.
 
 ---

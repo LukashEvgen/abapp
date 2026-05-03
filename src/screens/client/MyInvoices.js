@@ -1,4 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useMemo, useState, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -10,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getInvoicesPaginated} from '../../services/invoices';
+import {useClientInvoices} from '../../hooks/useFirebaseQueries';
 import {payInvoice, openPaymentUrl} from '../../services/payments';
 import {
   colors,
@@ -29,36 +30,35 @@ import {
 
 export default function MyInvoices({navigation}) {
   const {user} = useAuth();
-  const [invoices, setInvoices] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
+
+  const {
+    data: page,
+    isFetching,
+    refetch,
+  } = useClientInvoices(user?.uid, isFocused);
+
+  const invoices = page?.data ?? [];
   const [filter, setFilter] = useState('all'); // all | pending | paid | overdue
-  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-    const page = await getInvoicesPaginated(user.uid);
-    setInvoices(page.data);
-  }, [user]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
+  const filtered = useMemo(() => {
     if (filter === 'all') {
-      setFiltered(invoices);
-    } else {
-      setFiltered(invoices.filter(i => i.status === filter));
+      return invoices;
     }
+    return invoices.filter(i => {
+      if (filter === 'pending') {
+        return i.status === 'pending' || i.status === 'overdue';
+      }
+      return i.status === filter;
+    });
   }, [filter, invoices]);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
-  };
 
   const totalPending = invoices
     .filter(i => i.status === 'pending' || i.status === 'overdue')
@@ -150,8 +150,8 @@ export default function MyInvoices({navigation}) {
           renderItem={renderItem}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+              refreshing={isFetching}
+              onRefresh={refetch}
               tintColor={colors.gold}
             />
           }

@@ -1,7 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-
-const VIRUSTOTAL_API_KEY = process.env.VIRUSTOTAL_API_KEY;
+import {
+  ScanStatus,
+  scanFile,
+  updateDocumentScanInFirestore,
+  updateFileMetadata,
+} from './virusScan';
 
 interface ScanDocumentData {
   clientId: string;
@@ -12,52 +16,7 @@ interface ScanDocumentData {
   mimeType?: string;
 }
 
-async function hashFromBuffer(buf: Buffer): Promise<string> {
-  const crypto = await import('crypto');
-  return crypto.createHash('sha256').update(buf).digest('hex');
-}
-
-async function getVirusTotalReport(
-  sha256: string,
-): Promise<{scanned: boolean; malicious: number} | null> {
-  if (!VIRUSTOTAL_API_KEY) {
-    console.warn('VIRUSTOTAL_API_KEY not set, skipping real scan');
-    return null;
-  }
-  try {
-    const response = await fetch(
-      `https://www.virustotal.com/api/v3/files/${sha256}`,
-      {
-        headers: {'x-apikey': VIRUSTOTAL_API_KEY},
-      },
-    );
-    if (response.status === 404) {
-      return null;
-    }
-    if (!response.ok) {
-      console.error(
-        'VirusTotal API error',
-        response.status,
-        await response.text(),
-      );
-      return null;
-    }
-    const json = (await response.json()) as any;
-    const stats = json?.data?.attributes?.last_analysis_stats;
-    if (!stats) {
-      return null;
-    }
-    return {
-      scanned: true,
-      malicious: stats.malicious || 0,
-    };
-  } catch (err) {
-    console.error('VirusTotal fetch error', err);
-    return null;
-  }
-}
-
-export type ScanStatus = 'pending' | 'clean' | 'infected';
+export {ScanStatus};
 
 export const scanDocumentHandler = async (
   data: ScanDocumentData,
@@ -93,70 +52,31 @@ export const scanDocumentHandler = async (
     );
   }
 
+  let buffer: Buffer | undefined;
   let fileHash = sha256 || '';
   if (!fileHash) {
     try {
       const bucket = admin.storage().bucket();
       const file = bucket.file(storagePath);
-      const [buffer] = await file.download();
-      fileHash = await hashFromBuffer(buffer);
+      const [buf] = await file.download();
+      buffer = buf;
     } catch (err) {
       console.error('Failed to download file for hashing', err);
     }
   }
 
-  let scanned = false;
-  let scanStatus: ScanStatus = 'pending';
-  let malicious = 0;
+  const result = await scanFile(buffer || Buffer.alloc(0), fileHash);
 
-  if (VIRUSTOTAL_API_KEY && fileHash) {
-    const report = await getVirusTotalReport(fileHash);
-    if (report) {
-      scanned = report.scanned && report.malicious === 0;
-      malicious = report.malicious;
-      scanStatus = scanned ? 'clean' : 'infected';
-    } else {
-      scanned = false;
-      scanStatus = 'pending';
-    }
-  } else {
-    scanned = true;
-    scanStatus = 'clean';
-  }
-
-  const docRef = admin
-    .firestore()
-    .collection('clients')
-    .doc(clientId)
-    .collection('cases')
-    .doc(caseId)
-    .collection('documents')
-    .doc(documentId);
-
-  await docRef.update({
-    scanned,
-    scanStatus,
-    sha256: fileHash || admin.firestore.FieldValue.delete(),
-    mimeType: mimeType || admin.firestore.FieldValue.delete(),
-    scannedAt: admin.firestore.FieldValue.serverTimestamp(),
-  });
-
-  try {
-    const bucket = admin.storage().bucket();
-    const file = bucket.file(storagePath);
-    await file.setMetadata({
-      metadata: {
-        scanned: scanned ? 'true' : 'false',
-        scanStatus,
-      },
-    });
-  } catch (err) {
-    console.error('Failed to update storage metadata', err);
-  }
+  await updateDocumentScanInFirestore(clientId, caseId, documentId, result, mimeType);
+  await updateFileMetadata(storagePath, result);
 
   console.log(
-    `Document ${documentId} scan result: scanStatus=${scanStatus} scanned=${scanned} malicious=${malicious}`,
+    `Document ${documentId} scan result: scanStatus=${result.scanStatus} scanned=${result.scanned} malicious=${result.malicious}`,
   );
 
-  return {scanned, scanStatus, documentId};
+  return {
+    scanned: result.scanned,
+    scanStatus: result.scanStatus,
+    documentId,
+  };
 };

@@ -38,10 +38,12 @@ export const onMessageCreateHandler = async (
   // Push notification to the other party
   try {
     if (msg.from === 'client') {
-      // Notify lawyer(s)
-      const lawyersSnap = await admin.firestore().collection('lawyers').get();
-      const pushPromises = lawyersSnap.docs.map(lawyerDoc =>
-        sendPushToLawyer(lawyerDoc.id, {
+      // Notify assigned lawyer only
+      const clientDoc = await clientRef.get();
+      const clientData = clientDoc.data() || {};
+      const targetLawyerId = clientData.lawyerId || clientData.assignedLawyer;
+      if (targetLawyerId) {
+        await sendPushToLawyer(targetLawyerId, {
           title: 'Нове повідомлення',
           body: msg.text || '',
           data: {
@@ -49,9 +51,8 @@ export const onMessageCreateHandler = async (
             messageId: snap.id,
             type: 'chat',
           },
-        }),
-      );
-      await Promise.all(pushPromises);
+        });
+      }
     } else if (msg.from === 'lawyer') {
       // Notify client
       await sendPushToClient(clientId, {

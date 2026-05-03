@@ -1,4 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -8,39 +9,38 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getInspectionsPaginated} from '../../services/inspections';
+import {useClientInspections} from '../../hooks/useFirebaseQueries';
 import {
   colors,
   spacing,
   radius,
   typography,
   globalStyles,
+  tokens,
 } from '../../utils/theme';
-import {formatDate, statusColors, statusBgColors} from '../../utils/helpers';
+import {formatDate} from '../../utils/helpers';
 import {Card, Badge, EmptyState} from '../../components/shared/UIComponents';
 
 export default function MyInspections({navigation}) {
   const {user} = useAuth();
-  const [inspections, setInspections] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
-  const load = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-    const page = await getInspectionsPaginated(user.uid);
-    setInspections(page.data);
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  const {
+    data: page,
+    isFetching,
+    refetch,
+  } = useClientInspections(user?.uid, isFocused);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
-  };
+  const inspections = page?.data ?? [];
+
+  const criticalCount = inspections.filter(i => i.risk === 'critical').length;
 
   const renderItem = ({item}) => (
     <Card
@@ -63,8 +63,6 @@ export default function MyInspections({navigation}) {
       )}
     </Card>
   );
-
-  const criticalCount = inspections.filter(i => i.risk === 'critical').length;
 
   return (
     <View style={globalStyles.container}>
@@ -94,8 +92,8 @@ export default function MyInspections({navigation}) {
           renderItem={renderItem}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+              refreshing={isFetching}
+              onRefresh={refetch}
               tintColor={colors.gold}
             />
           }
