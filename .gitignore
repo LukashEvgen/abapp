@@ -9,3 +9,4 @@ coverage/
 .idea/
 vscode/
 android/app/google-services.json
+ios/LexTrack/GoogleService-Info.plist

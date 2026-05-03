@@ -1,0 +1,25 @@
+{
+  "_comment": "Це placeholder-файл. Після реєстрації Android app у Firebase Console проєкту lextrack-80605 замініть цей файл на справжній google-services.json.",
+  "project_info": {
+    "project_number": "PLACEHOLDER",
+    "project_id": "lextrack-80605",
+    "storage_bucket": "lextrack-80605.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:PLACEHOLDER:android:PLACEHOLDER",
+        "android_client_info": {
+          "package_name": "com.lextrack"
+        }
+      },
+      "api_key": [{"current_key": "PLACEHOLDER"}],
+      "services": {
+        "appinvite_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>COMMENT</key>
+	<string>Це placeholder-файл. Отримайте справжній GoogleService-Info.plist у Firebase Console: https://console.firebase.google.com/project/lextrack-80605/settings/general/ios:com.lextrack</string>
+	<key>BUNDLE_ID</key>
+	<string>com.lextrack</string>
+	<key>PROJECT_ID</key>
+	<string>lextrack-80605</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lextrack-80605.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<false></false>
+	<key>IS_SIGNIN_ENABLED</key>
+	<false></false>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:PLACEHOLDER:ios:PLACEHOLDER</string>
+</dict>
+</plist>
