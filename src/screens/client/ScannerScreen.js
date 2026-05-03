@@ -1,15 +1,24 @@
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import {useAuth} from '../../context/AuthContext';
-import {uploadDocument} from '../../services/documents';
+import {uploadDocument, callScanDocument} from '../../services/documents';
 import {
   colors,
   spacing,
   radius,
   typography,
   globalStyles,
+  tokens,
 } from '../../utils/theme';
 import {
   GoldButton,
@@ -82,10 +91,18 @@ export default function ScannerScreen({route, navigation}) {
   };
 
   const startUpload = async () => {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     setUploading(true);
     setStep(3);
     try {
+      let fileSha256 = '';
+      try {
+        fileSha256 = await ReactNativeBlobUtil.fs.hash(file.uri, 'sha256');
+      } catch (err) {
+        console.warn('Failed to compute sha256', err);
+      }
       const {id, url} = await uploadDocument(
         user.uid,
         caseId,
@@ -93,10 +110,26 @@ export default function ScannerScreen({route, navigation}) {
         file.name,
         file.size || 0,
         file.type || '',
-        '', // sha256 not calculated client-side yet
+        fileSha256,
         setProgress,
       );
       setStep(4);
+      const storagePath = `clients/${user.uid}/cases/${caseId}/documents/${file.name}`;
+      const scanResult = await callScanDocument(
+        user.uid,
+        caseId,
+        id,
+        storagePath,
+        fileSha256,
+        file.type || '',
+      );
+      if (scanResult.scanStatus === 'infected') {
+        Alert.alert(
+          'Загроза виявлена',
+          'Документ не пройшов перевірку на віруси та буде недоступний для завантаження.',
+        );
+      }
+      setStep(5);
     } catch (e) {
       Alert.alert('Помилка завантаження', e.message);
       setUploading(false);
@@ -106,7 +139,7 @@ export default function ScannerScreen({route, navigation}) {
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.screen}>
-        <Text style={styles.header}>PDF-сканер · Крок {step}/4</Text>
+        <Text style={styles.header}>PDF-сканер · Крок {step}/5</Text>
 
         {step === 1 && (
           <>
@@ -170,6 +203,13 @@ export default function ScannerScreen({route, navigation}) {
         )}
 
         {step === 4 && (
+          <>
+            <Text style={styles.subtitle}>🔍 Перевірка на віруси...</Text>
+            <ActivityIndicator size="large" color={colors.gold} />
+          </>
+        )}
+
+        {step === 5 && (
           <>
             <Text style={styles.subtitle}>✅ Успішно завантажено</Text>
             <Card>

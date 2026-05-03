@@ -132,7 +132,7 @@ service cloud.firestore {
                     && isDocSizeValid();
 
       allow update: if isLawyer()
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'mimeType', 'sha256', 'scanned'])
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'mimeType', 'sha256', 'scanned', 'scanStatus', 'scannedAt'])
                     && isDocSizeValid();
 
       allow delete: if isLawyer();

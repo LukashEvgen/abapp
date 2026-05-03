@@ -1,15 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  Linking,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getDocumentsPaginated} from '../../services/documents';
+import {useDocumentsInfinite} from '../../hooks/useFirebaseQueries';
 import {getSignatures} from '../../services/signatures';
 import {
   colors,
@@ -33,18 +34,21 @@ export default function MyDocuments({route, navigation}) {
   const {caseId, clientId: paramClientId} = route.params;
   const {user, isLawyer} = useAuth();
   const clientId = paramClientId || user?.uid;
-  const [docs, setDocs] = useState([]);
   const [signaturesMap, setSignaturesMap] = useState({});
 
-  useEffect(() => {
-    if (!user?.uid || !caseId) {
-      return;
-    }
-    getDocumentsPaginated(user.uid, caseId).then(page => setDocs(page.data));
-  }, [user, caseId]);
+  const {
+    data,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+  } = useDocumentsInfinite(clientId, caseId);
+
+  const docs = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data]);
 
   useEffect(() => {
-    if (!user?.uid || !caseId || !docs.length) {
+    if (!clientId || !caseId || !docs.length) {
       return;
     }
     let cancelled = false;
@@ -52,7 +56,7 @@ export default function MyDocuments({route, navigation}) {
       const map = {};
       for (const doc of docs) {
         try {
-          const sigs = await getSignatures(user.uid, caseId, doc.id);
+          const sigs = await getSignatures(clientId, caseId, doc.id);
           if (sigs.length) {
             map[doc.id] = sigs;
           }
@@ -67,7 +71,7 @@ export default function MyDocuments({route, navigation}) {
     return () => {
       cancelled = true;
     };
-  }, [user, caseId, docs]);
+  }, [clientId, caseId, docs]);
 
   const handleSign = item => {
     if (!isLawyer) {
@@ -75,7 +79,7 @@ export default function MyDocuments({route, navigation}) {
       return;
     }
     navigation.navigate('DiiaSign', {
-      clientId: user.uid,
+      clientId,
       caseId,
       documentId: item.id,
       documentName: item.name,
@@ -94,22 +98,47 @@ export default function MyDocuments({route, navigation}) {
   const renderItem = ({item}) => {
     const sigs = signaturesMap[item.id] || [];
     const latest = sigs[0];
+    const status = item.scanStatus;
+    let scanLabel;
+    let scanColor;
+    if (status === 'clean') {
+      scanLabel = '✅ Перевірено';
+      scanColor = colors.success;
+    } else if (status === 'infected') {
+      scanLabel = '⚠ Загроза виявлена';
+      scanColor = colors.danger;
+    } else {
+      scanLabel =
+        item.scanned === true ? '✅ Перевірено' : '⏳ Очікує перевірки';
+      scanColor = item.scanned === true ? colors.success : colors.warning;
+    }
     return (
       <Card>
         <View style={globalStyles.rowBetween}>
           <Text style={styles.name}>{item.name}</Text>
-          <TouchableOpacity onPress={() => Linking.openURL(item.url)}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('DocumentDetail', {
+                clientId,
+                caseId,
+                documentId: item.id,
+              })
+            }>
             <Text style={styles.open}>Відкрити</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.meta}>
           {formatDate(item.uploadedAt)} · {item.type}
         </Text>
+        <Text style={[styles.scanStatus, {color: scanColor}]}>{scanLabel}</Text>
         {latest ? (
           <View style={styles.signBadgeRow}>
-            <Badge status={latest.status === 'signed' ? 'Підписано' : latest.status} />
+            <Badge
+              status={latest.status === 'signed' ? 'Підписано' : latest.status}
+            />
             <Text style={styles.signMeta}>
-              {latest.signerName || 'КЕП'} · {formatDate(latest.signedAt || latest.createdAt)}
+              {latest.signerName || 'КЕП'} ·{' '}
+              {formatDate(latest.signedAt || latest.createdAt)}
             </Text>
           </View>
         ) : null}
@@ -138,6 +167,30 @@ export default function MyDocuments({route, navigation}) {
             data={docs}
             keyExtractor={item => item.id}
             renderItem={renderItem}
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching && !isFetchingNextPage}
+                onRefresh={refetch}
+                tintColor={colors.gold}
+              />
+            }
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.5}
+            initialNumToRender={8}
+            maxToRenderPerBatch={8}
+            windowSize={5}
+            removeClippedSubviews={true}
+            ListFooterComponent={
+              isFetchingNextPage ? (
+                <View style={{padding: spacing.md}}>
+                  <ActivityIndicator color={colors.gold} />
+                </View>
+              ) : null
+            }
             ListEmptyComponent={
               <EmptyState
                 icon="📄"
@@ -183,6 +236,11 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
+  },
+  scanStatus: {
+    fontSize: tokens.typography.size.sm,
+    marginTop: spacing.xs,
+    fontWeight: tokens.typography.weight.semibold,
   },
   signBadgeRow: {
     flexDirection: 'row',

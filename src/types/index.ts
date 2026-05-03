@@ -21,6 +21,7 @@ export interface Lawyer {
   phone?: string;
   email?: string;
   specialization?: string;
+  fcmToken?: string;
   createdAt?: FirestoreTimestamp;
   updatedAt?: FirestoreTimestamp;
 }
@@ -35,6 +36,7 @@ export interface Client {
   phone?: string;
   email?: string;
   address?: string;
+  fcmToken?: string;
   createdAt?: FirestoreTimestamp;
   updatedAt?: FirestoreTimestamp;
 }
@@ -70,6 +72,8 @@ export interface CaseEvent {
 // Domain: Document
 // ---------------------------------------------------------------------------
 
+export type ScanStatus = 'pending' | 'clean' | 'infected';
+
 export interface Document {
   id: string;
   name: string;
@@ -77,6 +81,11 @@ export interface Document {
   storagePath: string;
   type: string;
   size: number;
+  mimeType?: string;
+  sha256?: string;
+  scanned?: boolean;
+  scanStatus?: ScanStatus;
+  scannedAt?: FirestoreTimestamp;
   uploadedAt?: FirestoreTimestamp;
 }
 
@@ -100,7 +109,11 @@ export interface Invoice {
 // Domain: Inspection
 // ---------------------------------------------------------------------------
 
-export type InspectionStatus = 'scheduled' | 'completed' | 'cancelled' | 'pending';
+export type InspectionStatus =
+  | 'scheduled'
+  | 'completed'
+  | 'cancelled'
+  | 'pending';
 
 export interface Inspection {
   id: string;
@@ -164,7 +177,9 @@ export interface AuthState {
   user: AuthUser | null;
   initializing: boolean;
   isLawyer: boolean;
-  loginWithPhone: (phoneNumber: string) => Promise<FirebaseAuthTypes.ConfirmationResult>;
+  loginWithPhone: (
+    phoneNumber: string,
+  ) => Promise<FirebaseAuthTypes.ConfirmationResult>;
   confirmCode: (code: string) => Promise<FirebaseAuthTypes.UserCredential>;
   logout: () => Promise<void>;
 }
