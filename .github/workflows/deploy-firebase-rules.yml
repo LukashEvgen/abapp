@@ -13,9 +13,14 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: 'Deploy target: default, prod, staging'
+        description: 'Deploy target: default, staging, prod'
         required: true
         default: 'default'
+        type: choice
+        options:
+          - default
+          - staging
+          - prod
 
 jobs:
   build-and-deploy:
@@ -48,6 +53,9 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
-      - name: Post-deploy info
+      - name: Write summary
         if: always()
-        run: echo "Rules deployed. Check Firebase Console → Firestore/Storage Rules for version."
+        run: |
+          echo "## Rules deployment finished :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "- Target: ${{ github.event.inputs.target || 'default' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Trigger: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY

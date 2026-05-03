@@ -1,1 +1,6 @@
-{"projects": {"default": "lextrack-test"}}
+{
+  "projects": {
+    "default": "lextrack-test",
+    "staging": "lextrack-test"
+  }
+}

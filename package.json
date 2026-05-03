@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest --coverage",
-    "test:rules": "jest --testPathPattern=tests/firestore-storage.rules.test.js --no-coverage"
+    "test:rules": "jest --config tests/jest.config.js --no-coverage",
+    "test:rules:regression": "firebase emulators:exec --only firestore,storage \"npm run test:rules\""
   },
   "jest": {
     "preset": "react-native",
