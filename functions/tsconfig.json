@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
@@ -9,10 +10,15 @@
     "target": "es2017",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDir": "src"
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src/index.ts",
+    "src/messages.ts",
+    "src/signatures.ts",
+    "src/kepAuth.ts",
+    "src/registry/*"
   ]
 }

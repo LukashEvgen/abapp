@@ -1,18 +1,20 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
 
 export interface SignatureRecord {
   id: string;
   documentId: string;
   status: 'pending' | 'signed' | 'failed' | 'cancelled';
-  signedAt?: firestore.Timestamp | null;
+  signedAt?: FirebaseFirestoreTypes.Timestamp | null;
   signerName?: string;
   signerIdentifier?: string; // ЄДРПОУ / РНОКПП
   signatureHash?: string;
   signatureType?: 'QES' | 'SES' | 'AES';
   verificationUrl?: string;
   errorMessage?: string;
-  createdAt?: firestore.Timestamp | null;
+  createdAt?: FirebaseFirestoreTypes.Timestamp | null;
 }
 
 export async function getSignatures(
@@ -59,6 +61,28 @@ export async function completeSignSession(
   return result.data as SignatureRecord;
 }
 
+/**
+ * One-step callable that creates a signature record in Firestore.
+ * Preferred over createSignSession / completeSignSession for simple flows.
+ */
+export async function signDocument(
+  clientId: string,
+  caseId: string,
+  documentId: string,
+  documentName: string,
+  documentHash: string,
+): Promise<SignatureRecord> {
+  const callable = functions().httpsCallable('signDocument');
+  const result = await callable({
+    clientId,
+    caseId,
+    documentId,
+    documentName,
+    documentHash,
+  });
+  return result.data as SignatureRecord;
+}
+
 export async function addSignatureStub(
   clientId: string,
   caseId: string,
@@ -79,4 +103,32 @@ export async function addSignatureStub(
     createdAt: firestore.FieldValue.serverTimestamp(),
   });
   return ref.id;
+}
+
+export function getSignaturesRealtime(
+  clientId: string,
+  caseId: string,
+  documentId: string,
+  callback: (sigs: SignatureRecord[]) => void,
+): () => void {
+  return firestore()
+    .collection('clients')
+    .doc(clientId)
+    .collection('cases')
+    .doc(caseId)
+    .collection('documents')
+    .doc(documentId)
+    .collection('signatures')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(
+      snapshot => {
+        callback(
+          snapshot.docs.map(d => ({id: d.id, ...d.data()} as SignatureRecord)),
+        );
+      },
+      err => {
+        console.warn('signaturesRealtime error', err);
+        callback([]);
+      },
+    );
 }

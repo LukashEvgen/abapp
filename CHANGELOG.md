@@ -17,6 +17,12 @@
   - Cloud Functions triggers: `notifyOnMessageCreate` (chat), `notifyOnCaseEventCreate` (new case event), `notifyOnInvoiceCreate` (invoice), `notifyOnInspectionCreate` (inspection), `notifyOnInquiryCreate` (public inquiry → lawyers).
   - Types: `fcmToken` added to `Client` and `Lawyer` interfaces.
 
+### Змінено
+- **Cloud Function `messages.onCreate` — оновлення summary клієнта ([CMP-155](/CMP/issues/CMP-155))**
+  - Summary-поля (`lastMessage`, `lastMessageAt`, `unreadCount`) тепер оновлюються однією **атомарною** `update()` замість двох послідовних — виключає race condition між onCreate та клієнтським `updateClientLastMessage`.
+  - Додано тригер `notifyOnMessageUpdate` (`messages.onUpdate`), який декрементує `unreadCount` коли повідомлення від клієнта змінює `read: false → true`.
+  - Додано обробку помилок для summary update — push-нотифікації не блокуються через збій запису в `clients`.
+
 ## [2.0.0] — 2026-05-03 (заплановано)
 
 ### Додано (Epics CMP-127 – CMP-135)

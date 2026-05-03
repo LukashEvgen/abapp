@@ -1,11 +1,5 @@
 import React, {useCallback, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator, Alert} from 'react-native';
 import {WebView, WebViewMessageEvent} from 'react-native-webview';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import {
@@ -18,8 +12,7 @@ import {
 } from '../../utils/theme';
 import {GoldButton} from '../../components/shared/UIComponents';
 import {
-  createSignSession,
-  completeSignSession,
+  signDocument,
   addSignatureStub,
 } from '../../services/signatures';
 
@@ -151,19 +144,21 @@ export default function DiiaSignScreen() {
         if (msg.type === 'SIGNED') {
           setLoading(true);
           try {
-            // Attempt Cloud Function flow; fall back to local stub if unavailable
+            // Attempt single-step Cloud Function; fall back to local stub if unavailable
             let signature;
             try {
-              const session = await createSignSession(
+              signature = await signDocument(
                 clientId,
                 caseId,
                 documentId,
                 documentName,
-                documentHash,
+                msg.hash || documentHash,
               );
-              signature = await completeSignSession(session.sessionId);
             } catch (cfErr) {
-              console.warn('Cloud Function signing unavailable, using stub', cfErr);
+              console.warn(
+                'Cloud Function signDocument unavailable, using stub',
+                cfErr,
+              );
               signature = {
                 id: '',
                 documentId,
@@ -203,16 +198,22 @@ export default function DiiaSignScreen() {
         // ignore non-JSON messages
       }
     },
-    [clientId, caseId, documentId, documentName, documentHash, onComplete, navigation],
+    [
+      clientId,
+      caseId,
+      documentId,
+      documentName,
+      documentHash,
+      onComplete,
+      navigation,
+    ],
   );
 
   return (
     <View style={globalStyles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Дія.Підпис</Text>
-        <Text style={styles.headerSubtitle}>
-          {documentName || 'Документ'}
-        </Text>
+        <Text style={styles.headerSubtitle}>{documentName || 'Документ'}</Text>
       </View>
       <WebView
         ref={webViewRef}
