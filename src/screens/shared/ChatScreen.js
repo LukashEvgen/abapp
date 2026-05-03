@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -25,27 +26,26 @@ export default function ChatScreen() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const listRef = useRef(null);
-  const unsubscribeRef = useRef(null);
 
-  useEffect(() => {
-    if (!user?.uid) {
-      return;
-    }
-    unsubscribeRef.current = getMessagesRealtime(user.uid, msgs => {
-      setMessages(msgs);
-      const unread = msgs
-        .filter(m => m.from === 'lawyer' && !m.read)
-        .map(m => m.id);
-      if (unread.length > 0) {
-        markMessagesRead(user.uid, unread).catch(() => {});
+  useFocusEffect(
+    useCallback(() => {
+      if (!user?.uid) {
+        return;
       }
-    });
-    return () => {
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current();
-      }
-    };
-  }, [user]);
+      const unsub = getMessagesRealtime(user.uid, msgs => {
+        setMessages(msgs);
+        const unread = msgs
+          .filter(m => m.from === 'lawyer' && !m.read)
+          .map(m => m.id);
+        if (unread.length > 0) {
+          markMessagesRead(user.uid, unread).catch(() => {});
+        }
+      });
+      return () => {
+        unsub();
+      };
+    }, [user]),
+  );
 
   useEffect(() => {
     if (messages.length > 0 && listRef.current) {

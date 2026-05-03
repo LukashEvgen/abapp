@@ -1,4 +1,5 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -24,8 +25,16 @@ import {
 export default function MyCases({navigation}) {
   const {user} = useAuth();
   const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
-  const {data: allCases, isFetching} = useCasesRealtime(user?.uid);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
+
+  const {data: allCases, isFetching} = useCasesRealtime(user?.uid, isFocused);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();

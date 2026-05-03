@@ -52,6 +52,13 @@ export async function sendMessage(
   return ref.id;
 }
 
+export async function resetUnreadCount(clientId: string): Promise<void> {
+  await firestore()
+    .collection('clients')
+    .doc(clientId)
+    .update({unreadCount: 0});
+}
+
 export async function markMessagesRead(
   clientId: string,
   messageIds: string[],

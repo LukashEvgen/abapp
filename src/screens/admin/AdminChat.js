@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -25,11 +26,19 @@ export default function AdminChat({route}) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const listRef = useRef(null);
   const unsubscribeRef = useRef(null);
 
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
+
   useEffect(() => {
-    if (!clientId) {
+    if (!clientId || !isFocused) {
       return;
     }
     unsubscribeRef.current = getMessagesRealtime(clientId, msgs => {
@@ -44,9 +53,10 @@ export default function AdminChat({route}) {
     return () => {
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
+        unsubscribeRef.current = null;
       }
     };
-  }, [clientId]);
+  }, [clientId, isFocused]);
 
   useEffect(() => {
     if (messages.length > 0 && listRef.current) {

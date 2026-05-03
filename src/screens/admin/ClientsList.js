@@ -1,4 +1,5 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -17,8 +18,16 @@ import {Card, EmptyState} from '../../components/shared/UIComponents';
 
 export default function ClientsList({navigation}) {
   const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
-  const {data: allClients, isFetching} = useClientsRealtime(100);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
+
+  const {data: allClients, isFetching} = useClientsRealtime(100, isFocused);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();

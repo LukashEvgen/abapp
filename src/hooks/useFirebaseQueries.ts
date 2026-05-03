@@ -29,10 +29,7 @@ import {
   Case,
   CaseEvent,
 } from '../services/cases';
-import {
-  getDocumentsPaginated,
-  uploadDocument,
-} from '../services/documents';
+import {getDocumentsPaginated, uploadDocument} from '../services/documents';
 import {
   getInvoicesPaginated,
   createInvoice,
@@ -42,10 +39,7 @@ import {
   getInspectionsPaginated,
   getInspectionById,
 } from '../services/inspections';
-import {
-  getInquiriesPaginated,
-  submitInquiry,
-} from '../services/inquiries';
+import {getInquiriesPaginated, submitInquiry} from '../services/inquiries';
 import {
   getMessagesRealtime,
   sendMessage,
