@@ -1,18 +1,29 @@
-import React, {useState} from 'react';
-import {View, Text, ScrollView, StyleSheet, TextInput} from 'react-native';
+import React, {useState, useCallback, useMemo} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {useQueryClient} from '@tanstack/react-query';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import {
   useCaseByIdRealtime,
-  useCaseEventsRealtime,
+  useCaseEventsPaginated,
   useUpdateCase,
   useAddCaseEvent,
 } from '../../hooks/useFirebaseQueries';
-import {useQueryClient} from '@tanstack/react-query';
 import {
   colors,
   spacing,
   radius,
   typography,
   globalStyles,
+  tokens,
 } from '../../utils/theme';
 import {formatDateTime} from '../../utils/helpers';
 import {
@@ -26,12 +37,32 @@ import {
 export default function AdminCaseDetail({route}) {
   const {clientId, caseId} = route.params;
   const qc = useQueryClient();
+  const [isFocused, setIsFocused] = useState(false);
 
-  useCaseByIdRealtime(clientId, caseId);
-  useCaseEventsRealtime(clientId, caseId);
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, []),
+  );
+
+  useCaseByIdRealtime(clientId, caseId, isFocused);
+
+  const {
+    data: eventsPages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isFetching,
+  } = useCaseEventsPaginated(clientId, caseId);
+
+  const events = useMemo(
+    () => eventsPages?.pages.flatMap(p => p.data) ?? [],
+    [eventsPages],
+  );
 
   const c = qc.getQueryData(['case', clientId, caseId]) ?? null;
-  const events = qc.getQueryData(['caseEvents', clientId, caseId]) ?? [];
   const [note, setNote] = useState('');
 
   const updateCase = useUpdateCase();
@@ -60,7 +91,14 @@ export default function AdminCaseDetail({route}) {
   return (
     <ScrollView
       style={globalStyles.container}
-      contentContainerStyle={{padding: spacing.md}}>
+      contentContainerStyle={{padding: spacing.md}}
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetching && !isFetchingNextPage}
+          onRefresh={refetch}
+          tintColor={colors.gold}
+        />
+      }>
       <View style={globalStyles.rowBetween}>
         <Text style={styles.title}>{c.title}</Text>
         <Badge status={c.status} />
@@ -115,6 +153,19 @@ export default function AdminCaseDetail({route}) {
         </Card>
       ))}
       {events.length === 0 && <Text style={styles.empty}>Немає подій</Text>}
+
+      {hasNextPage && (
+        <TouchableOpacity
+          style={styles.loadMoreBtn}
+          onPress={() => fetchNextPage()}
+          disabled={isFetchingNextPage}>
+          {isFetchingNextPage ? (
+            <ActivityIndicator color={colors.gold} />
+          ) : (
+            <Text style={styles.loadMoreText}>Завантажити ще ↓</Text>
+          )}
+        </TouchableOpacity>
+      )}
 
       <SectionLabel text="Додати нотатку" />
       <View style={styles.inputWrap}>
@@ -173,6 +224,16 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: tokens.typography.size.base,
     marginBottom: spacing.lg,
+  },
+  loadMoreBtn: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  loadMoreText: {
+    color: colors.gold,
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
   },
   inputWrap: {
     backgroundColor: colors.surface,

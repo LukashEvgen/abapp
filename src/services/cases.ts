@@ -132,9 +132,9 @@ export async function getCaseEvents(
 export async function getCaseEventsPaginated(
   clientId: string,
   caseId: string,
-  cursor?: firestore.DocumentSnapshot,
+  cursor?: FirebaseFirestoreTypes.DocumentSnapshot,
 ): Promise<PaginatedResult<CaseEvent>> {
-  let q: Query = firestore()
+  let q: FirebaseFirestoreTypes.Query = firestore()
     .collection('clients')
     .doc(clientId)
     .collection('cases')
@@ -145,7 +145,10 @@ export async function getCaseEventsPaginated(
     q = q.startAfter(cursor);
   }
   const snapshot = await q.limit(PAGE_SIZE).get();
-  const data = snapshot.docs.map(d => ({id: d.id, ...d.data()} as CaseEvent));
+  const data = snapshot.docs.map(
+    (d: FirebaseFirestoreTypes.DocumentSnapshot) =>
+      ({id: d.id, ...d.data()} as CaseEvent),
+  );
   const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
   return {
     data,

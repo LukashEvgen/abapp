@@ -1,17 +1,26 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, Text, ScrollView, StyleSheet, RefreshControl} from 'react-native';
+import React, {useMemo} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {
-  getAllClients,
-  getInquiries,
-  getAdminMessagesSummary,
-} from '../../services/clients';
+  useClientsInfinite,
+  useAdminMessagesSummaryPaginated,
+  useInquiriesInfinite,
+} from '../../hooks/useFirebaseQueries';
 import {
   colors,
   spacing,
   radius,
   typography,
   globalStyles,
+  tokens,
 } from '../../utils/theme';
 import {
   Card,
@@ -23,38 +32,55 @@ import {
 
 export default function AdminDashboard({navigation}) {
   const {user} = useAuth();
-  const [clients, setClients] = useState([]);
-  const [inquiries, setInquiries] = useState([]);
-  const [summaries, setSummaries] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      const [cl, inq, sum] = await Promise.all([
-        getAllClients(),
-        getInquiries(),
-        getAdminMessagesSummary(),
-      ]);
-      setClients(cl);
-      setInquiries(inq);
-      setSummaries(sum);
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  const {
+    data: clientsPages,
+    isFetching: clientsFetching,
+    refetch: refetchClients,
+    hasNextPage: hasMoreClients,
+  } = useClientsInfinite();
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  const {
+    data: summariesPages,
+    isFetching: summariesFetching,
+    refetch: refetchSummaries,
+    fetchNextPage: fetchNextSummaries,
+    hasNextPage: hasMoreSummaries,
+    isFetchingNextPage: isFetchingNextSummaries,
+  } = useAdminMessagesSummaryPaginated();
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
+  const {
+    data: inquiriesPages,
+    isFetching: inquiriesFetching,
+    refetch: refetchInquiries,
+  } = useInquiriesInfinite();
+
+  const isRefreshing =
+    clientsFetching || summariesFetching || inquiriesFetching;
+
+  const onRefresh = () => {
+    refetchClients();
+    refetchSummaries();
+    refetchInquiries();
   };
 
+  const clients = useMemo(
+    () => clientsPages?.pages.flatMap(p => p.data) ?? [],
+    [clientsPages],
+  );
+
+  const summaries = useMemo(
+    () => summariesPages?.pages.flatMap(p => p.data) ?? [],
+    [summariesPages],
+  );
+
+  const inquiries = useMemo(
+    () => inquiriesPages?.pages.flatMap(p => p.data) ?? [],
+    [inquiriesPages],
+  );
+
   const unreadChats = summaries.filter(s => s.unreadCount > 0);
-  const newInquiries = inquiries.filter(i => i.status === 'new');
+  const newInquiriesCount = inquiries.filter(i => i.status === 'new').length;
 
   return (
     <ScrollView
@@ -62,7 +88,7 @@ export default function AdminDashboard({navigation}) {
       contentContainerStyle={{padding: spacing.md}}
       refreshControl={
         <RefreshControl
-          refreshing={refreshing}
+          refreshing={isRefreshing}
           onRefresh={onRefresh}
           tintColor={colors.gold}
         />
@@ -70,8 +96,12 @@ export default function AdminDashboard({navigation}) {
       <Text style={styles.header}>Адмін-панель</Text>
 
       <View style={styles.statsRow}>
-        <StatCard icon="👥" label="Клієнтів" value={clients.length} />
-        <StatCard icon="📝" label="Звернень" value={newInquiries.length} />
+        <StatCard
+          icon="👥"
+          label="Клієнтів"
+          value={`${clients.length}${hasMoreClients ? '+' : ''}`}
+        />
+        <StatCard icon="📝" label="Звернень" value={newInquiriesCount} />
         <StatCard icon="💬" label="Чатів" value={unreadChats.length} />
       </View>
 
@@ -86,10 +116,10 @@ export default function AdminDashboard({navigation}) {
         />
       )}
 
-      {newInquiries.length > 0 && (
+      {newInquiriesCount > 0 && (
         <AlertBanner
           type="gold"
-          text={`Нових звернень: ${newInquiries.length}`}
+          text={`Нових звернень: ${newInquiriesCount}`}
           onPress={() =>
             navigation.navigate('Clients', {screen: 'ClientsList'})
           }
@@ -124,6 +154,19 @@ export default function AdminDashboard({navigation}) {
           subtitle="Чати з клієнтами з’являться тут"
         />
       )}
+
+      {hasMoreSummaries && (
+        <TouchableOpacity
+          style={styles.loadMoreBtn}
+          onPress={() => fetchNextSummaries()}
+          disabled={isFetchingNextSummaries}>
+          {isFetchingNextSummaries ? (
+            <ActivityIndicator color={colors.gold} />
+          ) : (
+            <Text style={styles.loadMoreText}>Завантажити ще ↓</Text>
+          )}
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 }
@@ -131,8 +174,17 @@ export default function AdminDashboard({navigation}) {
 const styles = StyleSheet.create({
   header: {...typography.h1, marginBottom: spacing.md},
   statsRow: {flexDirection: 'row', marginBottom: spacing.lg},
-  clientName: {color: colors.text, fontSize: tokens.typography.size.base, fontWeight: tokens.typography.weight.semibold, flex: 1},
-  lastMsg: {color: colors.muted, fontSize: tokens.typography.size.sm, marginTop: spacing.xs},
+  clientName: {
+    color: colors.text,
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
+    flex: 1,
+  },
+  lastMsg: {
+    color: colors.muted,
+    fontSize: tokens.typography.size.sm,
+    marginTop: spacing.xs,
+  },
   unreadBadge: {
     backgroundColor: colors.danger,
     color: colors.text,
@@ -142,5 +194,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     overflow: 'hidden',
+  },
+  loadMoreBtn: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+  },
+  loadMoreText: {
+    color: colors.gold,
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
   },
 });

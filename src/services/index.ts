@@ -4,6 +4,7 @@ export {
   createClient,
   updateClientLastMessage,
   getAllClients,
+  getAdminMessagesSummaryPaginated,
   getClientsRealtime,
   Client,
   PaginatedResult,
@@ -16,13 +17,21 @@ export {
   updateCaseProgress,
   updateCase,
   getCaseEvents,
+  getCaseEventsPaginated,
   addCaseEvent,
   getCaseByIdRealtime,
   getCaseEventsRealtime,
   Case,
   CaseEvent,
 } from './cases';
-export {getDocumentsPaginated, uploadDocument, DocumentItem} from './documents';
+export {
+  getDocumentsPaginated,
+  uploadDocument,
+  DocumentItem,
+  ScanStatus,
+  ScanDocumentResult,
+  updateDocumentScanStatus,
+} from './documents';
 export {getInvoicesPaginated, createInvoice, Invoice} from './invoices';
 export {
   getInspectionsPaginated,

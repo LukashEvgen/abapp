@@ -8,12 +8,11 @@ import {
   getClientsPaginated,
   getClientById,
   createClient,
-  updateClientLastMessage,
   getAllClients,
   getAdminMessagesSummary,
+  getAdminMessagesSummaryPaginated,
   getClientsRealtime,
   Client,
-  PaginatedResult,
 } from '../services/clients';
 import {
   getCasesPaginated,
@@ -23,6 +22,7 @@ import {
   updateCaseProgress,
   updateCase,
   getCaseEvents,
+  getCaseEventsPaginated,
   addCaseEvent,
   getCaseByIdRealtime,
   getCaseEventsRealtime,
@@ -32,7 +32,6 @@ import {
 import {
   getDocumentsPaginated,
   uploadDocument,
-  DocumentItem,
 } from '../services/documents';
 import {
   getInvoicesPaginated,
@@ -42,20 +41,19 @@ import {
 import {
   getInspectionsPaginated,
   getInspectionById,
-  Inspection,
 } from '../services/inspections';
+import {
+  getInquiriesPaginated,
+  submitInquiry,
+} from '../services/inquiries';
 import {
   getMessagesRealtime,
   sendMessage,
   markMessagesRead,
   Message,
 } from '../services/messages';
-import {
-  getInquiriesPaginated,
-  submitInquiry,
-  Inquiry,
-} from '../services/inquiries';
-import {useEffect, useState} from 'react';
+import {getSignaturesRealtime, SignatureRecord} from '../services/signatures';
+import {useEffect, useRef, useState} from 'react';
 
 // ---------------------------------------------------------------------------
 // Clients
@@ -80,22 +78,39 @@ export function useClientsInfinite() {
   });
 }
 
-export function useClientsRealtime(limitCount: number = 100) {
+export function useClientsRealtime(
+  limitCount: number = 100,
+  enabled: boolean = true,
+  debounceMs: number = 300,
+) {
   const [data, setData] = useState<Client[] | undefined>(undefined);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      setIsFetching(false);
+      return;
+    }
     setIsFetching(true);
     const unsub = getClientsRealtime(clients => {
-      setData(clients);
-      setIsFetching(false);
-      setError(null);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
+        setData(clients);
+        setIsFetching(false);
+        setError(null);
+      }, debounceMs);
     }, limitCount);
     return () => {
       unsub();
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
     };
-  }, [limitCount]);
+  }, [limitCount, enabled, debounceMs]);
 
   return {data, isFetching, error};
 }
@@ -113,6 +128,16 @@ export function useAdminMessagesSummary() {
     queryKey: ['adminMessagesSummary'],
     queryFn: getAdminMessagesSummary,
     staleTime: 1000 * 60 * 1,
+  });
+}
+
+export function useAdminMessagesSummaryPaginated() {
+  return useInfiniteQuery({
+    queryKey: ['adminMessagesSummary'],
+    queryFn: ({pageParam}) => getAdminMessagesSummaryPaginated(pageParam),
+    getNextPageParam: lastPage =>
+      lastPage.hasMore ? lastPage.nextCursor : undefined,
+    initialPageParam: undefined as any,
   });
 }
 
@@ -143,13 +168,16 @@ export function useCase(
   });
 }
 
-export function useCasesRealtime(clientId: string | undefined) {
+export function useCasesRealtime(
+  clientId: string | undefined,
+  enabled: boolean = true,
+) {
   const [data, setData] = useState<Case[] | undefined>(undefined);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!clientId) {
+    if (!enabled || !clientId) {
       setData(undefined);
       setIsFetching(false);
       return;
@@ -163,7 +191,7 @@ export function useCasesRealtime(clientId: string | undefined) {
     return () => {
       unsub();
     };
-  }, [clientId]);
+  }, [clientId, enabled]);
 
   return {data, isFetching, error};
 }
@@ -188,6 +216,21 @@ export function useCaseEvents(
     queryFn: () => getCaseEvents(clientId!, caseId!),
     enabled: !!clientId && !!caseId,
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useCaseEventsPaginated(
+  clientId: string | undefined,
+  caseId: string | undefined,
+) {
+  return useInfiniteQuery({
+    queryKey: ['caseEvents', clientId, caseId],
+    queryFn: ({pageParam}) =>
+      getCaseEventsPaginated(clientId!, caseId!, pageParam),
+    getNextPageParam: lastPage =>
+      lastPage.hasMore ? lastPage.nextCursor : undefined,
+    initialPageParam: undefined as any,
+    enabled: !!clientId && !!caseId,
   });
 }
 
@@ -300,33 +343,35 @@ export function useAddCaseEvent() {
 export function useCaseByIdRealtime(
   clientId: string | undefined,
   caseId: string | undefined,
+  enabled: boolean = true,
 ) {
   const qc = useQueryClient();
   useEffect(() => {
-    if (!clientId || !caseId) {
+    if (!enabled || !clientId || !caseId) {
       return;
     }
     const unsub = getCaseByIdRealtime(clientId, caseId, caseData => {
       qc.setQueryData(['case', clientId, caseId], caseData);
     });
     return unsub;
-  }, [clientId, caseId, qc]);
+  }, [clientId, caseId, enabled, qc]);
 }
 
 export function useCaseEventsRealtime(
   clientId: string | undefined,
   caseId: string | undefined,
+  enabled: boolean = true,
 ) {
   const qc = useQueryClient();
   useEffect(() => {
-    if (!clientId || !caseId) {
+    if (!enabled || !clientId || !caseId) {
       return;
     }
     const unsub = getCaseEventsRealtime(clientId, caseId, events => {
       qc.setQueryData(['caseEvents', clientId, caseId], events);
     });
     return unsub;
-  }, [clientId, caseId, qc]);
+  }, [clientId, caseId, enabled, qc]);
 }
 
 // ---------------------------------------------------------------------------
@@ -444,10 +489,11 @@ export function useInspection(
 export function useMessagesRealtime(
   clientId: string | undefined,
   callback: (messages: Message[]) => void,
+  enabled: boolean = true,
 ) {
   const qc = useQueryClient();
   useEffect(() => {
-    if (!clientId) {
+    if (!enabled || !clientId) {
       return;
     }
     const unsub = getMessagesRealtime(clientId, messages => {
@@ -455,7 +501,7 @@ export function useMessagesRealtime(
       callback?.(messages);
     });
     return unsub;
-  }, [clientId, callback, qc]);
+  }, [clientId, callback, enabled, qc]);
 }
 
 export function useSendMessage() {
@@ -516,4 +562,36 @@ export function useSubmitInquiry() {
       qc.invalidateQueries({queryKey: ['inquiries']});
     },
   });
+}
+
+// ---------------------------------------------------------------------------
+// Signatures realtime
+// ---------------------------------------------------------------------------
+
+export function useSignaturesRealtime(
+  clientId: string | undefined,
+  caseId: string | undefined,
+  documentId: string | undefined,
+  enabled: boolean = true,
+) {
+  const [data, setData] = useState<SignatureRecord[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    if (!enabled || !clientId || !caseId || !documentId) {
+      setData([]);
+      setIsFetching(false);
+      return;
+    }
+    setIsFetching(true);
+    const unsub = getSignaturesRealtime(clientId, caseId, documentId, sigs => {
+      setData(sigs);
+      setIsFetching(false);
+    });
+    return () => {
+      unsub();
+    };
+  }, [clientId, caseId, documentId, enabled]);
+
+  return {data, isFetching};
 }
