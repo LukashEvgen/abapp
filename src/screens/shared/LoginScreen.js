@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import {useAuth} from '../context/AuthContext';
-import {colors, spacing, radius, globalStyles} from '../utils/theme';
+import {colors, spacing, radius, globalStyles, tokens} from '../utils/theme';
 import {validatePhoneUA, validateCode} from '../utils/helpers';
 import {GoldButton} from '../components/shared/UIComponents';
 
@@ -127,14 +127,14 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   logo: {
     color: colors.gold,
-    fontSize: 32,
-    fontWeight: '800',
+    fontSize: tokens.typography.size['3xl'],
+    fontWeight: tokens.typography.weight.bold,
     textAlign: 'center',
     marginBottom: spacing.md,
   },
   subtitle: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginBottom: spacing.lg,
   },
@@ -152,11 +152,11 @@ const styles = StyleSheet.create({
   },
   input: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: tokens.typography.size.md,
   },
   errorText: {
     color: colors.danger,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     textAlign: 'center',
     marginBottom: spacing.md,
   },

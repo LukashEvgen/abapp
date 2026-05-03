@@ -12,6 +12,7 @@ LexTrack дозволяє юристам керувати клієнтами, с
 - [Запуск](#запуск)
 - [Структура проєкту](#структура-проєкту)
 - [Ролі користувачів](#ролі-користувачів)
+- [Документація](#документація)
 - [Ліцензія](#ліцензія)
 
 ## Функціонал
@@ -57,6 +58,36 @@ npm install
 5. Розгорніть правила безпеки Firestore: перейдіть до Firestore Database → Rules та вставте вміст файлу `firestore.rules`.
 
 > **Примітка:** Файл `android/app/google-services.json` не повинен потрапляти у публічний репозиторій. Він вже доданий до `.gitignore`.
+
+### Firebase App Check
+
+1. **Android — Play Integrity API (prod)**
+   - Отримайте SHA-256 fingerprint вашого підпису:
+     ```bash
+     keytool -list -v -keystore android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
+     ```
+     Або для релізного ключа:
+     ```bash
+     keytool -list -v -keystore <шлях-до-release.keystore> -alias <alias> -storepass <пароль>
+     ```
+   - Перейдіть у **Firebase Console → Project settings → App Check** та виберіть додаток `com.lextrack`.
+   - Увімкніть **Play Integrity API**, вставте SHA-256 fingerprint та збережіть.
+
+2. **iOS — DeviceCheck (prod)**
+   - У **Firebase Console → App Check** виберіть iOS-додаток.
+   - Увімкніть **DeviceCheck** (потрібен Apple Developer Account та налаштований ключ).
+
+3. **iOS налаштування**
+    - Переконайтеся, що файл `ios/LexTrack/GoogleService-Info.plist` додано до проєкту Xcode (поза git; вже в `.gitignore`).
+    - У `ios/LexTrack/AppDelegate.mm` автоматично обрано `FIRDeviceCheckProviderFactory` (prod) або `FIRAppCheckDebugProviderFactory` (dev) залежно від `#if DEBUG`. Якщо ви редагуєте вручну, переконайтеся, що `[FIRApp configure]` відбувається перед `[FIRAppCheck setAppCheckProviderFactory:…]`.
+   - **Android:** при першому запуску в debug-режимі в логах з’явиться `DebugAppCheckToken`. Скопіюйте його та додайте у **Firebase Console → App Check → Manage debug tokens**.
+   - **iOS:** у консолі Xcode в debug-режимі з’явиться аналогічний токен. Додайте його у тому ж розділі Firebase Console.
+
+4. **Cloud Functions**
+   - Усі callable-функції в `functions/index.js` перевіряють `context.app != null` та повертають `failed-precondition` для запитів без дійсного App Check token.
+   - Для HTTPS `onRequest` функцій перевіряється заголовок `X-Firebase-AppCheck`.
+
+> **⚠️ Не деплоюйте на production без схвалення CTO.** Переконайтеся, що SHA-256 релізного ключа додано у Firebase Console та debug-токени видалені/неактивні для prod.
 
 ## Запуск
 
@@ -149,6 +180,16 @@ cd android
 - Пошук у реєстрах
 - Перевірка кредитних історій через бюро
 - Комунікація через чат з юристом
+
+## Документація
+
+| Документ | Опис |
+|----------|------|
+| [`docs/LexTrack-v2-TZ.md`](docs/LexTrack-v2-TZ.md) | Повне технічне завдання LexTrack v2 (архітектура, стек, вимоги, план) |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Інструкція для розробників (налаштування середовища, дизайн-система, тестування) |
+| [`CHANGELOG.md`](CHANGELOG.md) | Історія змін та версіонування |
+| [`design/tokens.json`](design/tokens.json) | Design tokens (Palette V2) |
+| [`firestore.rules`](firestore.rules) | Правила безпеки Firestore |
 
 ## Ліцензія
 

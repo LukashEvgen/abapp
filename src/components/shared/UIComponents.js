@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import {colors, spacing, radius, typography} from '../utils/theme';
+import {colors, spacing, radius, typography, tokens} from '../utils/theme';
 import {statusColors, statusBgColors, initials} from '../utils/helpers';
 
 export const Badge = ({status}) => {
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
     marginRight: spacing.xs,
   },
   badgeText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.xs,
+    fontWeight: tokens.typography.weight.semibold,
   },
   button: {
     backgroundColor: colors.gold,
@@ -210,14 +210,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.bg,
-    fontWeight: '700',
-    fontSize: 14,
+    fontWeight: tokens.typography.weight.bold,
+    fontSize: tokens.typography.size.base,
   },
   ghostText: {
     color: colors.gold,
   },
   smallText: {
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
   },
   card: {
     backgroundColor: colors.card,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   input: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
   },
   alertBanner: {
     flexDirection: 'row',
@@ -253,13 +253,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   alertText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
   },
   alertArrow: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
     marginLeft: spacing.sm,
   },
   statCard: {
@@ -273,17 +273,17 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xs,
   },
   statIcon: {
-    fontSize: 24,
+    fontSize: tokens.typography.size['2xl'],
     marginBottom: spacing.xs,
   },
   statValue: {
     color: colors.text,
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.xl,
+    fontWeight: tokens.typography.weight.bold,
   },
   statLabel: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   avatar: {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     color: colors.bg,
-    fontWeight: '700',
+    fontWeight: tokens.typography.weight.bold,
   },
   loadingScreen: {
     flex: 1,
@@ -307,28 +307,28 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   emptyIcon: {
-    fontSize: 48,
+    fontSize: tokens.typography.size['3xl'],
     marginBottom: spacing.md,
   },
   emptyTitle: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.semibold,
     textAlign: 'center',
   },
   emptySubtitle: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginTop: spacing.sm,
   },
   progressTrack: {
     backgroundColor: colors.surface,
-    borderRadius: 3,
+    borderRadius: radius.sm / 2,
     overflow: 'hidden',
     width: '100%',
   },
   progressFill: {
-    borderRadius: 3,
+    borderRadius: radius.sm / 2,
   },
 });

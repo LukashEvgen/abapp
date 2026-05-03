@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {
-  getMessages,
+  getMessagesRealtime,
   sendMessage,
   markMessagesRead,
-} from '../../services/firebase';
+} from '../../services/messages';
 import {colors, spacing, globalStyles} from '../../utils/theme';
 import {formatDateTime} from '../../utils/helpers';
 import {EmptyState} from '../../components/shared/UIComponents';
@@ -32,7 +32,7 @@ export default function AdminChat({route}) {
     if (!clientId) {
       return;
     }
-    unsubscribeRef.current = getMessages(clientId, msgs => {
+    unsubscribeRef.current = getMessagesRealtime(clientId, msgs => {
       setMessages(msgs);
       const unread = msgs
         .filter(m => m.from === 'client' && !m.read)

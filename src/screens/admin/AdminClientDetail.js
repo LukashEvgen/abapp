@@ -6,12 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {
-  getClientById,
-  getCases,
-  getInvoices,
-  getInspections,
-} from '../../services/firebase';
+import {getClientById} from '../../services/clients';
+import {getCasesPaginated} from '../../services/cases';
+import {getInvoicesPaginated} from '../../services/invoices';
+import {getInspectionsPaginated} from '../../services/inspections';
 import {
   colors,
   spacing,
@@ -40,17 +38,17 @@ export default function AdminClientDetail({route, navigation}) {
     (async () => {
       const [cl, cs, inv, ins] = await Promise.all([
         getClientById(clientId),
-        getCases(clientId),
-        getInvoices(clientId),
-        getInspections(clientId),
+        getCasesPaginated(clientId),
+        getInvoicesPaginated(clientId),
+        getInspectionsPaginated(clientId),
       ]);
       if (!mounted) {
         return;
       }
       setClient(cl);
-      setCases(cs);
-      setInvoices(inv);
-      setInspections(ins);
+      setCases(cs.data);
+      setInvoices(inv.data);
+      setInspections(ins.data);
     })();
     return () => {
       mounted = false;
@@ -113,16 +111,16 @@ export default function AdminClientDetail({route, navigation}) {
 
 const styles = StyleSheet.create({
   header: {...typography.h1, marginBottom: spacing.sm},
-  meta: {color: colors.muted, fontSize: 13, marginTop: spacing.xs},
+  meta: {color: colors.muted, fontSize: tokens.typography.size.sm, marginTop: spacing.xs},
   statsRow: {flexDirection: 'row', marginVertical: spacing.lg},
   caseTitle: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
-  caseMeta: {color: colors.muted, fontSize: 12, marginTop: spacing.xs},
-  empty: {color: colors.muted, fontSize: 14, marginBottom: spacing.lg},
+  caseMeta: {color: colors.muted, fontSize: tokens.typography.size.sm, marginTop: spacing.xs},
+  empty: {color: colors.muted, fontSize: tokens.typography.size.base, marginBottom: spacing.lg},
   actions: {marginTop: spacing.lg},
 });

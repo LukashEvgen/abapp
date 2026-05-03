@@ -4,7 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {useAuth} from '../context/AuthContext';
 
-import {colors} from '../utils/theme';
+import {colors, tokens} from '../utils/theme';
 
 import LoginScreen from '../screens/shared/LoginScreen';
 
@@ -16,7 +16,8 @@ import ScannerScreen from '../screens/client/ScannerScreen';
 import MyInvoices from '../screens/client/MyInvoices';
 import MyInspections from '../screens/client/MyInspections';
 import InspectionDetail from '../screens/client/InspectionDetail';
-import RegistrySearch from '../screens/client/RegistrySearch';
+import RegistriesScreen from '../screens/client/RegistriesScreen';
+import RegistryDetail from '../screens/client/RegistryDetail';
 import ChatScreen from '../screens/shared/ChatScreen';
 import BureauScreen from '../screens/client/BureauScreen';
 
@@ -26,6 +27,8 @@ import AdminClientDetail from '../screens/admin/AdminClientDetail';
 import AdminCaseDetail from '../screens/admin/AdminCaseDetail';
 import CreateInvoice from '../screens/admin/CreateInvoice';
 import AdminChat from '../screens/admin/AdminChat';
+import DiiaSignScreen from '../screens/shared/DiiaSignScreen';
+import SignResultScreen from '../screens/shared/SignResultScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,7 +59,7 @@ function ClientTabs() {
       />
       <Tab.Screen
         name="Registry"
-        component={RegistrySearch}
+        component={RegistryStack}
         options={{tabBarLabel: 'Реєстри'}}
       />
       <Tab.Screen
@@ -77,6 +80,8 @@ function ClientCasesStack() {
       <Stack.Screen name="ScannerScreen" component={ScannerScreen} />
       <Stack.Screen name="MyInvoices" component={MyInvoices} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="DiiaSign" component={DiiaSignScreen} />
+      <Stack.Screen name="SignResult" component={SignResultScreen} />
     </Stack.Navigator>
   );
 }
@@ -95,6 +100,15 @@ function BureauStack() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Bureau" component={BureauScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function RegistryStack() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Registries" component={RegistriesScreen} />
+      <Stack.Screen name="RegistryDetail" component={RegistryDetail} />
     </Stack.Navigator>
   );
 }
@@ -144,6 +158,8 @@ function AdminClientsStack() {
       <Stack.Screen name="AdminCaseDetail" component={AdminCaseDetail} />
       <Stack.Screen name="CreateInvoice" component={CreateInvoice} />
       <Stack.Screen name="AdminChatDetail" component={ChatScreen} />
+      <Stack.Screen name="DiiaSign" component={DiiaSignScreen} />
+      <Stack.Screen name="SignResult" component={SignResultScreen} />
     </Stack.Navigator>
   );
 }

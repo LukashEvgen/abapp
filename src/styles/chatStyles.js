@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors, spacing, radius} from '../utils/theme';
+import {colors, spacing, radius, tokens} from '../utils/theme';
 
 export const chatStyles = StyleSheet.create({
   bubbleWrap: {
@@ -26,8 +26,8 @@ export const chatStyles = StyleSheet.create({
     borderColor: colors.border,
   },
   bubbleText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: tokens.typography.size.base,
+    lineHeight: tokens.typography.size.base * tokens.typography.lineHeight.normal,
   },
   bubbleTextMe: {
     color: colors.bg,
@@ -36,7 +36,7 @@ export const chatStyles = StyleSheet.create({
     color: colors.text,
   },
   time: {
-    fontSize: 10,
+    fontSize: tokens.typography.size.xs,
     color: colors.muted,
     marginTop: spacing.xs,
     alignSelf: 'flex-end',
@@ -58,7 +58,7 @@ export const chatStyles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     maxHeight: 120,
   },
   sendBtn: {
@@ -75,7 +75,7 @@ export const chatStyles = StyleSheet.create({
   },
   sendBtnText: {
     color: colors.bg,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
   },
 });

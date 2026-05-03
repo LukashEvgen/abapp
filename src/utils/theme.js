@@ -2,6 +2,11 @@ import {StyleSheet} from 'react-native';
 import tokens from '../../design/tokens.json';
 
 // ---------------------------------------------------------------------------
+// Re-export raw tokens for direct size/weight/radius access (Palette V2 compliant)
+// ---------------------------------------------------------------------------
+export {tokens};
+
+// ---------------------------------------------------------------------------
 // Colors — legacy flat keys preserved for backward compatibility.
 // New semantic access via colors.neutral / brand / semantic / surface / textSemantic.
 // ---------------------------------------------------------------------------

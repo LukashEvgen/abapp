@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -6,47 +6,33 @@ import {
   TextInput,
   StyleSheet,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import {getAllClients} from '../../services/firebase';
-import {colors, spacing, globalStyles} from '../../utils/theme';
+import {useClientsRealtime} from '../../hooks/useFirebaseQueries';
+import {Client} from '../../services/clients';
+import {colors, spacing, globalStyles, tokens} from '../../utils/theme';
 import {formatDate} from '../../utils/helpers';
 import {sharedStyles} from '../../utils/sharedStyles';
 import {Card, EmptyState} from '../../components/shared/UIComponents';
 
 export default function ClientsList({navigation}) {
-  const [clients, setClients] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [query, setQuery] = useState('');
-  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    const data = await getAllClients();
-    setClients(data);
-    setFiltered(data);
-  }, []);
+  const {data: allClients, isFetching} = useClientsRealtime(100);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
+  const filtered = useMemo(() => {
     const q = query.toLowerCase();
-    setFiltered(
-      clients.filter(
-        c =>
-          (c.name || '').toLowerCase().includes(q) ||
-          (c.phone || '').toLowerCase().includes(q),
-      ),
+    if (!q) {
+      return allClients ?? [];
+    }
+    return (allClients ?? []).filter(
+      c =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.phone || '').toLowerCase().includes(q),
     );
-  }, [query, clients]);
+  }, [query, allClients]);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
-  };
-
-  const renderItem = ({item}) => (
+  const renderItem = ({item}: {item: Client}) => (
     <Card
       onPress={() =>
         navigation.navigate('AdminClientDetail', {clientId: item.id})
@@ -80,10 +66,20 @@ export default function ClientsList({navigation}) {
           renderItem={renderItem}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+              refreshing={isFetching}
+              onRefresh={() => {
+                /* Realtime auto-refreshes; no-op is intentional */
+              }}
               tintColor={colors.gold}
             />
+          }
+          ListFooterComponent={
+            isFetching ? (
+              <ActivityIndicator
+                color={colors.gold}
+                style={{margin: spacing.md}}
+              />
+            ) : null
           }
           ListEmptyComponent={
             <EmptyState
@@ -100,5 +96,5 @@ export default function ClientsList({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  phone: {color: colors.muted, fontSize: 13},
+  phone: {color: colors.muted, fontSize: tokens.typography.size.sm},
 });

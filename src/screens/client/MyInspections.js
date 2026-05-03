@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getInspections} from '../../services/firebase';
+import {getInspectionsPaginated} from '../../services/inspections';
 import {
   colors,
   spacing,
@@ -28,8 +28,8 @@ export default function MyInspections({navigation}) {
     if (!user?.uid) {
       return;
     }
-    const data = await getInspections(user.uid);
-    setInspections(data);
+    const page = await getInspectionsPaginated(user.uid);
+    setInspections(page.data);
   }, [user]);
 
   useEffect(() => {
@@ -128,29 +128,29 @@ const styles = StyleSheet.create({
   },
   criticalText: {
     color: colors.danger,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
   },
   organ: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
   meta: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   type: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     marginTop: spacing.sm,
   },
   recommendation: {
     color: colors.gold,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.sm,
   },
 });

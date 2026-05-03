@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, ScrollView, Alert} from 'react-native';
-import {createInvoice} from '../../services/firebase';
+import {View, Text, TextInput, StyleSheet, ScrollView, Alert, TouchableOpacity} from 'react-native';
+import {createInvoice} from '../../services/invoices';
 import {
   colors,
   spacing,
@@ -14,12 +14,14 @@ import {
   Card,
   SectionLabel,
 } from '../../components/shared/UIComponents';
+import SensitiveScreenGuard from '../../components/SensitiveScreenGuard';
 
 export default function CreateInvoice({route, navigation}) {
   const {clientId} = route.params;
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [number, setNumber] = useState('');
+  const [gateway, setGateway] = useState('none'); // 'none' | 'liqpay' | 'wayforpay'
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -41,6 +43,7 @@ export default function CreateInvoice({route, navigation}) {
         title: title.trim(),
         amount: Number(amount),
         number: number.trim() || undefined,
+        gateway: gateway === 'none' ? undefined : gateway,
       });
       navigation.goBack();
     } catch (e) {
@@ -53,6 +56,7 @@ export default function CreateInvoice({route, navigation}) {
   };
 
   return (
+    <SensitiveScreenGuard>
     <ScrollView
       style={globalStyles.container}
       contentContainerStyle={{padding: spacing.md}}>
@@ -101,7 +105,7 @@ export default function CreateInvoice({route, navigation}) {
       </View>
       {errors.amount && <Text style={styles.errorText}>{errors.amount}</Text>}
 
-      <SectionLabel text="Номер рахунку (необов’язково)" />
+      <SectionLabel text="Номер рахунку (необовʼязково)" />
       <View style={styles.inputWrap}>
         <TextInput
           placeholder="№..."
@@ -112,6 +116,27 @@ export default function CreateInvoice({route, navigation}) {
         />
       </View>
 
+      <SectionLabel text="Платіжний шлюз" />
+      <View style={styles.gatewayRow}>
+        {[{key: 'none', label: 'Не вказано'}, {key: 'liqpay', label: 'LiqPay'}, {key: 'wayforpay', label: 'WayForPay'}].map(g => (
+          <TouchableOpacity
+            key={g.key}
+            onPress={() => setGateway(g.key)}
+            style={[
+              styles.gatewayChip,
+              gateway === g.key && styles.gatewayChipActive,
+            ]}>
+            <Text
+              style={[
+                styles.gatewayChipText,
+                gateway === g.key && styles.gatewayChipTextActive,
+              ]}>
+              {g.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <GoldButton
         title={saving ? 'Збереження...' : 'Виставити рахунок'}
         onPress={handleSave}
@@ -119,6 +144,7 @@ export default function CreateInvoice({route, navigation}) {
         disabled={!title.trim() || !amount.trim()}
       />
     </ScrollView>
+    </SensitiveScreenGuard>
   );
 }
 
@@ -136,16 +162,43 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: colors.danger,
   },
-  input: {color: colors.text, fontSize: 14},
+  input: {color: colors.text, fontSize: tokens.typography.size.base},
   errorText: {
     color: colors.danger,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginBottom: spacing.md,
   },
   errorGeneral: {
     color: colors.danger,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginBottom: spacing.md,
+  },
+  gatewayRow: {
+    flexDirection: 'row',
+    marginBottom: spacing.md,
+    flexWrap: 'wrap',
+  },
+  gatewayChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  gatewayChipActive: {
+    backgroundColor: colors.gold,
+    borderColor: colors.gold,
+  },
+  gatewayChipText: {
+    color: colors.muted,
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
+  },
+  gatewayChipTextActive: {
+    color: colors.bg,
   },
 });

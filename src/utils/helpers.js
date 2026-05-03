@@ -41,6 +41,10 @@ export const statusColors = {
   medium: colors.warning,
   high: colors.danger,
   critical: colors.danger,
+  signed: colors.success,
+  'Підписано': colors.success,
+  failed: colors.danger,
+  cancelled: colors.muted,
 };
 
 export const statusBgColors = {
@@ -54,6 +58,10 @@ export const statusBgColors = {
   medium: colors.semantic.warningBg,
   high: colors.semantic.dangerBg,
   critical: colors.semantic.dangerBg,
+  signed: colors.semantic.successBg,
+  'Підписано': colors.semantic.successBg,
+  failed: colors.semantic.dangerBg,
+  cancelled: colors.semantic.warningBg,
 };
 
 export const initials = fullName => {

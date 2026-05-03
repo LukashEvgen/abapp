@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getInspectionById} from '../../services/firebase';
+import {getInspectionById} from '../../services/inspections';
 import {
   colors,
   spacing,
@@ -151,23 +151,23 @@ const styles = StyleSheet.create({
   },
   meta: {
     color: colors.textSemantic.secondary,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   riskValue: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
     marginBottom: spacing.sm,
   },
   riskDesc: {
     color: colors.textSemantic.primary,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: tokens.typography.size.base,
+    lineHeight: tokens.typography.size.base * tokens.typography.lineHeight.normal,
   },
   body: {
     color: colors.textSemantic.primary,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: tokens.typography.size.base,
+    lineHeight: tokens.typography.size.base * tokens.typography.lineHeight.normal,
   },
   actions: {
     marginTop: spacing.lg,

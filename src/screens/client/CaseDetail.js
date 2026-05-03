@@ -8,10 +8,11 @@ import {
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {
-  getCaseById,
-  getCaseEvents,
-  getDocuments,
-} from '../../services/firebase';
+  useCaseByIdRealtime,
+  useCaseEventsRealtime,
+} from '../../hooks/useFirebaseQueries';
+import {useQueryClient} from '@tanstack/react-query';
+import {getDocumentsPaginated} from '../../services/documents';
 import {
   colors,
   spacing,
@@ -31,24 +32,23 @@ import {
 export default function CaseDetail({route, navigation}) {
   const {caseId} = route.params;
   const {user} = useAuth();
-  const [c, setCase] = useState(null);
-  const [events, setEvents] = useState([]);
+  const qc = useQueryClient();
+
+  useCaseByIdRealtime(user?.uid, caseId);
+  useCaseEventsRealtime(user?.uid, caseId);
+
+  const c = qc.getQueryData(['case', user?.uid, caseId]) ?? null;
+  const events = qc.getQueryData(['caseEvents', user?.uid, caseId]) ?? [];
   const [docs, setDocs] = useState([]);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const [cs, ev, dc] = await Promise.all([
-        getCaseById(user.uid, caseId),
-        getCaseEvents(user.uid, caseId),
-        getDocuments(user.uid, caseId),
-      ]);
+      const dc = await getDocumentsPaginated(user.uid, caseId);
       if (!mounted) {
         return;
       }
-      setCase(cs);
-      setEvents(ev);
-      setDocs(dc);
+      setDocs(dc.data);
     })();
     return () => {
       mounted = false;
@@ -118,34 +118,34 @@ const styles = StyleSheet.create({
   },
   meta: {
     color: colors.muted,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   progressText: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.lg,
   },
   eventDate: {
     color: colors.gold,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
   eventActor: {
     color: colors.muted,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
   eventText: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
   },
   empty: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     marginBottom: spacing.lg,
   },
   actions: {

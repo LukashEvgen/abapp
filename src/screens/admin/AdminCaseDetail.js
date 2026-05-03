@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {View, Text, ScrollView, StyleSheet, TextInput} from 'react-native';
 import {
-  getCaseById,
-  getCaseEvents,
-  addCaseEvent,
-  updateCase,
-} from '../../services/firebase';
+  useCaseByIdRealtime,
+  useCaseEventsRealtime,
+  useUpdateCase,
+  useAddCaseEvent,
+} from '../../hooks/useFirebaseQueries';
+import {useQueryClient} from '@tanstack/react-query';
 import {
   colors,
   spacing,
@@ -24,39 +25,32 @@ import {
 
 export default function AdminCaseDetail({route}) {
   const {clientId, caseId} = route.params;
-  const [c, setCase] = useState(null);
-  const [events, setEvents] = useState([]);
+  const qc = useQueryClient();
+
+  useCaseByIdRealtime(clientId, caseId);
+  useCaseEventsRealtime(clientId, caseId);
+
+  const c = qc.getQueryData(['case', clientId, caseId]) ?? null;
+  const events = qc.getQueryData(['caseEvents', clientId, caseId]) ?? [];
   const [note, setNote] = useState('');
 
-  const load = async () => {
-    const [cs, ev] = await Promise.all([
-      getCaseById(clientId, caseId),
-      getCaseEvents(clientId, caseId),
-    ]);
-    setCase(cs);
-    setEvents(ev);
-  };
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientId, caseId]);
+  const updateCase = useUpdateCase();
+  const addCaseEvent = useAddCaseEvent();
 
   const handleAddEvent = async () => {
     if (!note.trim()) {
       return;
     }
-    await addCaseEvent(clientId, caseId, {
-      text: note.trim(),
-      actor: 'lawyer',
+    await addCaseEvent.mutateAsync({
+      clientId,
+      caseId,
+      eventData: {text: note.trim(), actor: 'lawyer'},
     });
     setNote('');
-    await load();
   };
 
   const handleUpdateProgress = async progress => {
-    await updateCase(clientId, caseId, {progress});
-    await load();
+    await updateCase.mutateAsync({clientId, caseId, data: {progress}});
   };
 
   if (!c) {
@@ -137,7 +131,7 @@ export default function AdminCaseDetail({route}) {
       <GoldButton
         title="Додати подію"
         onPress={handleAddEvent}
-        disabled={!note.trim()}
+        disabled={!note.trim() || addCaseEvent.isPending}
       />
     </ScrollView>
   );
@@ -147,13 +141,13 @@ const styles = StyleSheet.create({
   title: {...typography.h1, flex: 1, marginRight: spacing.sm},
   meta: {
     color: colors.muted,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.lg,
   },
   progressText: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.md,
   },
@@ -164,18 +158,22 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     color: colors.gold,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
   eventActor: {
     color: colors.muted,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
-  eventText: {color: colors.text, fontSize: 14},
-  empty: {color: colors.muted, fontSize: 14, marginBottom: spacing.lg},
+  eventText: {color: colors.text, fontSize: tokens.typography.size.base},
+  empty: {
+    color: colors.muted,
+    fontSize: tokens.typography.size.base,
+    marginBottom: spacing.lg,
+  },
   inputWrap: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -187,7 +185,7 @@ const styles = StyleSheet.create({
   },
   input: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     minHeight: 60,
     textAlignVertical: 'top',
   },

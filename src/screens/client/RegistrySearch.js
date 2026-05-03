@@ -187,18 +187,18 @@ const styles = StyleSheet.create({
   },
   search: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
   },
   name: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
   meta: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   statusBadge: {
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     color: colors.warning,
   },
   statusLabel: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.xs,
+    fontWeight: tokens.typography.weight.semibold,
   },
 });

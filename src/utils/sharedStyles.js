@@ -1,4 +1,4 @@
-import {colors, spacing, radius, typography} from './theme';
+import {colors, spacing, radius, typography, tokens} from './theme';
 
 export const sharedStyles = {
   header: {...typography.h1, marginBottom: spacing.md},
@@ -15,46 +15,47 @@ export const sharedStyles = {
 
   search: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
   },
 
   caseTitle: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
 
   caseMeta: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
 
   empty: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     marginBottom: spacing.lg,
   },
 
   eventDate: {
     color: colors.gold,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
 
   eventActor: {
     color: colors.muted,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
 
   eventText: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
+    lineHeight: tokens.typography.size.base * tokens.typography.lineHeight.normal,
   },
 
   inputWrap: {
@@ -69,7 +70,7 @@ export const sharedStyles = {
 
   input: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     minHeight: 60,
     textAlignVertical: 'top',
   },

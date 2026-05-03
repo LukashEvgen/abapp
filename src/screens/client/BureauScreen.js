@@ -20,7 +20,7 @@ import {
   GoldButton,
   Input,
 } from '../../components/shared/UIComponents';
-import {submitInquiry} from '../../services/firebase';
+import {submitInquiry} from '../../services/inquiries';
 
 const SERVICES = [
   {
@@ -172,19 +172,19 @@ const styles = StyleSheet.create({
   },
   bureauName: {
     color: colors.gold,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
     marginBottom: spacing.sm,
   },
   bureauMeta: {
     color: colors.muted,
-    fontSize: 13,
+    fontSize: tokens.typography.size.sm,
     marginBottom: spacing.xs,
   },
   bureauLink: {
     color: colors.gold,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     marginTop: spacing.xs,
   },
   servicesGrid: {
@@ -203,29 +203,29 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   serviceIcon: {
-    fontSize: 28,
+    fontSize: tokens.typography.size['2xl'],
     marginBottom: spacing.sm,
   },
   serviceTitle: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
   },
   serviceDesc: {
     color: colors.muted,
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: tokens.typography.size.sm,
+    lineHeight: tokens.typography.size.sm * tokens.typography.lineHeight.normal,
   },
   successTitle: {
     color: colors.success,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.bold,
     marginBottom: spacing.sm,
   },
   successText: {
     color: colors.text,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: tokens.typography.size.base,
+    lineHeight: tokens.typography.size.base * tokens.typography.lineHeight.normal,
   },
 });

@@ -43,5 +43,6 @@ android {
 dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:hermes-android")
-    // Firebase BoM is managed by @react-native-firebase packages via autolinking
+    // Firebase App Check — Play Integrity provider
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
 }

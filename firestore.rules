@@ -20,73 +20,235 @@ service cloud.firestore {
       return request.writeSize <= 524288;
     }
 
-    function isValidClientCreate() {
-      return request.resource.data.keys().hasAll(['name', 'phone'])
-             && request.resource.data.name is string
-             && request.resource.data.phone is string
-             && isDocSizeValid();
+    function isString(data, key) {
+      return data.keys().hasAll([key]) && data[key] is string;
     }
 
-    function isValidInquiryCreate() {
-      return request.resource.data.keys().hasAll(['name', 'phone', 'text'])
-             && request.resource.data.name is string
-             && request.resource.data.phone is string
-             && request.resource.data.text is string
-             && request.resource.data.status == 'new'
-             && isDocSizeValid();
+    function isInt(data, key) {
+      return data.keys().hasAll([key]) && data[key] is int;
+    }
+
+    function isNumber(data, key) {
+      return data.keys().hasAll([key]) && data[key] is number;
+    }
+
+    // ========== Enum validators ==========
+
+    function isValidCaseStatus(data) {
+      return !data.keys().hasAll(['status']) ||
+             data.status in ['Розглядається', 'Вирішено', 'Закрито', 'Відхилено', 'new', 'in_progress', 'resolved', 'closed'];
+    }
+
+    function isValidInvoiceStatus(data) {
+      return !data.keys().hasAll(['status']) ||
+             data.status in ['pending', 'paid', 'overdue', 'cancelled'];
+    }
+
+    function isValidInspectionStatus(data) {
+      return !data.keys().hasAll(['status']) ||
+             data.status in ['scheduled', 'completed', 'cancelled', 'pending'];
+    }
+
+    function isValidInquiryStatus(data) {
+      return !data.keys().hasAll(['status']) ||
+             data.status in ['new', 'in_progress', 'resolved', 'closed'];
+    }
+
+    function isValidMessageFrom(data) {
+      return !data.keys().hasAll(['from']) ||
+             data.from in ['client', 'lawyer', 'system'];
+    }
+
+    function isValidCaseEventActor(data) {
+      return !data.keys().hasAll(['actor']) ||
+             data.actor in ['lawyer', 'court', 'other'];
+    }
+
+    function isValidProgress(data) {
+      return !data.keys().hasAll(['progress']) ||
+             (data.progress is int && data.progress >= 0 && data.progress <= 100);
+    }
+
+    function isValidPriority(data) {
+      return !data.keys().hasAll(['priority']) ||
+             data.priority in ['low', 'medium', 'high'];
     }
 
     // ========== Clients collection ==========
+
     match /clients/{clientId} {
       allow read: if isLawyer() || isOwner(clientId);
-      allow create: if isLawyer() && isDocSizeValid();
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['name', 'phone'])
+                    && request.resource.data.name is string
+                    && request.resource.data.phone is string
+                    && isDocSizeValid();
+
       allow update: if (isLawyer() || isOwner(clientId))
-                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'phone', 'updatedAt'])
-                      && isDocSizeValid();
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'phone', 'email', 'address', 'updatedAt'])
+                    && isDocSizeValid();
+
       allow delete: if isLawyer();
     }
 
     // ========== Sub-collections under a client ==========
 
+    // Cases
     match /clients/{clientId}/cases/{caseId} {
-      allow read, delete: if isLawyer() || isOwner(clientId);
-      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
-    }
-
-    match /clients/{clientId}/cases/{caseId}/events/{eventId} {
-      allow read, delete: if isLawyer() || isOwner(clientId);
-      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
-    }
-
-    match /clients/{clientId}/cases/{caseId}/documents/{documentId} {
-      allow read, delete: if isLawyer() || isOwner(clientId);
-      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
-    }
-
-    match /clients/{clientId}/invoices/{invoiceId} {
       allow read: if isLawyer() || isOwner(clientId);
-      allow create, update: if isLawyer() && isDocSizeValid();
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['title'])
+                    && request.resource.data.title is string
+                    && isValidCaseStatus(request.resource.data)
+                    && isValidProgress(request.resource.data)
+                    && isValidPriority(request.resource.data)
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && isValidCaseStatus(request.resource.data)
+                    && isValidProgress(request.resource.data)
+                    && isValidPriority(request.resource.data)
+                    && isDocSizeValid();
+
       allow delete: if isLawyer();
     }
 
-    match /clients/{clientId}/inspections/{inspectionId} {
-      allow read, delete: if isLawyer() || isOwner(clientId);
-      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+    // Case Events
+    match /clients/{clientId}/cases/{caseId}/events/{eventId} {
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['text'])
+                    && request.resource.data.text is string
+                    && isValidCaseEventActor(request.resource.data)
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && isValidCaseEventActor(request.resource.data)
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
     }
 
+    // Documents
+    match /clients/{clientId}/cases/{caseId}/documents/{documentId} {
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['name', 'url', 'storagePath', 'type', 'size'])
+                    && request.resource.data.name is string
+                    && request.resource.data.url is string
+                    && request.resource.data.storagePath is string
+                    && request.resource.data.type is string
+                    && request.resource.data.size is number
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'mimeType', 'sha256', 'scanned'])
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
+    }
+
+    // Invoices
+    match /clients/{clientId}/invoices/{invoiceId} {
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['amount'])
+                    && request.resource.data.amount is number
+                    && isValidInvoiceStatus(request.resource.data)
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && isValidInvoiceStatus(request.resource.data)
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
+    }
+
+    // Signatures
+    match /clients/{clientId}/cases/{caseId}/documents/{documentId}/signatures/{signatureId} {
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if isLawyer()
+                    && request.resource.data.keys().hasAll(['documentId', 'status'])
+                    && request.resource.data.documentId is string
+                    && request.resource.data.status in ['pending', 'signed', 'failed', 'cancelled']
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'signedAt', 'signerName', 'signerIdentifier', 'signatureHash', 'signatureType', 'verificationUrl', 'errorMessage', 'updatedAt'])
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
+    }
+
+    // Inspections
+    match /clients/{clientId}/inspections/{inspectionId} {
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if isLawyer()
+                    && isValidInspectionStatus(request.resource.data)
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && isValidInspectionStatus(request.resource.data)
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
+    }
+
+    // Messages
     match /clients/{clientId}/messages/{messageId} {
-      allow read, delete: if isLawyer() || isOwner(clientId);
-      allow create, update: if (isLawyer() || isOwner(clientId)) && isDocSizeValid();
+      allow read: if isLawyer() || isOwner(clientId);
+
+      allow create: if (isLawyer() || isOwner(clientId))
+                    && request.resource.data.keys().hasAll(['text', 'from'])
+                    && request.resource.data.text is string
+                    && isValidMessageFrom(request.resource.data)
+                    && isDocSizeValid();
+
+      allow update: if isLawyer()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+                    && isDocSizeValid();
+
+      allow delete: if isLawyer();
     }
 
     // ========== Inquiries collection (public write, admin read) ==========
+
     match /inquiries/{inquiryId} {
-      allow create: if isValidInquiryCreate();
-      allow read, update: if isLawyer() && isDocSizeValid();
+      allow create: if request.resource.data.keys().hasAll(['name', 'phone', 'text'])
+                     && request.resource.data.name is string
+                     && request.resource.data.phone is string
+                     && request.resource.data.text is string
+                     && request.resource.data.status == 'new'
+                     && isDocSizeValid();
+
+      allow read, update: if isLawyer()
+                           && isValidInquiryStatus(request.resource.data)
+                           && isDocSizeValid();
+
       allow delete: if false;
     }
 
+    // Payment orders (created by callable functions, updated by webhooks)
+    match /paymentOrders/{orderId} {
+      allow read: if isLawyer() || (isAuth() && resource.data.clientId == request.auth.uid);
+      allow create, update: if false; // only server-side
+    }
+
+    // ========== Registry cache (public read/write for authenticated users) ==========
+
+    match /registry_cache/{docId} {
+      allow read, write: if isAuth();
+    }
+
     // ========== Lawyers collection ==========
+
     match /lawyers/{lawyerId} {
       allow read: if isLawyer();
       allow write: if false;

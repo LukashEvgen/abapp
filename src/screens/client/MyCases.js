@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,11 @@ import {
   TextInput,
   StyleSheet,
   RefreshControl,
-  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getCases} from '../../services/firebase';
+import {useCasesRealtime} from '../../hooks/useFirebaseQueries';
+import {Case} from '../../services/cases';
 import {colors, spacing, globalStyles} from '../../utils/theme';
 import {formatDate} from '../../utils/helpers';
 import {sharedStyles} from '../../utils/sharedStyles';
@@ -22,43 +23,24 @@ import {
 
 export default function MyCases({navigation}) {
   const {user} = useAuth();
-  const [cases, setCases] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [query, setQuery] = useState('');
-  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-    const data = await getCases(user.uid);
-    setCases(data);
-    setFiltered(data);
-  }, [user]);
+  const {data: allCases, isFetching} = useCasesRealtime(user?.uid);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
+  const filtered = useMemo(() => {
     const q = query.toLowerCase();
-    setFiltered(
-      cases.filter(
-        c =>
-          (c.title || '').toLowerCase().includes(q) ||
-          (c.caseNumber || '').toLowerCase().includes(q) ||
-          (c.court || '').toLowerCase().includes(q),
-      ),
+    if (!q) {
+      return allCases ?? [];
+    }
+    return (allCases ?? []).filter(
+      c =>
+        (c.title || '').toLowerCase().includes(q) ||
+        (c.caseNumber || '').toLowerCase().includes(q) ||
+        (c.court || '').toLowerCase().includes(q),
     );
-  }, [query, cases]);
+  }, [query, allCases]);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await load();
-    setRefreshing(false);
-  };
-
-  const renderItem = ({item}) => (
+  const renderItem = ({item}: {item: Case}) => (
     <Card onPress={() => navigation.navigate('CaseDetail', {caseId: item.id})}>
       <View style={globalStyles.rowBetween}>
         <Text style={sharedStyles.caseTitle}>{item.title}</Text>
@@ -95,10 +77,20 @@ export default function MyCases({navigation}) {
           renderItem={renderItem}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+              refreshing={isFetching}
+              onRefresh={() => {
+                /* Realtime auto-refreshes; no-op is intentional */
+              }}
               tintColor={colors.gold}
             />
+          }
+          ListFooterComponent={
+            isFetching ? (
+              <ActivityIndicator
+                color={colors.gold}
+                style={{margin: spacing.md}}
+              />
+            ) : null
           }
           ListEmptyComponent={
             <EmptyState

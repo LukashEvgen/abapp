@@ -1,0 +1,50 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isLawyer() {
+      return isAuth() && firestore.exists(/databases/(default)/documents/lawyers/$(request.auth.uid));
+    }
+
+    function isOwner(clientId) {
+      return isAuth() && request.auth.uid == clientId;
+    }
+
+    function isFileSizeValid() {
+      return request.resource.size <= 25 * 1024 * 1024;
+    }
+
+    function isValidContentType() {
+      return request.resource.contentType.matches('image/.*') ||
+             request.resource.contentType.matches('application/pdf') ||
+             request.resource.contentType == 'application/msword' ||
+             request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+             request.resource.contentType == 'text/plain' ||
+             request.resource.contentType == 'application/vnd.ms-excel' ||
+             request.resource.contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    }
+
+    // Client documents path: clients/{clientId}/cases/{caseId}/documents/{fileName}
+    match /clients/{clientId}/cases/{caseId}/documents/{fileName} {
+      allow read: if isLawyer() || isOwner(clientId);
+      allow write: if (isLawyer() || isOwner(clientId))
+                   && isFileSizeValid()
+                   && isValidContentType();
+      allow delete: if isLawyer();
+    }
+
+    // Lawyer-only storage (e.g. templates, shared resources)
+    match /lawyers/{lawyerId}/{allPaths=**} {
+      allow read, write: if isAuth() && request.auth.uid == lawyerId;
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

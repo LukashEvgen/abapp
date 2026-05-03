@@ -5,7 +5,7 @@ import {
   getAllClients,
   getInquiries,
   getAdminMessagesSummary,
-} from '../../services/firebase';
+} from '../../services/clients';
 import {
   colors,
   spacing,
@@ -131,13 +131,13 @@ export default function AdminDashboard({navigation}) {
 const styles = StyleSheet.create({
   header: {...typography.h1, marginBottom: spacing.md},
   statsRow: {flexDirection: 'row', marginBottom: spacing.lg},
-  clientName: {color: colors.text, fontSize: 15, fontWeight: '600', flex: 1},
-  lastMsg: {color: colors.muted, fontSize: 13, marginTop: spacing.xs},
+  clientName: {color: colors.text, fontSize: tokens.typography.size.base, fontWeight: tokens.typography.weight.semibold, flex: 1},
+  lastMsg: {color: colors.muted, fontSize: tokens.typography.size.sm, marginTop: spacing.xs},
   unreadBadge: {
     backgroundColor: colors.danger,
     color: colors.text,
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.bold,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,

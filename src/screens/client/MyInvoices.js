@@ -7,9 +7,11 @@ import {
   RefreshControl,
   TouchableOpacity,
   Linking,
+  Alert,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {getInvoices} from '../../services/firebase';
+import {getInvoicesPaginated} from '../../services/invoices';
+import {payInvoice, openPaymentUrl} from '../../services/payments';
 import {
   colors,
   spacing,
@@ -36,8 +38,8 @@ export default function MyInvoices({navigation}) {
     if (!user?.uid) {
       return;
     }
-    const data = await getInvoices(user.uid);
-    setInvoices(data);
+    const page = await getInvoicesPaginated(user.uid);
+    setInvoices(page.data);
   }, [user]);
 
   useEffect(() => {
@@ -72,17 +74,40 @@ export default function MyInvoices({navigation}) {
         № {item.number || item.id.slice(-6)} · {formatDate(item.createdAt)}
       </Text>
       <Text style={styles.amount}>{formatCurrency(item.amount)}</Text>
-      {item.status === 'pending' || item.status === 'overdue' ? (
-        <GoldButton
-          title="Оплатити"
-          size="small"
-          style={{marginTop: spacing.sm}}
-          onPress={() => {
-            // MVP: відкрити монобанку/приват24 або показати реквізити
-            const url = item.paymentUrl || 'https://privat24.ua';
-            Linking.openURL(url).catch(() => {});
-          }}
-        />
+      {(item.status === 'pending' || item.status === 'overdue') ? (
+        item.gateway === 'liqpay' || item.gateway === 'wayforpay' ? (
+          <GoldButton
+            title="Оплатити"
+            size="small"
+            style={{marginTop: spacing.sm}}
+            onPress={async () => {
+              try {
+                const result = await payInvoice(
+                  user.uid,
+                  item.id,
+                  item.amount || 0,
+                  item.title || 'Рахунок',
+                  item.gateway,
+                );
+                if (result?.checkoutUrl) {
+                  await openPaymentUrl(result.checkoutUrl);
+                }
+              } catch {
+                // помилка вже показана всередині payInvoice
+              }
+            }}
+          />
+        ) : (
+          <GoldButton
+            title="Оплатити"
+            size="small"
+            style={{marginTop: spacing.sm}}
+            onPress={() => {
+              const url = item.paymentUrl || 'https://privat24.ua';
+              Linking.openURL(url).catch(() => {});
+            }}
+          />
+        )
       ) : null}
     </Card>
   );
@@ -163,8 +188,8 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     color: colors.text,
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: tokens.typography.size['2xl'],
+    fontWeight: tokens.typography.weight.bold,
   },
   chipRow: {
     flexDirection: 'row',
@@ -185,28 +210,28 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: colors.muted,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
   },
   chipTextActive: {
     color: colors.bg,
   },
   title: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
   meta: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
   },
   amount: {
     color: colors.gold,
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: tokens.typography.size.lg,
+    fontWeight: tokens.typography.weight.bold,
     marginTop: spacing.sm,
   },
 });

@@ -3,7 +3,7 @@ import {View, Text, Image, StyleSheet, Alert} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useAuth} from '../../context/AuthContext';
-import {uploadDocument} from '../../services/firebase';
+import {uploadDocument} from '../../services/documents';
 import {
   colors,
   spacing,
@@ -82,13 +82,20 @@ export default function ScannerScreen({route, navigation}) {
   };
 
   const startUpload = async () => {
-    if (!file) {
-      return;
-    }
+    if (!file) return;
     setUploading(true);
     setStep(3);
     try {
-      await uploadDocument(user.uid, caseId, file.uri, file.name, setProgress);
+      const {id, url} = await uploadDocument(
+        user.uid,
+        caseId,
+        file.uri,
+        file.name,
+        file.size || 0,
+        file.type || '',
+        '', // sha256 not calculated client-side yet
+        setProgress,
+      );
       setStep(4);
     } catch (e) {
       Alert.alert('Помилка завантаження', e.message);
@@ -184,18 +191,18 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: colors.muted,
-    fontSize: 16,
+    fontSize: tokens.typography.size.md,
     marginBottom: spacing.lg,
   },
   label: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.sm,
   },
   value: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.base,
+    fontWeight: tokens.typography.weight.semibold,
   },
   preview: {
     width: '100%',
@@ -211,7 +218,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     color: colors.gold,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginTop: spacing.sm,
   },

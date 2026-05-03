@@ -8,12 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useAuth} from '../../context/AuthContext';
-import {
-  getClientById,
-  getCases,
-  getInspections,
-  getInvoices,
-} from '../../services/firebase';
+import {getClientById} from '../../services/clients';
+import {getCasesPaginated} from '../../services/cases';
+import {getInvoicesPaginated} from '../../services/invoices';
+import {getInspectionsPaginated} from '../../services/inspections';
 import {
   colors,
   spacing,
@@ -47,13 +45,13 @@ export default function ClientDashboard({navigation}) {
     setClient(c);
     if (c) {
       const [cs, ins, inv] = await Promise.all([
-        getCases(user.uid),
-        getInspections(user.uid),
-        getInvoices(user.uid),
+        getCasesPaginated(user.uid),
+        getInspectionsPaginated(user.uid),
+        getInvoicesPaginated(user.uid),
       ]);
-      setCases(cs);
-      setInspections(ins);
-      setInvoices(inv);
+      setCases(cs.data);
+      setInspections(ins.data);
+      setInvoices(inv.data);
     }
   }, [user]);
 
@@ -227,30 +225,30 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   quickIcon: {
-    fontSize: 28,
+    fontSize: tokens.typography.size['2xl'],
     marginBottom: spacing.xs,
   },
   quickLabel: {
     color: colors.text,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.sm,
+    fontWeight: tokens.typography.weight.semibold,
   },
   caseTitle: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: tokens.typography.size.md,
+    fontWeight: tokens.typography.weight.semibold,
     flex: 1,
     marginRight: spacing.sm,
   },
   caseMeta: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: tokens.typography.size.sm,
     marginTop: spacing.xs,
     marginBottom: spacing.sm,
   },
   empty: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginTop: spacing.md,
   },
