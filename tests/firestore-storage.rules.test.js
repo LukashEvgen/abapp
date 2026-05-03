@@ -1,33 +1,55 @@
-const {initializeTestEnvironment, assertSucceeds, assertFails} = require('@firebase/rules-unit-testing');
-const {doc, setDoc, getDoc, updateDoc, deleteDoc} = require('firebase/firestore');
+const {
+  initializeTestEnvironment,
+  assertSucceeds,
+  assertFails,
+} = require('@firebase/rules-unit-testing');
+const {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} = require('firebase/firestore');
 const {ref, uploadBytes} = require('firebase/storage');
 const fs = require('fs');
 
 const PROJECT_ID = 'lextrack-test';
-const FIRESTORE_RULES = fs.readFileSync('./firestore.rules', 'utf8');
-const STORAGE_RULES = fs.readFileSync('./storage.rules', 'utf8');
+const FIRESTORE_RULES = fs.readFileSync('../firestore.rules', 'utf8');
+const STORAGE_RULES = fs.readFileSync('../storage.rules', 'utf8');
+
+const FIRESTORE_HOST = process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8082';
+const [firestoreHost, firestorePort] = FIRESTORE_HOST.split(':');
+const STORAGE_HOST =
+  process.env.FIREBASE_STORAGE_EMULATOR_HOST || '127.0.0.1:9201';
+const [storageHost, storagePort] = STORAGE_HOST.split(':');
 
 let testEnv;
 
 beforeAll(async () => {
   testEnv = await initializeTestEnvironment({
     projectId: PROJECT_ID,
-    firestore: {rules: FIRESTORE_RULES},
-    storage: {rules: STORAGE_RULES},
+    firestore: {
+      rules: FIRESTORE_RULES,
+      host: firestoreHost,
+      port: Number(firestorePort),
+    },
+    storage: {
+      rules: STORAGE_RULES,
+      host: storageHost,
+      port: Number(storagePort),
+    },
   });
 });
 
 afterAll(async () => {
-  if (testEnv) await testEnv.cleanup();
+  if (testEnv) {
+    await testEnv.cleanup();
+  }
 });
 
 beforeEach(async () => {
   await testEnv.clearFirestore();
 });
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function lawyerCtx(uid = 'lawyer_1') {
   return testEnv.authenticatedContext(uid, {email: 'lawyer@example.com'});
@@ -44,7 +66,7 @@ function anonCtx() {
 async function seedLawyer(uid) {
   const admin = testEnv.authenticatedContext('admin_seed');
   await setDoc(doc(admin.firestore(), 'lawyers', uid), {name: 'Lawyer'});
-  admin.firestore().terminate();
+  await admin.firestore().terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -95,7 +117,9 @@ describe('Firestore rules', () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
       await assertFails(
-        setDoc(doc(ctx.firestore(), 'clients', 'bad_client'), {name: 'NoPhone'}),
+        setDoc(doc(ctx.firestore(), 'clients', 'bad_client'), {
+          name: 'NoPhone',
+        }),
       );
     });
 
@@ -131,7 +155,13 @@ describe('Firestore rules', () => {
     it('allows lawyer CRUD', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      const caseRef = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
       await assertSucceeds(
         setDoc(caseRef, {
           title: 'Справка',
@@ -147,7 +177,13 @@ describe('Firestore rules', () => {
 
     it('allows client read but not write', async () => {
       const ctx = clientCtx('client_1');
-      const caseRef = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
       await assertSucceeds(getDoc(caseRef));
       await assertFails(setDoc(caseRef, {title: 'Bad'}));
     });
@@ -155,7 +191,13 @@ describe('Firestore rules', () => {
     it('denies invalid case status', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      const caseRef = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
       await assertFails(
         setDoc(caseRef, {
           title: 'Справка',
@@ -168,7 +210,13 @@ describe('Firestore rules', () => {
     it('denies progress outside 0–100', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      const caseRef = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
       await assertFails(
         setDoc(caseRef, {
           title: 'Справка',
@@ -181,7 +229,13 @@ describe('Firestore rules', () => {
     it('denies non-int progress', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      const caseRef = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1');
+      const caseRef = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+      );
       await assertFails(
         setDoc(caseRef, {
           title: 'Справка',
@@ -267,31 +321,53 @@ describe('Storage rules', () => {
   describe('clients/{clientId}/cases/{caseId}/documents/{file}', () => {
     it('allows client to upload valid file', async () => {
       const ctx = clientCtx('client_1');
-      const sRef = ref(ctx.storage(), 'clients/client_1/cases/case_1/documents/test.pdf');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test.pdf',
+      );
       const blob = new Blob(['pdf content'], {type: 'application/pdf'});
-      await assertSucceeds(uploadBytes(sRef, blob, {contentType: 'application/pdf'}));
+      await assertSucceeds(
+        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+      );
     });
 
     it('allows lawyer to upload valid file', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      const sRef = ref(ctx.storage(), 'clients/client_1/cases/case_1/documents/test.pdf');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test.pdf',
+      );
       const blob = new Blob(['pdf content'], {type: 'application/pdf'});
-      await assertSucceeds(uploadBytes(sRef, blob, {contentType: 'application/pdf'}));
+      await assertSucceeds(
+        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+      );
     });
 
     it('denies anonymous upload', async () => {
       const ctx = anonCtx();
-      const sRef = ref(ctx.storage(), 'clients/client_1/cases/case_1/documents/test.pdf');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test.pdf',
+      );
       const blob = new Blob(['pdf content'], {type: 'application/pdf'});
-      await assertFails(uploadBytes(sRef, blob, {contentType: 'application/pdf'}));
+      await assertFails(
+        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+      );
     });
 
     it('denies invalid content type', async () => {
       const ctx = clientCtx('client_1');
-      const sRef = ref(ctx.storage(), 'clients/client_1/cases/case_1/documents/test.exe');
-      const blob = new Blob(['exe content'], {type: 'application/x-msdownload'});
-      await assertFails(uploadBytes(sRef, blob, {contentType: 'application/x-msdownload'}));
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test.exe',
+      );
+      const blob = new Blob(['exe content'], {
+        type: 'application/x-msdownload',
+      });
+      await assertFails(
+        uploadBytes(sRef, blob, {contentType: 'application/x-msdownload'}),
+      );
     });
   });
 });

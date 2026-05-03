@@ -6,6 +6,17 @@
 
 ---
 
+## [2.0.1] — 2026-05-03
+
+### Додано
+- **Push notifications через FCM та Cloud Functions ([CMP-162](/CMP/issues/CMP-162))**
+  - Mobile: `@react-native-firebase/messaging` integration, token registration + refresh, permission request (`POST_NOTIFICATIONS` on Android 13+).
+  - Mobile: `App.js` initializes push handlers (foreground, background, token refresh).
+  - Mobile: `pushNotifications.ts` — unified push service module.
+  - Cloud Functions: `sendPushToClient` / `sendPushToLawyer` helper in `push.ts`.
+  - Cloud Functions triggers: `notifyOnMessageCreate` (chat), `notifyOnCaseEventCreate` (new case event), `notifyOnInvoiceCreate` (invoice), `notifyOnInspectionCreate` (inspection), `notifyOnInquiryCreate` (public inquiry → lawyers).
+  - Types: `fcmToken` added to `Client` and `Lawyer` interfaces.
+
 ## [2.0.0] — 2026-05-03 (заплановано)
 
 ### Додано (Epics CMP-127 – CMP-135)
