@@ -1,6 +1,7 @@
 package com.lextrack;
 
 import android.app.Application;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -10,11 +11,6 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.react.flipper.ReactNativeFlipper;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
-
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.appcheck.FirebaseAppCheck;
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -57,14 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    // Initialize Firebase App Check with Play Integrity (prod) or Debug (dev)
-    if (BuildConfig.DEBUG) {
-      FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
-          DebugAppCheckProviderFactory.getInstance());
-    } else {
-      FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
-          PlayIntegrityAppCheckProviderFactory.getInstance());
-    }
+    // Note: Firebase App Check is activated from JS via @react-native-firebase/app-check.
     SoLoader.init(this, /* native exopackage */ false);
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
