@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 
 import {onMessageCreateHandler, onMessageUpdateHandler} from './messages';
-import {onCaseEventCreateHandler} from './caseEvents';
+import {onCaseEventCreateHandler, onCaseUpdateHandler} from './caseEvents';
 import {onInspectionCreateHandler, onInquiryCreateHandler} from './inspections';
 import {searchEdrHandler} from './registry/edr';
 import {searchCourtHandler} from './registry/court';
@@ -25,7 +25,7 @@ import {
 // Summaries callable function
 // ---------------------------------------------------------------------------
 export const getAdminMessagesSummary = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(async (_data, _context) => {
     const snapshot = await admin
       .firestore()
@@ -47,19 +47,19 @@ export const getAdminMessagesSummary = functions
 // Registry callable functions
 // ---------------------------------------------------------------------------
 export const searchEdr = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(searchEdrHandler);
 
 export const searchCourt = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(searchCourtHandler);
 
 export const searchEnforcement = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(searchEnforcementHandler);
 
 export const searchOpendatabot = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(searchEdrHandler);
 
 // ---------------------------------------------------------------------------
@@ -79,6 +79,11 @@ export const notifyOnCaseEventCreate = functions
   .runWith({maxInstances: 10, timeoutSeconds: 30})
   .firestore.document('clients/{clientId}/cases/{caseId}/events/{eventId}')
   .onCreate(onCaseEventCreateHandler);
+
+export const notifyOnCaseUpdate = functions
+  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .firestore.document('clients/{clientId}/cases/{caseId}')
+  .onUpdate(onCaseUpdateHandler);
 
 export const notifyOnInvoiceCreate = functions
   .runWith({maxInstances: 10, timeoutSeconds: 30})
@@ -120,29 +125,29 @@ export const notifyOnInquiryCreate = functions
 // Signature & KEP callable functions
 // ---------------------------------------------------------------------------
 export const createSignSession = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(createSignSessionHandler);
 
 export const completeSignSession = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(completeSignSessionHandler);
 
 export const signDocument = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(signDocumentHandler);
 
 export const initiateKEPAuth = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(initiateKEPAuthHandler);
 
 export const exchangeKEPCode = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(exchangeKEPCodeHandler);
 
 export const getKEPToken = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 30})
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
   .https.onCall(getKEPTokenHandler);
 
 export const scanDocument = functions
-  .runWith({maxInstances: 10, timeoutSeconds: 60, memory: '512MB'})
+  .runWith({maxInstances: 10, timeoutSeconds: 60, memory: '512MB', enforceAppCheck: true})
   .https.onCall(scanDocumentHandler);
