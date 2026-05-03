@@ -14,8 +14,8 @@ const {ref, uploadBytes} = require('firebase/storage');
 const fs = require('fs');
 
 const PROJECT_ID = 'lextrack-test';
-const FIRESTORE_RULES = fs.readFileSync('../firestore.rules', 'utf8');
-const STORAGE_RULES = fs.readFileSync('../storage.rules', 'utf8');
+const FIRESTORE_RULES = fs.readFileSync('./firestore.rules', 'utf8');
+const STORAGE_RULES = fs.readFileSync('./storage.rules', 'utf8');
 
 const FIRESTORE_HOST = process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8082';
 const [firestoreHost, firestorePort] = FIRESTORE_HOST.split(':');
@@ -64,9 +64,18 @@ function anonCtx() {
 }
 
 async function seedLawyer(uid) {
-  const admin = testEnv.authenticatedContext('admin_seed');
-  await setDoc(doc(admin.firestore(), 'lawyers', uid), {name: 'Lawyer'});
-  await admin.firestore().terminate();
+  await testEnv.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(), 'lawyers', uid), {name: 'Lawyer'});
+  });
+}
+
+async function seedClient(uid) {
+  await testEnv.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(), 'clients', uid), {
+      name: 'Ivan',
+      phone: '+380991234567',
+    });
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -96,7 +105,7 @@ describe('Firestore rules', () => {
       const ctx = lawyerCtx('lawyer_1');
       await assertSucceeds(
         setDoc(doc(ctx.firestore(), 'clients', 'new_client'), {
-          name: 'Іван',
+          name: 'Ivan',
           phone: '+380991234567',
           createdAt: new Date(),
         }),
@@ -107,7 +116,7 @@ describe('Firestore rules', () => {
       const ctx = clientCtx('client_1');
       await assertFails(
         setDoc(doc(ctx.firestore(), 'clients', 'client_2'), {
-          name: 'Петро',
+          name: 'Petro',
           phone: '+380991234568',
         }),
       );
@@ -124,25 +133,19 @@ describe('Firestore rules', () => {
     });
 
     it('allows client to update own name/phone', async () => {
+      await seedClient('client_1');
       const ctx = clientCtx('client_1');
-      await setDoc(doc(ctx.firestore(), 'clients', 'client_1'), {
-        name: 'Іван',
-        phone: '+380991234567',
-      });
       await assertSucceeds(
         updateDoc(doc(ctx.firestore(), 'clients', 'client_1'), {
-          name: 'Іван Оновлений',
+          name: 'Ivan Updated',
           updatedAt: new Date(),
         }),
       );
     });
 
     it('denies client update of createdAt', async () => {
+      await seedClient('client_1');
       const ctx = clientCtx('client_1');
-      await setDoc(doc(ctx.firestore(), 'clients', 'client_1'), {
-        name: 'Іван',
-        phone: '+380991234567',
-      });
       await assertFails(
         updateDoc(doc(ctx.firestore(), 'clients', 'client_1'), {
           createdAt: new Date(),
@@ -164,8 +167,8 @@ describe('Firestore rules', () => {
       );
       await assertSucceeds(
         setDoc(caseRef, {
-          title: 'Справка',
-          status: 'Розглядається',
+          title: 'Spravka',
+          status: 'in_progress',
           progress: 0,
           createdAt: new Date(),
         }),
@@ -176,6 +179,7 @@ describe('Firestore rules', () => {
     });
 
     it('allows client read but not write', async () => {
+      await seedClient('client_1');
       const ctx = clientCtx('client_1');
       const caseRef = doc(
         ctx.firestore(),
@@ -200,14 +204,14 @@ describe('Firestore rules', () => {
       );
       await assertFails(
         setDoc(caseRef, {
-          title: 'Справка',
+          title: 'Spravka',
           status: 'invalid_status',
           progress: 0,
         }),
       );
     });
 
-    it('denies progress outside 0–100', async () => {
+    it('denies progress outside 0-100', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
       const caseRef = doc(
@@ -219,8 +223,8 @@ describe('Firestore rules', () => {
       );
       await assertFails(
         setDoc(caseRef, {
-          title: 'Справка',
-          status: 'Розглядається',
+          title: 'Spravka',
+          status: 'Rozglyadaye',
           progress: 101,
         }),
       );
@@ -238,8 +242,8 @@ describe('Firestore rules', () => {
       );
       await assertFails(
         setDoc(caseRef, {
-          title: 'Справка',
-          status: 'Розглядається',
+          title: 'Spravka',
+          status: 'Rozglyadaye',
           progress: 50.5,
         }),
       );
@@ -251,9 +255,9 @@ describe('Firestore rules', () => {
       const ctx = anonCtx();
       await assertSucceeds(
         setDoc(doc(ctx.firestore(), 'inquiries', 'inq_1'), {
-          name: 'Олег',
+          name: 'Oleg',
           phone: '+380991234567',
-          text: 'Питання',
+          text: 'Pytannya',
           status: 'new',
           createdAt: new Date(),
         }),
@@ -264,7 +268,7 @@ describe('Firestore rules', () => {
       const ctx = anonCtx();
       await assertFails(
         setDoc(doc(ctx.firestore(), 'inquiries', 'inq_1'), {
-          name: 'Олег',
+          name: 'Oleg',
           status: 'new',
         }),
       );
@@ -276,6 +280,14 @@ describe('Firestore rules', () => {
     });
 
     it('allows lawyer read and update', async () => {
+      await testEnv.withSecurityRulesDisabled(async ctx => {
+        await setDoc(doc(ctx.firestore(), 'inquiries', 'inq_1'), {
+          name: 'Oleg',
+          phone: '+380991234567',
+          text: 'Pytannya',
+          status: 'new',
+        });
+      });
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
       const inqRef = doc(ctx.firestore(), 'inquiries', 'inq_1');
@@ -299,6 +311,7 @@ describe('Firestore rules', () => {
     });
 
     it('denies non-lawyer read', async () => {
+      await seedLawyer('lawyer_1');
       const ctx = clientCtx('client_1');
       await assertFails(getDoc(doc(ctx.firestore(), 'lawyers', 'lawyer_1')));
     });
@@ -325,9 +338,9 @@ describe('Storage rules', () => {
         ctx.storage(),
         'clients/client_1/cases/case_1/documents/test.pdf',
       );
-      const blob = new Blob(['pdf content'], {type: 'application/pdf'});
+      const data = new Uint8Array(Buffer.from('pdf content'));
       await assertSucceeds(
-        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
       );
     });
 
@@ -338,9 +351,9 @@ describe('Storage rules', () => {
         ctx.storage(),
         'clients/client_1/cases/case_1/documents/test.pdf',
       );
-      const blob = new Blob(['pdf content'], {type: 'application/pdf'});
+      const data = new Uint8Array(Buffer.from('pdf content'));
       await assertSucceeds(
-        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
       );
     });
 
@@ -350,9 +363,9 @@ describe('Storage rules', () => {
         ctx.storage(),
         'clients/client_1/cases/case_1/documents/test.pdf',
       );
-      const blob = new Blob(['pdf content'], {type: 'application/pdf'});
+      const data = new Uint8Array(Buffer.from('pdf content'));
       await assertFails(
-        uploadBytes(sRef, blob, {contentType: 'application/pdf'}),
+        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
       );
     });
 
@@ -362,11 +375,9 @@ describe('Storage rules', () => {
         ctx.storage(),
         'clients/client_1/cases/case_1/documents/test.exe',
       );
-      const blob = new Blob(['exe content'], {
-        type: 'application/x-msdownload',
-      });
+      const data = new Uint8Array(Buffer.from('exe content'));
       await assertFails(
-        uploadBytes(sRef, blob, {contentType: 'application/x-msdownload'}),
+        uploadBytes(sRef, data, {contentType: 'application/x-msdownload'}),
       );
     });
   });

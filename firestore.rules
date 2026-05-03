@@ -2,41 +2,27 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ========== Helpers ==========
-
     function isAuth() {
       return request.auth != null;
-    }
-
-    function isLawyer() {
-      return isAuth() && exists(/databases/$(database)/documents/lawyers/$(request.auth.uid));
     }
 
     function isOwner(clientId) {
       return isAuth() && request.auth.uid == clientId;
     }
 
+    function isLawyer() {
+      return isAuth() && exists(/databases/$(database)/documents/lawyers/$(request.auth.uid));
+    }
+
     function isDocSizeValid() {
-      return request.writeSize <= 524288;
-    }
-
-    function isString(data, key) {
-      return data.keys().hasAll([key]) && data[key] is string;
-    }
-
-    function isInt(data, key) {
-      return data.keys().hasAll([key]) && data[key] is int;
-    }
-
-    function isNumber(data, key) {
-      return data.keys().hasAll([key]) && data[key] is number;
+      return !("writeSize" in request) || request.writeSize <= 524288;
     }
 
     // ========== Enum validators ==========
 
     function isValidCaseStatus(data) {
       return !data.keys().hasAll(['status']) ||
-             data.status in ['Розглядається', 'Вирішено', 'Закрито', 'Відхилено', 'new', 'in_progress', 'resolved', 'closed'];
+             data.status in ['pending', 'in_progress', 'resolved', 'closed'];
     }
 
     function isValidInvoiceStatus(data) {
@@ -228,9 +214,11 @@ service cloud.firestore {
                      && request.resource.data.status == 'new'
                      && isDocSizeValid();
 
-      allow read, update: if isLawyer()
-                           && isValidInquiryStatus(request.resource.data)
-                           && isDocSizeValid();
+      allow read: if isLawyer();
+
+      allow update: if isLawyer()
+                            && isValidInquiryStatus(request.resource.data)
+                            && isDocSizeValid();
 
       allow delete: if false;
     }

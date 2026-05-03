@@ -1,0 +1,53 @@
+name: Deploy Firebase Rules
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'firestore.rules'
+      - 'storage.rules'
+      - '.github/workflows/deploy-firebase-rules.yml'
+      - 'firebase.json'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target: default, prod, staging'
+        required: true
+        default: 'default'
+
+jobs:
+  build-and-deploy:
+    name: Deploy Firestore & Storage Rules
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Verify .firebaserc exists
+        run: test -f .firebaserc && echo ".firebaserc OK" || (echo "Missing .firebaserc" && exit 1)
+
+      - name: Deploy Firestore rules
+        run: |
+          firebase deploy --only firestore:rules --project ${{ github.event.inputs.target || 'default' }} --token "${{ secrets.FIREBASE_TOKEN }}"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Deploy Storage rules
+        run: |
+          firebase deploy --only storage --project ${{ github.event.inputs.target || 'default' }} --token "${{ secrets.FIREBASE_TOKEN }}"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Post-deploy info
+        if: always()
+        run: echo "Rules deployed. Check Firebase Console → Firestore/Storage Rules for version."
