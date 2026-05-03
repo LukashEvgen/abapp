@@ -15,10 +15,7 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/index.ts",
-    "src/messages.ts",
-    "src/signatures.ts",
-    "src/kepAuth.ts",
-    "src/registry/*"
+    "src/**/*.ts",
+    "src/**/*.d.ts"
   ]
 }

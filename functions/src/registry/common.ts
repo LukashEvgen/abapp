@@ -77,6 +77,10 @@ function assertAppCheck(context: functions.https.CallableContext): void {
   }
 }
 
+export function fetchJson(url: string): Promise<any> {
+  return httpGet(url);
+}
+
 export {
   db,
   CACHE_TTL_HOURS,

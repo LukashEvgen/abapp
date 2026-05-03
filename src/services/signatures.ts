@@ -65,21 +65,50 @@ export async function completeSignSession(
  * One-step callable that creates a signature record in Firestore.
  * Preferred over createSignSession / completeSignSession for simple flows.
  */
+export interface SignDocumentOpts {
+  clientId: string;
+  caseId: string;
+  documentId: string;
+  documentName: string;
+  documentHash: string;
+  storagePath?: string;
+  accessToken?: string;
+  signerName?: string;
+  signerIdentifier?: string;
+  signatureType?: 'QES' | 'SES' | 'AES';
+}
+
+export async function signDocument(
+  opts: SignDocumentOpts,
+): Promise<SignatureRecord>;
 export async function signDocument(
   clientId: string,
   caseId: string,
   documentId: string,
   documentName: string,
   documentHash: string,
+): Promise<SignatureRecord>;
+export async function signDocument(
+  arg1: SignDocumentOpts | string,
+  caseId?: string,
+  documentId?: string,
+  documentName?: string,
+  documentHash?: string,
 ): Promise<SignatureRecord> {
   const callable = functions().httpsCallable('signDocument');
-  const result = await callable({
-    clientId,
-    caseId,
-    documentId,
-    documentName,
-    documentHash,
-  });
+  let payload: SignDocumentOpts;
+  if (typeof arg1 === 'string') {
+    payload = {
+      clientId: arg1,
+      caseId: caseId!,
+      documentId: documentId!,
+      documentName: documentName!,
+      documentHash: documentHash!,
+    };
+  } else {
+    payload = arg1;
+  }
+  const result = await callable(payload);
   return result.data as SignatureRecord;
 }
 

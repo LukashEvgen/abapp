@@ -1,1 +1,3 @@
-declare module 'node-fetch';
+declare module 'node-fetch' {
+  export = fetch;
+}

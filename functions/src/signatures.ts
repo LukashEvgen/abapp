@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import fetch from 'node-fetch';
 
 interface SignSessionData {
   clientId: string;
@@ -142,15 +143,187 @@ interface SignDocumentData {
   caseId: string;
   documentId: string;
   documentName: string;
-  documentHash: string;
+  documentHash?: string;
+  storagePath?: string;
+  accessToken?: string;
   signerName?: string;
   signerIdentifier?: string;
   signatureType?: 'QES' | 'SES' | 'AES';
 }
 
+/* ================================================================
+   Helper: fetch or refresh KEP access token for the caller
+   ================================================================ */
+async function getValidKEPToken(uid: string): Promise<string> {
+  const tokenRef = admin
+    .firestore()
+    .collection('lawyers')
+    .doc(uid)
+    .collection('kepTokens')
+    .doc('id.gov.ua');
+
+  const doc = await tokenRef.get();
+  if (!doc.exists) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'No KEP token found. Complete OAuth flow first.',
+    );
+  }
+
+  const data = doc.data()!;
+  let accessToken: string = data.accessToken;
+  let expiresAtMs: number = data.expiresAt
+    ? (data.expiresAt as admin.firestore.Timestamp).toMillis()
+    : 0;
+
+  // Refresh if expires in < 5 minutes
+  if (Date.now() + 5 * 60 * 1000 > expiresAtMs) {
+    const refreshToken: string | undefined = data.refreshToken;
+    if (!refreshToken) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'KEP token expired and no refresh token available.',
+      );
+    }
+
+    const cfg = functions.config().kep || {};
+    const clientId = cfg.client_id || '';
+    const clientSecret = cfg.client_secret || '';
+    if (!clientId || !clientSecret) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'Kep OAuth config missing.',
+      );
+    }
+
+    const tokenUrl = cfg.token_url || 'https://id.gov.ua/token';
+    const refreshRes = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }).toString(),
+    });
+
+    if (!refreshRes.ok) {
+      const text = await refreshRes.text();
+      console.error('id.gov.ua token refresh failed', refreshRes.status, text);
+      throw new functions.https.HttpsError(
+        'unknown',
+        `KEP token refresh failed: ${refreshRes.status} – ${text}`,
+      );
+    }
+
+    const refreshJson = (await refreshRes.json()) as {
+      access_token: string;
+      refresh_token?: string;
+      expires_in?: number;
+      token_type?: string;
+      scope?: string;
+    };
+
+    accessToken = refreshJson.access_token;
+    expiresAtMs = Date.now() + (refreshJson.expires_in || 3600) * 1000;
+
+    const updateData: Record<string, any> = {
+      accessToken,
+      expiresAt: admin.firestore.Timestamp.fromMillis(expiresAtMs),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    if (refreshJson.refresh_token) {
+      updateData.refreshToken = refreshJson.refresh_token;
+    }
+    if (refreshJson.token_type) {
+      updateData.tokenType = refreshJson.token_type;
+    }
+    if (refreshJson.scope) {
+      updateData.scope = refreshJson.scope;
+    }
+
+    await tokenRef.update(updateData);
+  }
+
+  return accessToken;
+}
+
+/* ================================================================
+   Helper: download file from Storage and compute SHA-256
+   ================================================================ */
+async function hashFromStorage(path: string): Promise<string> {
+  const bucket = admin.storage().bucket();
+  const file = bucket.file(path);
+  const [buffer] = await file.download();
+  const crypto = await import('crypto');
+  return crypto.createHash('sha256').update(buffer).digest('hex');
+}
+
+/* ================================================================
+   Helper: call id.gov.ua remote signing API
+   ================================================================ */
+interface IdGovUaSignResponse {
+  status: 'signed' | 'failed' | 'pending';
+  signatureHash?: string;
+  signatureData?: string;
+  timestamp?: string;
+  errorMessage?: string;
+}
+
+async function callIdGovUaSign(
+  accessToken: string,
+  documentHash: string,
+): Promise<IdGovUaSignResponse> {
+  const cfg = functions.config().kep || {};
+  const signUrl = cfg.sign_url || 'https://id.gov.ua/api/v1/sign';
+
+  const res = await fetch(signUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({hash: documentHash, algorithm: 'sha256'}),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('id.gov.ua sign API error', res.status, text);
+
+    if (res.status === 400) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `KEP sign rejected: ${text}`,
+      );
+    }
+    if (res.status === 401 || res.status === 403) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        `KEP access denied: ${text}`,
+      );
+    }
+    if (res.status >= 500) {
+      throw new functions.https.HttpsError(
+        'unavailable',
+        `KEP service unavailable (${res.status}): ${text}`,
+      );
+    }
+    throw new functions.https.HttpsError(
+      'unknown',
+      `KEP sign failed: ${res.status} – ${text}`,
+    );
+  }
+
+  const json = (await res.json()) as IdGovUaSignResponse;
+  return json;
+}
+
 /**
  * One-step document signing callable.
  * Validates the caller is authenticated, verifies they belong to the case,
+ * downloads the document from Storage (if storagePath provided), computes
+ * or uses the provided hash, calls id.gov.ua sign API with a valid KEP token,
  * writes a signature record in Firestore under
  *   clients/{clientId}/cases/{caseId}/documents/{documentId}/signatures
  * and returns the created signature object.
@@ -165,6 +338,8 @@ export const signDocumentHandler = async (
     documentId,
     documentName,
     documentHash,
+    storagePath,
+    accessToken: explicitAccessToken,
     signerName,
     signerIdentifier,
     signatureType = 'QES',
@@ -177,8 +352,9 @@ export const signDocumentHandler = async (
     );
   }
 
-  // Optional ownership / role validation: check caller UID belongs to the lawyer list
   const uid = context.auth.uid;
+
+  // --- case authorization --------------------------------------------------
   const caseDoc = await admin
     .firestore()
     .collection('clients')
@@ -207,6 +383,23 @@ export const signDocumentHandler = async (
     );
   }
 
+  // --- resolve document hash -----------------------------------------------
+  let hash = documentHash || '';
+  if (!hash && storagePath) {
+    try {
+      hash = await hashFromStorage(storagePath);
+    } catch {
+      console.error('Failed to download/hash document');
+    }
+  }
+
+  // --- ensure we have a valid KEP access token -------------------------------
+  const token = explicitAccessToken || (await getValidKEPToken(uid));
+
+  // --- call id.gov.ua sign API ---------------------------------------------
+  const signResponse = await callIdGovUaSign(token, hash);
+
+  // --- write signature record -----------------------------------------------
   const signatureRef = admin
     .firestore()
     .collection('clients')
@@ -223,19 +416,27 @@ export const signDocumentHandler = async (
     id: signatureRef.id,
     documentId,
     documentName: documentName || '',
-    status: 'signed',
+    status: signResponse.status || 'signed',
     signedAt: now,
     signerName: signerName || context.auth.token?.name || 'Юрист (КЕП)',
     signerIdentifier:
       signerIdentifier || context.auth.token?.edrpou || uid,
-    signatureHash: documentHash,
+    signatureHash: hash,
     signatureType,
     verificationUrl: 'https://id.gov.ua/verify',
     signedByUid: uid,
     createdAt: now,
+    ...(signResponse.signatureData
+      ? {signatureData: signResponse.signatureData}
+      : {}),
+    ...(signResponse.errorMessage
+      ? {errorMessage: signResponse.errorMessage}
+      : {}),
+    ...(signResponse.timestamp
+      ? {externalTimestamp: signResponse.timestamp}
+      : {}),
   };
 
-  // Also mark the document as signed for quick filtering
   const docRef = admin
     .firestore()
     .collection('clients')
