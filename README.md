@@ -84,8 +84,9 @@ npm install
    - **iOS:** у консолі Xcode в debug-режимі з’явиться аналогічний токен. Додайте його у тому ж розділі Firebase Console.
 
 4. **Cloud Functions**
-   - Усі callable-функції в `functions/index.js` перевіряють `context.app != null` та повертають `failed-precondition` для запитів без дійсного App Check token.
+   - Усі callable-функції в `functions/src/index.ts` використовують `enforceAppCheck: true` та перевіряють `context.app != null`, повертаючи `failed-precondition` для запитів без дійсного App Check token.
    - Для HTTPS `onRequest` функцій перевіряється заголовок `X-Firebase-AppCheck`.
+   - Детальна довідка з налаштування: [`docs/FIREBASE_APP_CHECK_SETUP.md`](docs/FIREBASE_APP_CHECK_SETUP.md).
 
 > **⚠️ Не деплоюйте на production без схвалення CTO.** Переконайтеся, що SHA-256 релізного ключа додано у Firebase Console та debug-токени видалені/неактивні для prod.
 
@@ -185,6 +186,7 @@ cd android
 
 | Документ | Опис |
 |----------|------|
+| [`docs/FIREBASE_APP_CHECK_SETUP.md`](docs/FIREBASE_APP_CHECK_SETUP.md) | Повний гайд налаштування Firebase App Check (Play Integrity, DeviceCheck, debug tokens, verify checklist) |
 | [`docs/LexTrack-v2-TZ.md`](docs/LexTrack-v2-TZ.md) | Повне технічне завдання LexTrack v2 (архітектура, стек, вимоги, план) |
 | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Інструкція для розробників (налаштування середовища, дизайн-система, тестування) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Історія змін та версіонування |

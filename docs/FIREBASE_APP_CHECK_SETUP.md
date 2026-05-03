@@ -137,15 +137,9 @@ After both Play Integrity and DeviceCheck are successfully receiving attestation
 
 ### 6.3 Cloud Functions (Callable)
 
-The current code does `context.app` checks manually. For stricter enforcement, wrap callable handlers with `runWith({ enforceAppCheck: true })`:
+All callable functions in `functions/src/index.ts` now use `runWith({ enforceAppCheck: true })` (applied in commit `6cbab36`).
 
-```ts
-export const searchEdr = functions
-  .runWith({ maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true })
-  .https.onCall(searchEdrHandler);
-```
-
-Apply this to **all** `.https.onCall` exports in `functions/src/index.ts`.
+This, combined with the runtime `assertAppCheck` assertion, ensures that any request without a valid App Check token is immediately rejected with a `failed-precondition` error before reaching business logic.
 
 ---
 
