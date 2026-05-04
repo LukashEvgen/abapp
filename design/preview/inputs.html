@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><link rel="stylesheet" href="../colors_and_type.css"><title>Inputs</title><style>
+body{margin:0;padding:24px;display:flex;flex-direction:column;gap:14px;max-width:380px;}
+.label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);}
+.field{background:var(--surface-base);border:1px solid var(--border-subtle);border-radius:10px;padding:11px 14px;}
+.field input{width:100%;background:transparent;border:none;outline:none;font-family:var(--font-sans);font-size:14px;color:var(--text-primary);}
+.field input::placeholder{color:var(--text-tertiary);}
+.field.focused{background:#fff;border-color:var(--brand-primary);box-shadow:var(--shadow-focus);}
+.field.error{border-color:var(--danger);}
+.err{font-size:12px;color:var(--danger);margin-top:6px;}
+</style></head><body>
+<div><div class="label">DEFAULT</div><div class="field"><input placeholder="Пошук за назвою..."></div></div>
+<div><div class="label">FILLED</div><div class="field"><input value="+380 67 904 09 72"></div></div>
+<div><div class="label">FOCUSED</div><div class="field focused"><input value="Олексій Коваленко"></div></div>
+<div><div class="label">ERROR</div><div class="field error"><input value="123"></div><div class="err">Невірний формат номера</div></div>
+</body></html>

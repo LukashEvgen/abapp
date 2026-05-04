@@ -3,27 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LexTrack — Mockups Preview</title>
+<title>LexTrack — Mockups Gallery V3 (Light)</title>
 <style>
+  :root {
+    --bg: #FFFFFF;
+    --base: #F8F9FA;
+    --raised: #FFFFFF;
+    --text-primary: #1B1D1F;
+    --text-secondary: #5C6164;
+    --text-tertiary: #7C8084;
+    --brand: #2A8FA8;
+    --brand-light: #4FA9BF;
+    --brand-muted: rgba(42,143,168,0.12);
+    --border-subtle: #E4E7E9;
+    --border-default: #C9CDD0;
+    --shadow-1: 0 1px 2px rgba(15,16,17,0.06);
+    --shadow-2: 0 2px 6px rgba(15,16,17,0.08);
+    --shadow-3: 0 8px 24px rgba(15,16,17,0.10);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #0A0D0E;
-    color: #F0F1F2;
+    background: var(--base);
+    color: var(--text-primary);
     padding: 32px 24px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
+
   header { text-align: center; margin-bottom: 40px; }
-  header h1 { font-size: 28px; margin-bottom: 8px; color: #41A9A5; }
-  header p { color: #8A9496; font-size: 14px; }
+  header h1 { font-size: 28px; margin-bottom: 8px; color: var(--brand); }
+  header p { color: var(--text-secondary); font-size: 14px; }
 
   .section { margin-bottom: 48px; }
   .section-title {
     font-size: 18px;
     font-weight: 700;
-    color: #41A9A5;
-    border-bottom: 1px solid #1E2324;
+    color: var(--brand);
+    border-bottom: 1px solid var(--border-subtle);
     padding-bottom: 10px;
     margin-bottom: 20px;
     display: flex;
@@ -37,49 +55,50 @@
     letter-spacing: .05em;
     padding: 4px 10px;
     border-radius: 999px;
-    background: rgba(65,169,165,0.15);
-    color: #41A9A5;
+    background: var(--brand-muted);
+    color: var(--brand);
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 24px;
   }
   .card {
-    background: #101314;
-    border: 1px solid #1E2324;
-    border-radius: 12px;
+    background: var(--raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
     overflow: hidden;
     transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: var(--shadow-1);
   }
   .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    box-shadow: var(--shadow-3);
   }
   .card img {
     width: 100%;
     height: auto;
     display: block;
-    background: #161A1B;
+    background: var(--base);
   }
   .card .label {
     padding: 12px 14px;
     font-size: 13px;
     font-weight: 600;
-    color: #D8DBDC;
+    color: var(--text-secondary);
     text-align: center;
-    border-top: 1px solid #1E2324;
+    border-top: 1px solid var(--border-subtle);
   }
 
-  .count { color: #8A9496; font-weight: 500; }
+  .count { color: var(--text-tertiary); font-weight: 500; }
 
   footer {
     text-align: center;
     padding: 32px 0 16px;
-    color: #6A7A7C;
+    color: var(--text-tertiary);
     font-size: 12px;
-    border-top: 1px solid #1E2324;
+    border-top: 1px solid var(--border-subtle);
     margin-top: 16px;
   }
 
@@ -91,10 +110,11 @@
 <body>
 
 <header>
-  <h1>LexTrack — Mockup Gallery</h1>
-  <p>Візуальна навігація по екранах додатку LexTrack</p>
+  <h1>LexTrack — Mockup Gallery V3</h1>
+  <p>Візуальна навігація по екранах додатку LexTrack (світла тема V3)</p>
 </header>
 
+<!-- Shared -->
 <div class="section">
   <h2 class="section-title">Спільні <span class="badge">Shared</span></h2>
   <div class="grid">
@@ -102,6 +122,7 @@
   </div>
 </div>
 
+<!-- Admin -->
 <div class="section">
   <h2 class="section-title">Адміністратор <span class="badge">Admin</span></h2>
   <div class="grid">
@@ -114,13 +135,13 @@
   </div>
 </div>
 
+<!-- Client -->
 <div class="section">
   <h2 class="section-title">Клієнт <span class="badge">Client</span></h2>
   <div class="grid">
     <div class="card"><img src="mockups/client_dashboard.png" alt="Client Dashboard" loading="lazy"><div class="label">Client Dashboard</div></div>
     <div class="card"><img src="mockups/my_cases.png" alt="My Cases" loading="lazy"><div class="label">My Cases</div></div>
     <div class="card"><img src="mockups/case_detail.png" alt="Case Detail" loading="lazy"><div class="label">Case Detail</div></div>
-    <div class="card"><img src="mockups/casedetail.png" alt="CaseDetail" loading="lazy"><div class="label">CaseDetail</div></div>
     <div class="card"><img src="mockups/my_documents.png" alt="My Documents" loading="lazy"><div class="label">My Documents</div></div>
     <div class="card"><img src="mockups/scanner.png" alt="Scanner" loading="lazy"><div class="label">Scanner</div></div>
     <div class="card"><img src="mockups/my_invoices.png" alt="My Invoices" loading="lazy"><div class="label">My Invoices</div></div>
@@ -132,18 +153,19 @@
   </div>
 </div>
 
+<!-- Legacy -->
 <div class="section">
-  <h2 class="section-title">Індекс <span class="badge">Legacy mockups/</span></h2>
-  <p style="color:#8A9496;font-size:13px;margin-bottom:16px;
-    Повний індекс файлів у папці <code>mockups/</code> (legacy) та <code>design/mockups/</code> (canonical):</p>
+  <h2 class="section-title">Legacy <span class="badge">Deprecated</span></h2>
+  <p style="color:var(--text-tertiary);font-size:13px;margin-bottom:16px;">Нижче перелічені файли, що залишені для сумісності або є застарілими темно-темними мокапами.</p>
   <div class="grid">
-    <div class="card"><img src="mockups/dashboard.png" alt="Dashboard" loading="lazy"><div class="label">dashboard.png</div></div>
-    <div class="card"><img src="mockups/mycases.png" alt="MyCases" loading="lazy"><div class="label">mycases.png</div></div>
+    <div class="card"><img src="mockups/dashboard.png" alt="Dashboard (legacy dark)" loading="lazy"><div class="label">dashboard.png (legacy)</div></div>
+    <div class="card"><img src="mockups/mycases.png" alt="MyCases (legacy)" loading="lazy"><div class="label">mycases.png (legacy)</div></div>
+    <div class="card"><img src="mockups/casedetail.png" alt="CaseDetail (legacy naming)" loading="lazy"><div class="label">casedetail.png (legacy)</div></div>
   </div>
 </div>
 
 <footer>
-  LexTrack Design System — Palette V2 — Dark theme
+  LexTrack Design System — Tokens V3 — Light theme — <a href="preview/colors-brand.html" style="color:var(--brand)">Brand colors</a> · <a href="preview/surfaces.html" style="color:var(--brand)">Surfaces</a> · <a href="preview/type-scale.html" style="color:var(--brand)">Type scale</a>
 </footer>
 
 </body>

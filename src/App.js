@@ -3,6 +3,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider} from './context/AuthContext';
 import AppNavigator from './navigation/AppNavigator';
+import PushNotificationsProvider from './components/PushNotificationsProvider';
 import SecurityGate from './components/SecurityGate';
 import {activateAppCheck} from './services/appCheck';
 
@@ -28,7 +29,9 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <SecurityGate>
-            <AppNavigator />
+            <PushNotificationsProvider>
+              <AppNavigator />
+            </PushNotificationsProvider>
           </SecurityGate>
         </AuthProvider>
       </QueryClientProvider>

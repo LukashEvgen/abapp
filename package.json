@@ -16,10 +16,16 @@
     "moduleFileExtensions": [
       "js",
       "jsx",
-      "json"
+      "json",
+      "ts",
+      "tsx",
+      "mjs"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(react-native|@react-native|date-fns|@firebase|firebase)/)"
+    ],
+    "testPathIgnorePatterns": [
+      "tests/"
     ],
     "collectCoverageFrom": [
       "src/utils/helpers.js",

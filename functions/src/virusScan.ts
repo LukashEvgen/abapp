@@ -19,7 +19,8 @@ export async function hashFromBuffer(buf: Buffer): Promise<string> {
 async function getVirusTotalReport(
   sha256: string,
 ): Promise<{scanned: boolean; malicious: number} | null> {
-  if (!VIRUSTOTAL_API_KEY) {
+  const apiKey = process.env.VIRUSTOTAL_API_KEY;
+  if (!apiKey) {
     console.warn('VIRUSTOTAL_API_KEY not set, skipping real scan');
     return null;
   }
@@ -27,7 +28,7 @@ async function getVirusTotalReport(
     const response = await fetch(
       `https://www.virustotal.com/api/v3/files/${sha256}`,
       {
-        headers: {'x-apikey': VIRUSTOTAL_API_KEY},
+        headers: {'x-apikey': apiKey},
       },
     );
     if (response.status === 404) {
@@ -69,7 +70,7 @@ export async function scanFile(
   let scanStatus: ScanStatus = 'pending';
   let malicious = 0;
 
-  if (VIRUSTOTAL_API_KEY && fileHash) {
+  if (process.env.VIRUSTOTAL_API_KEY && fileHash) {
     const report = await getVirusTotalReport(fileHash);
     if (report) {
       scanned = report.scanned && report.malicious === 0;

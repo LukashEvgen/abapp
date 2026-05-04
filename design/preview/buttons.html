@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><link rel="stylesheet" href="../colors_and_type.css"><title>Buttons</title><style>
+body{margin:0;padding:24px;display:flex;flex-direction:column;gap:14px;align-items:flex-start;}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+button{font-family:var(--font-sans);font-size:14px;font-weight:700;border-radius:10px;padding:11px 24px;border:none;cursor:pointer;}
+.filled{background:var(--brand-primary);color:#fff;}
+.filled:hover{background:var(--brand-primary-dark);}
+.secondary{background:var(--brand-secondary);color:#fff;}
+.secondary:hover{background:var(--brand-secondary-dark);}
+.ghost{background:transparent;border:1px solid var(--brand-primary);color:var(--brand-primary);}
+.ghost:hover{background:var(--brand-primary-hover);}
+.danger{background:var(--danger);color:#fff;}
+.danger:hover{background:var(--danger-dark);}
+.disabled{opacity:.4;cursor:default;}
+.small{padding:7px 14px;font-size:12px;}
+.label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);}
+</style></head><body>
+<div class="label">PRIMARY (filled) · SECONDARY (sage grey) · GHOST · DANGER</div>
+<div class="row">
+<button class="filled">Підтвердити</button>
+<button class="secondary">Зберегти чернетку</button>
+<button class="ghost">Скасувати</button>
+<button class="danger">Видалити</button>
+<button class="filled disabled">Disabled</button>
+</div>
+<div class="label">SMALL</div>
+<div class="row">
+<button class="filled small">Зберегти</button>
+<button class="secondary small">Назад</button>
+<button class="ghost small">Деталі</button>
+</div>
+</body></html>

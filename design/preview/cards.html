@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><link rel="stylesheet" href="../colors_and_type.css"><title>Cards</title><style>
+body{margin:0;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--surface-base);}
+.card{background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:12px;padding:16px;box-shadow:var(--shadow-1);}
+.title{font-size:15px;font-weight:600;color:var(--text-primary);}
+.meta{font-size:12px;color:var(--text-secondary);margin-top:4px;}
+.row{display:flex;justify-content:space-between;align-items:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(74,155,110,0.10);color:#366E4F;}
+.badge .dot{width:6px;height:6px;border-radius:3px;background:#4A9B6E;}
+.bar{margin-top:12px;height:6px;background:var(--surface-base);border-radius:3px;overflow:hidden;}
+.fill{height:100%;background:var(--brand-primary);border-radius:3px;}
+</style></head><body>
+<div class="card">
+<div class="row"><div class="title">Захист прав на ТМ</div><div class="badge"><span class="dot"></span>Активна</div></div>
+<div class="meta">Госп. суд Києва · № 761/2024</div>
+<div class="meta" style="margin-top:2px">Засідання: 12 травня 2025</div>
+<div class="bar"><div class="fill" style="width:65%"></div></div>
+</div>
+<div class="card">
+<div class="title">Корп. спір з ТОВ «Лідер»</div>
+<div class="meta">Печерський суд · № 757/2025</div>
+<div class="bar"><div class="fill" style="width:35%;background:var(--brand-secondary)"></div></div>
+</div>
+</body></html>

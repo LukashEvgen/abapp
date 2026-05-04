@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {useAuth} from '../context/AuthContext';
+import {navigationRef} from './navigationRef';
 
 import {colors, tokens} from '../utils/theme';
 
@@ -181,7 +182,7 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {!user ? (
           <Stack.Screen name="Login" component={LoginScreen} />
