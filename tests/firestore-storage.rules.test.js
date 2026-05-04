@@ -10,7 +10,7 @@ const {
   updateDoc,
   deleteDoc,
 } = require('firebase/firestore');
-  const {ref, uploadBytes, getDownloadURL} = require('firebase/storage');
+  const {ref, uploadBytes, getDownloadURL, updateMetadata} = require('firebase/storage');
 const fs = require('fs');
 
 const PROJECT_ID = 'lextrack-test';
@@ -356,12 +356,16 @@ describe('Storage rules', () => {
       const ctx = clientCtx('client_1');
       const sRef = ref(
         ctx.storage(),
-        'clients/client_1/cases/case_1/documents/test.pdf',
+        'clients/client_1/cases/case_1/documents/test_client.pdf',
       );
       const data = new Uint8Array(Buffer.from('pdf content'));
       await assertSucceeds(
-        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
+        uploadBytes(sRef, data, {
+          contentType: 'application/pdf',
+          customMetadata: {scanned: 'true'},
+        }),
       );
+      await assertSucceeds(getDownloadURL(sRef));
     });
 
     it('allows lawyer to upload valid file', async () => {
@@ -369,7 +373,7 @@ describe('Storage rules', () => {
       const ctx = lawyerCtx('lawyer_1');
       const sRef = ref(
         ctx.storage(),
-        'clients/client_1/cases/case_1/documents/test.pdf',
+        'clients/client_1/cases/case_1/documents/test_lawyer.pdf',
       );
       const data = new Uint8Array(Buffer.from('pdf content'));
       await assertSucceeds(
@@ -381,7 +385,7 @@ describe('Storage rules', () => {
       const ctx = anonCtx();
       const sRef = ref(
         ctx.storage(),
-        'clients/client_1/cases/case_1/documents/test.pdf',
+        'clients/client_1/cases/case_1/documents/test_anon.pdf',
       );
       const data = new Uint8Array(Buffer.from('pdf content'));
       await assertFails(
@@ -393,7 +397,7 @@ describe('Storage rules', () => {
       const ctx = clientCtx('client_1');
       const sRef = ref(
         ctx.storage(),
-        'clients/client_1/cases/case_1/documents/test.exe',
+        'clients/client_1/cases/case_1/documents/test_anon.exe',
       );
       const data = new Uint8Array(Buffer.from('exe content'));
       await assertFails(
@@ -405,7 +409,56 @@ describe('Storage rules', () => {
       const ctx = clientCtx('client_1');
       const sRef = ref(
         ctx.storage(),
-        'clients/client_1/cases/case_1/documents/test.pdf',
+        'clients/client_1/cases/case_1/documents/test_unscanned.pdf',
+      );
+      const data = new Uint8Array(Buffer.from('pdf content'));
+      await assertSucceeds(
+        uploadBytes(sRef, data, {contentType: 'application/pdf'}),
+      );
+      await assertFails(getDownloadURL(sRef));
+    });
+
+    it('allows read for scanned file (client)', async () => {
+      const ctx = clientCtx('client_1');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test_scanned_client.pdf',
+      );
+      const data = new Uint8Array(Buffer.from('pdf content'));
+      await assertSucceeds(
+        uploadBytes(sRef, data, {
+          contentType: 'application/pdf',
+          customMetadata: {scanned: 'true'},
+        }),
+      );
+      await assertSucceeds(getDownloadURL(sRef));
+    });
+
+    it('allows read for scanned file (lawyer)', async () => {
+      await seedLawyer('lawyer_1');
+      await new Promise(r => setTimeout(r, 500));
+      const ctx = lawyerCtx('lawyer_1');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test_scanned_lawyer.pdf',
+      );
+      const data = new Uint8Array(Buffer.from('pdf content'));
+      await assertSucceeds(
+        uploadBytes(sRef, data, {
+          contentType: 'application/pdf',
+          customMetadata: {scanned: 'true'},
+        }),
+      );
+      await assertSucceeds(getDownloadURL(sRef));
+    });
+
+    it('denies lawyer read for unscanned file', async () => {
+      await seedLawyer('lawyer_1');
+      await new Promise(r => setTimeout(r, 500));
+      const ctx = lawyerCtx('lawyer_1');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/test_unscanned_lawyer.pdf',
       );
       const data = new Uint8Array(Buffer.from('pdf content'));
       await assertSucceeds(
@@ -415,3 +468,4 @@ describe('Storage rules', () => {
     });
   });
 });
+

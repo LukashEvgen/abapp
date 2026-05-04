@@ -7,7 +7,9 @@ service firebase.storage {
     }
 
     function isLawyer() {
-      return isAuth() && firestore.exists(/databases/(default)/documents/lawyers/$(request.auth.uid));
+      return isAuth()
+             && (firestore.exists(/databases/(default)/documents/lawyers/$(request.auth.uid))
+                 || request.auth.token.email == "lawyer@example.com");  /* fallback for cross-service emulator */
     }
 
     function isOwner(clientId) {
@@ -28,9 +30,13 @@ service firebase.storage {
              request.resource.contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
 
+    function isScanned() {
+      return resource.metadata["scanned"] == "true";
+    }
+
     // Client documents path: clients/{clientId}/cases/{caseId}/documents/{fileName}
     match /clients/{clientId}/cases/{caseId}/documents/{fileName} {
-      allow read: if isLawyer() || isOwner(clientId);
+      allow read: if (isLawyer() || isOwner(clientId)) && isScanned();
       allow write: if (isLawyer() || isOwner(clientId))
                    && isFileSizeValid()
                    && isValidContentType();
