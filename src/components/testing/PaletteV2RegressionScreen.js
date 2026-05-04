@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
-import {colors, spacing, radius, tokens, typography} from '../../utils/theme';
+import {colors, spacing, radius, tokens, typography} from '../../utils/theme.js';
 import {
   Badge,
   GoldButton,
@@ -14,9 +14,9 @@ import {
 } from '../shared/UIComponents';
 
 /**
- * Palette V2 Visual Regression Screen
+ * Palette V3 Visual Regression Screen
  *
- * Renders every V2 color in every supported UI context.
+ * Renders every V3 color in every supported UI context.
  * Intended for snapshot tests and manual QA preview.
  */
 export default function PaletteV2RegressionScreen() {
@@ -41,7 +41,7 @@ export default function PaletteV2RegressionScreen() {
 
       {/* Neutral Scale */}
       <Text style={styles.heading}>Neutral Scale</Text>
-      {['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950', '1000'].map(key => (
+      {['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '1000'].map(key => (
         <View key={key} style={styles.neutralRow}>
           <Text style={styles.neutralLabel}>neutral.{key}</Text>
           <View

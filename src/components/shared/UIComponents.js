@@ -7,8 +7,8 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import {colors, spacing, radius, typography, tokens} from '../utils/theme';
-import {statusColors, statusBgColors, initials} from '../utils/helpers';
+import {colors, spacing, radius, typography, tokens} from '../../utils/theme';
+import {statusColors, statusBgColors, initials} from '../../utils/helpers';
 
 export const Badge = ({status}) => {
   const color = statusColors[status] || colors.muted;
@@ -126,7 +126,7 @@ export const StatCard = ({icon, label, value}) => (
 );
 
 export const Avatar = ({name, size = 40}) => {
-  const {initials: getInitials} = require('../utils/helpers');
+  const {initials: getInitials} = require('../../utils/helpers');
   return (
     <View
       style={[
