@@ -323,24 +323,97 @@ describe('Firestore rules', () => {
     });
   });
 
-  describe('lawyers', () => {
-    it('allows lawyer read own record', async () => {
+  describe('clients/{clientId}/cases/{caseId}/events/{eventId}', () => {
+    it('denies client write', async () => {
+      await seedClient('client_1');
+      const ctx = clientCtx('client_1');
+      const ref = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1', 'events', 'ev_1');
+      await assertFails(
+        setDoc(ref, {text: 'Event', actor: 'lawyer'}),
+      );
+    });
+
+    it('allows lawyer create with required fields', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
-      await assertSucceeds(getDoc(doc(ctx.firestore(), 'lawyers', 'lawyer_1')));
+      const ref = doc(ctx.firestore(), 'clients', 'client_1', 'cases', 'case_1', 'events', 'ev_1');
+      await assertSucceeds(
+        setDoc(ref, {text: 'Event', actor: 'lawyer', createdAt: new Date()}),
+      );
     });
+  });
 
-    it('denies non-lawyer read', async () => {
-      await seedLawyer('lawyer_1');
+  describe('clients/{clientId}/invoices/{invoiceId}', () => {
+    it('denies client create', async () => {
+      await seedClient('client_1');
       const ctx = clientCtx('client_1');
-      await assertFails(getDoc(doc(ctx.firestore(), 'lawyers', 'lawyer_1')));
+      const ref = doc(ctx.firestore(), 'clients', 'client_1', 'invoices', 'inv_1');
+      await assertFails(
+        setDoc(ref, {amount: 100, status: 'pending'}),
+      );
     });
 
-    it('denies all writes', async () => {
+    it('allows lawyer create', async () => {
+      await seedLawyer('lawyer_1');
+      const ctx = lawyerCtx('lawyer_1');
+      const ref = doc(ctx.firestore(), 'clients', 'client_1', 'invoices', 'inv_1');
+      await assertSucceeds(
+        setDoc(ref, {amount: 100, status: 'pending', createdAt: new Date()}),
+      );
+    });
+  });
+
+  describe('lawyers collection', () => {
+    it('denies lawyer write to own record', async () => {
       await seedLawyer('lawyer_1');
       const ctx = lawyerCtx('lawyer_1');
       await assertFails(
         setDoc(doc(ctx.firestore(), 'lawyers', 'lawyer_1'), {name: 'Hack'}),
+      );
+    });
+  });
+
+  describe('inquiries', () => {
+    it('denies anonymous read', async () => {
+      const ctx = anonCtx();
+      await assertFails(getDoc(doc(ctx.firestore(), 'inquiries', 'inq_1')));
+    });
+  });
+
+  describe('clients/{clientId}/cases/{caseId}/documents/{documentId}/signatures/{signatureId}', () => {
+    it('denies client create', async () => {
+      await seedClient('client_1');
+      const ctx = clientCtx('client_1');
+      const ref = doc(
+        ctx.firestore(),
+        'clients',
+        'client_1',
+        'cases',
+        'case_1',
+        'documents',
+        'doc_1',
+        'signatures',
+        'sig_1',
+      );
+      await assertFails(
+        setDoc(ref, {documentId: 'doc_1', status: 'pending'}),
+      );
+    });
+  });
+
+  describe('negative — IDOR and role bypass', () => {
+    it('denies client from reading another clients case', async () => {
+      await seedClient('client_1');
+      const ctx = clientCtx('client_1');
+      const caseRef = doc(ctx.firestore(), 'clients', 'client_2', 'cases', 'case_1');
+      await assertFails(getDoc(caseRef));
+    });
+
+    it('denies client from updating own createdAt', async () => {
+      await seedClient('client_1');
+      const ctx = clientCtx('client_1');
+      await assertFails(
+        updateDoc(doc(ctx.firestore(), 'clients', 'client_1'), {createdAt: new Date()}),
       );
     });
   });
@@ -465,6 +538,18 @@ describe('Storage rules', () => {
         uploadBytes(sRef, data, {contentType: 'application/pdf'}),
       );
       await assertFails(getDownloadURL(sRef));
+    });
+
+    it('denies upload exceeding 25 MB', async () => {
+      const ctx = clientCtx('client_1');
+      const sRef = ref(
+        ctx.storage(),
+        'clients/client_1/cases/case_1/documents/huge.pdf',
+      );
+      const big = new Uint8Array(26 * 1024 * 1024);
+      await assertFails(
+        uploadBytes(sRef, big, {contentType: 'application/pdf'}),
+      );
     });
   });
 });

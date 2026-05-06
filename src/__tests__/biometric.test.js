@@ -22,6 +22,7 @@ import {
   getSessionTimestamp,
   clearSession,
 } from '../security/biometric';
+import {isSessionExpired, refreshSession, invalidateSession} from '../security/session';
 
 describe('biometric module', () => {
   beforeEach(() => {
@@ -50,5 +51,34 @@ describe('biometric module', () => {
     await clearSession();
     const ts = await getSessionTimestamp();
     expect(ts).toBeNull();
+  });
+});
+
+describe('session module', () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    await invalidateSession();
+  });
+
+  it('isSessionExpired returns true when no timestamp', async () => {
+    const expired = await isSessionExpired();
+    expect(expired).toBe(true);
+  });
+
+  it('refreshSession stores current timestamp', async () => {
+    await refreshSession();
+    const expired = await isSessionExpired();
+    expect(expired).toBe(false);
+  });
+
+  it('isSessionExpired returns true after 30 min', async () => {
+    const now = Date.now();
+    jest.spyOn(Date, 'now').mockReturnValue(now);
+    await refreshSession();
+    // Move time forward 31 minutes
+    Date.now.mockReturnValue(now + 31 * 60 * 1000);
+    const expired = await isSessionExpired();
+    expect(expired).toBe(true);
+    Date.now.mockRestore();
   });
 });

@@ -229,6 +229,12 @@ service cloud.firestore {
       allow create, update: if false; // only server-side
     }
 
+    // Audit logs (created by callable functions only)
+    match /auditLogs/{logId} {
+      allow read: if isLawyer();
+      allow create, update, delete: if false; // only server-side
+    }
+
     // ========== Registry cache (public read/write for authenticated users) ==========
 
     match /registry_cache/{docId} {

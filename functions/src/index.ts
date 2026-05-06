@@ -20,8 +20,18 @@ import {
   getKEPTokenHandler,
 } from './kepAuth';
 import {onDocumentUploadHandler} from './storageTriggers';
+import {submitInquiryHandler} from './inquiries';
+import {writeAuditLogHandler} from './auditLog';
 
+// ---------------------------------------------------------------------------
+// Public inquiry callable function
+// ---------------------------------------------------------------------------
+export const submitInquiry = functions
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
+  .https.onCall(submitInquiryHandler);
 
+// ---------------------------------------------------------------------------
+// Summaries callable function
 // ---------------------------------------------------------------------------
 // Summaries callable function
 // ---------------------------------------------------------------------------
@@ -210,6 +220,13 @@ export const getKEPToken = functions
 export const scanDocument = functions
   .runWith({maxInstances: 10, timeoutSeconds: 60, memory: '512MB', enforceAppCheck: true})
   .https.onCall(scanDocumentHandler);
+
+// ---------------------------------------------------------------------------
+// Audit Log callable function
+// ---------------------------------------------------------------------------
+export const writeAuditLog = functions
+  .runWith({maxInstances: 10, timeoutSeconds: 30, enforceAppCheck: true})
+  .https.onCall(writeAuditLogHandler);
 
 // ---------------------------------------------------------------------------
 // Storage triggers

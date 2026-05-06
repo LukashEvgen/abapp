@@ -95,6 +95,7 @@ function makeMockDoc(data: any, exists = true) {
 function makeContext(overrides?: Partial<functions.https.CallableContext>): functions.https.CallableContext {
   return {
     auth: {uid: 'lawyer-123', token: {name: 'Test Lawyer', edrpou: '12345678'}} as any,
+    app: {appId: 'test-app'} as any,
     ...overrides,
   } as functions.https.CallableContext;
 }

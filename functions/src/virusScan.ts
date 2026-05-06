@@ -1,6 +1,9 @@
 import * as admin from 'firebase-admin';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VIRUSTOTAL_API_KEY = process.env.VIRUSTOTAL_API_KEY;
+
+import * as crypto from 'crypto';
 
 export type ScanStatus = 'pending' | 'clean' | 'infected';
 
@@ -12,7 +15,6 @@ export interface ScanResult {
 }
 
 export async function hashFromBuffer(buf: Buffer): Promise<string> {
-  const crypto = await import('crypto');
   return crypto.createHash('sha256').update(buf).digest('hex');
 }
 
@@ -70,7 +72,8 @@ export async function scanFile(
   let scanStatus: ScanStatus = 'pending';
   let malicious = 0;
 
-  if (process.env.VIRUSTOTAL_API_KEY && fileHash) {
+  const apiKey = process.env.VIRUSTOTAL_API_KEY;
+  if (apiKey && fileHash) {
     const report = await getVirusTotalReport(fileHash);
     if (report) {
       scanned = report.scanned && report.malicious === 0;

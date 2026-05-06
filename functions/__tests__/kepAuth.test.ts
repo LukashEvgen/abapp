@@ -47,18 +47,37 @@ function makeFirestore() {
   };
 }
 
-jest.mock('firebase-admin', () => ({
-  initializeApp: jest.fn(),
-  firestore: jest.fn(() => ({
-    collection: mockFirestoreCollection,
-    FieldValue: {
-      serverTimestamp: jest.fn(() => '__server_timestamp__'),
-    },
-  })),
-  messaging: jest.fn(() => ({
-    send: mockSend,
-  })),
-}));
+jest.mock('firebase-admin', () => {
+  const mockMakeDocRef = () => ({
+    get: jest.fn(),
+    set: jest.fn(() => Promise.resolve()),
+    update: jest.fn(() => Promise.resolve()),
+    collection: jest.fn(() => ({doc: jest.fn(() => mockMakeDocRef())})),
+  });
+  const mockFirestoreFn = jest.fn(() => ({
+    collection: jest.fn(() => ({doc: jest.fn(() => mockMakeDocRef())})),
+    batch: jest.fn(() => ({
+      set: jest.fn(),
+      update: jest.fn(),
+      commit: jest.fn(() => Promise.resolve()),
+    })),
+  }));
+  mockFirestoreFn.FieldValue = {
+    serverTimestamp: jest.fn(() => '__server_timestamp__'),
+  };
+  mockFirestoreFn.Timestamp = {
+    fromMillis: jest.fn((ms: number) => ({toMillis: () => ms, isEqual: () => false})),
+  };
+  mockFirestoreFn.FieldPath = {
+    documentId: () => '__doc_id__',
+  };
+
+  return {
+    initializeApp: jest.fn(),
+    firestore: mockFirestoreFn,
+    messaging: jest.fn(() => ({send: jest.fn()})),
+  };
+});
 
 import * as admin from 'firebase-admin';
 
@@ -89,6 +108,7 @@ function makeMockDoc(data: any, exists = true) {
 function makeContext(overrides?: Partial<functions.https.CallableContext>): functions.https.CallableContext {
   return {
     auth: {uid: 'lawyer-123', token: {name: 'Test Lawyer'}} as any,
+    app: {appId: 'test-app'} as any,
     ...overrides,
   } as functions.https.CallableContext;
 }

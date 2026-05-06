@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as crypto from 'crypto';
 import fetch from 'node-fetch';
+import {assertAppCheck} from './registry/common';
 
 /* ------------------------------------------------------------------ */
 //  Lazy-loaded environment config
@@ -52,6 +53,8 @@ export const initiateKEPAuthHandler = async (
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
   }
+  assertAppCheck(context);
+
   requireKepConfig();
 
   const cfg = getKepConfig();
@@ -99,6 +102,8 @@ export const exchangeKEPCodeHandler = async (
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
   }
+  assertAppCheck(context);
+
   requireKepConfig();
 
   const {code, state} = data;
@@ -209,6 +214,8 @@ export const getKEPTokenHandler = async (
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
   }
+  assertAppCheck(context);
+
   requireKepConfig();
 
   const tokenRef = admin

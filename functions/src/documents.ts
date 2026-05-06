@@ -6,6 +6,7 @@ import {
   updateDocumentScanInFirestore,
   updateFileMetadata,
 } from './virusScan';
+import {assertAppCheck} from './registry/common';
 
 interface ScanDocumentData {
   clientId: string;
@@ -28,6 +29,8 @@ export const scanDocumentHandler = async (
       'User must be authenticated.',
     );
   }
+
+  assertAppCheck(context);
 
   const {clientId, caseId, documentId, storagePath, sha256, mimeType} = data;
 

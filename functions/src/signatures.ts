@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import fetch from 'node-fetch';
+import {assertAppCheck} from './registry/common';
 
 interface SignSessionData {
   clientId: string;
@@ -27,6 +28,8 @@ export const createSignSessionHandler = async (
       'User must be authenticated.',
     );
   }
+
+  assertAppCheck(context);
 
   // Optional: validate the caller is the lawyer/admin for this case
   const sessionRef = admin
@@ -79,6 +82,8 @@ export const completeSignSessionHandler = async (
       'User must be authenticated.',
     );
   }
+
+  assertAppCheck(context);
 
   // In a real implementation we would verify the signature from id.gov.ua here.
   // For now we look up the session, mark it signed, and write a signature record.
@@ -351,6 +356,8 @@ export const signDocumentHandler = async (
       'User must be authenticated.',
     );
   }
+
+  assertAppCheck(context);
 
   const uid = context.auth.uid;
 
