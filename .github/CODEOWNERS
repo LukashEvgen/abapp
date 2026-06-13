@@ -1,0 +1,38 @@
+# Code owners for LexTrack mobile project
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# CI/CD workflows — require DevOps review
+/.github/workflows/         @devops-lead
+/.github/CODEOWNERS         @devops-lead
+
+# Firebase security-critical files
+/firestore.rules            @backend-lead @devops-lead
+/storage.rules              @backend-lead @devops-lead
+/firebase.json              @backend-lead @devops-lead
+
+# Cloud Functions
+/functions/                 @backend-lead
+/functions/src/             @backend-lead
+
+# React Native source
+/src/                       @mobile-lead
+/src/screens/               @mobile-lead @qa-lead
+/src/components/             @mobile-lead
+
+# E2E tests
+e2e/                        @qa-lead
+
+# Android native
+/android/                   @android-lead
+
+# iOS native
+/ios/                       @ios-lead
+/ios/fastlane/              @ios-lead @devops-lead
+
+# Documentation
+docs/                       @tech-lead
+README.md                   @tech-lead
+
+# Package / dependencies
+package.json                @tech-lead @devops-lead
+pnpm-lock.yaml              @tech-lead @devops-lead

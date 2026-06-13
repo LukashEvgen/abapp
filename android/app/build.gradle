@@ -7,6 +7,14 @@ apply plugin: "com.google.gms.google-services"
 reactNativeDir = file("../node_modules/react-native")
 androidAppDir = file(".")
 
+// Load signing secrets from local.properties if available (CI or local dev).
+// Never commit passwords to git. Keep local.properties in .gitignore.
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file("local.properties")
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -17,8 +25,8 @@ android {
         applicationId "com.lextrack"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.1.0"
     }
     signingConfigs {
         debug {
@@ -29,10 +37,9 @@ android {
         }
         release {
             storeFile file('release.keystore')
-            storePassword 'lextrack-release-pass'
-            keyAlias 'lextrack-release'
-            keyPassword 'lextrack-release-pass'
-            // TODO: Перенести пароль у CI env або local.properties для production
+            storePassword keystoreProps.getProperty("RELEASE_STORE_PASSWORD", System.getenv("RELEASE_STORE_PASSWORD") ?: "")
+            keyAlias keystoreProps.getProperty("RELEASE_KEY_ALIAS", System.getenv("RELEASE_KEY_ALIAS") ?: "")
+            keyPassword keystoreProps.getProperty("RELEASE_KEY_PASSWORD", System.getenv("RELEASE_KEY_PASSWORD") ?: "")
         }
     }
     buildTypes {

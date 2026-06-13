@@ -1,6 +1,16 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,md}" "tests/**/*.js" "functions/src/**/*.ts" "functions/__tests__/**/*.ts"
-npx eslint .
-npm run test:rules --if-present
+# Lint JavaScript/TypeScript
+npx eslint "src/**/*.{js,jsx,ts,tsx}" "functions/src/**/*.{js,ts}"
+
+# Check code formatting
+npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,md}" "functions/src/**/*.{js,ts,json,md}" "tests/**/*.js"
+
+# Run unit tests (pre-commit gate)
+npm run test -- --passWithNoTests --watchAll=false
+
+# Validate Firebase rules with emulator (if firebase CLI available)
+if command -v firebase >/dev/null 2>&1; then
+  firebase emulators:exec --only firestore,storage "npm run test:rules" --project default
+fi

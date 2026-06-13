@@ -16,8 +16,6 @@ ios/LexTrack/GoogleService-Info.plist
 firestore-debug.log
 .firebase/
 *.keystore
-!android/app/release.keystore
-!android/app/lextrack.keystore
 *.jks
 *.p12
 *.mobileprovision
@@ -29,6 +27,9 @@ temp/
 .env
 .env.local
 .env.*.local
+android/local.properties
+.DS_Store
+local.properties
 .DS_Store
 *.swp
 *.swo
