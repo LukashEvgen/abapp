@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>COMMENT</key>
-	<string>Це placeholder-файл. Отримайте справжній GoogleService-Info.plist у Firebase Console: https://console.firebase.google.com/project/lextrack-80605/settings/general/ios:com.lextrack</string>
+	<string>PLACEHOLDER — потрібно замінити на справжній GoogleService-Info.plist з Firebase Console. Інструкція: 1) Перейти в Firebase Console: https://console.firebase.google.com/project/lextrack-80605/settings/general/ios:com.lextrack 2) Натиснути "Завантажити GoogleService-Info.plist" 3) Замінити цей файл. Усі ключі IS_*_ENABLED мають бути true для production.</string>
 	<key>BUNDLE_ID</key>
 	<string>com.lextrack</string>
 	<key>PROJECT_ID</key>
@@ -11,15 +11,15 @@
 	<key>STORAGE_BUCKET</key>
 	<string>lextrack-80605.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<true/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<false></false>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<false></false>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<false></false>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:PLACEHOLDER:ios:PLACEHOLDER</string>
 </dict>

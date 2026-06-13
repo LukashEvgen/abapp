@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Hello App Display Name</string>
+	<string>LexTrack</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -33,20 +33,22 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>LexTrack використовує ваше місцезнаходження для фіксації координат юридичних об'єктів</string>
+	<key>NSCameraUsageDescription</key>
+	<string>LexTrack потребує доступу до камери для сканування документів</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>LexTrack потребує доступу до фотогалереї для додавання документів</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>LexTrack надсилатиме сповіщення про дедлайни та оновлення справ</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 </dict>
 </plist>

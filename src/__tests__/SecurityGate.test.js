@@ -4,6 +4,7 @@ jest.mock('../context/AuthContext', () => ({
 
 jest.mock('../security/jailbreak', () => ({
   isJailBroken: jest.fn(() => false),
+  isDebuggedMode: jest.fn(() => false),
 }));
 
 jest.mock('../security/biometric', () => ({

@@ -79,10 +79,15 @@
 ## 6. Definition of Done
 
 - [x] Security QA test plan committed in `docs/SECURITY_QA_TEST_PLAN.md`.
-- [ ] `appCheckEnforcement.test.ts` created and passing.
-- [ ] Additional negative rules tests added and passing.
-- [ ] Coverage for `assertAppCheck` and callable handlers ≥ 80 %.
-- [ ] Child issue (or inline comment) created for manual end-to-end App Check verification after CMP-183.
+- [x] `appCheckEnforcement.test.ts` created and passing.
+- [x] Additional negative rules tests added and passing.
+- [x] Coverage for `assertAppCheck` and callable handlers ≥ 80 %.
+- [x] RN Jest preset fixed — all 11 non-noise suites running (pushNotifications has 8 pre-existing failures).
+- [x] RN coverage expanded to all src modules; global threshold set to 10% baseline.
+- [ ] SecurityGate + jailbreak tests expanded (partial — jailbreak expanded).
+- [ ] Service layer tests added.
+- [ ] Global coverage threshold ≥ 60%.
+- [ ] Child issue for manual e2e App Check verification.
 
 ---
 
