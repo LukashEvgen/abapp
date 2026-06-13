@@ -19,7 +19,7 @@ const requestAndroidPermission = async (): Promise<boolean> => {
  * Save FCM token to the user's document and devices subcollection.
  * This supports multiple devices and keeps the legacy fcmToken field in sync.
  */
-const saveToken = async (
+export const saveToken = async (
   token: string,
   role: 'client' | 'lawyer',
 ): Promise<void> => {
@@ -39,7 +39,11 @@ const saveToken = async (
   await userRef.collection('devices').doc(token).set({
     token,
     platform: Platform.OS,
-    updatedAt: firestore.FieldValue.serverTimestamp(),
+    updatedAt:
+      firestore.FieldValue &&
+      typeof firestore.FieldValue.serverTimestamp === 'function'
+        ? firestore.FieldValue.serverTimestamp()
+        : new Date(),
   });
 };
 

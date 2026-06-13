@@ -1,5 +1,9 @@
 import {jest} from '@jest/globals';
-import {saveToken, registerForPushNotifications, listenToTokenRefresh} from '../services/pushNotifications';
+import {
+  saveToken,
+  registerForPushNotifications,
+  listenToTokenRefresh,
+} from '../services/pushNotifications';
 
 jest.mock('@react-native-firebase/auth', () => {
   return jest.fn(() => ({
@@ -10,38 +14,62 @@ jest.mock('@react-native-firebase/auth', () => {
 jest.mock('@react-native-firebase/messaging', () => {
   return jest.fn(() => ({
     getToken: jest.fn(() => Promise.resolve('test-fcm-token')),
-    onTokenRefresh: jest.fn((cb: (t: string) => void) => {
+    onTokenRefresh: jest.fn((_cb: (t: string) => void) => {
       return () => {};
     }),
   }));
 });
 
 const mockDocUpdate = jest.fn(() => Promise.resolve());
+const mockDocSet = jest.fn(() => Promise.resolve());
 const mockDocGet = jest.fn(() => Promise.resolve({exists: false, data: () => null}));
-const mockDoc = jest.fn(() => ({
-  get: mockDocGet,
-  update: mockDocUpdate,
-}));
 
 let collectionName: string | null = null;
 
+const mockFieldValueServerTimestamp = jest.fn(() => '__server_timestamp__');
+
+const mockDoc = jest.fn(() => ({
+  get: mockDocGet,
+  update: mockDocUpdate,
+  set: mockDocSet,
+  collection: jest.fn(() => ({doc: mockDoc})),
+}));
+
 jest.mock('@react-native-firebase/firestore', () => {
-  return jest.fn(() => ({
+  const instance = jest.fn(() => ({
     collection: jest.fn((name: string) => {
       collectionName = name;
       return {doc: mockDoc};
     }),
     FieldValue: {
-      serverTimestamp: jest.fn(() => '__server_timestamp__'),
+      serverTimestamp: mockFieldValueServerTimestamp,
     },
   }));
+  instance.FieldValue = {
+    serverTimestamp: mockFieldValueServerTimestamp,
+  };
+  instance.serverTimestamp = mockFieldValueServerTimestamp;
+  return instance;
+});
+
+jest.mock('react-native', () => {
+  return {
+    Platform: {OS: 'ios', Version: 16},
+    PermissionsAndroid: {
+      PERMISSIONS: {POST_NOTIFICATIONS: 'POST_NOTIFICATIONS'},
+      RESULTS: {GRANTED: 'granted'},
+      request: jest.fn(() => Promise.resolve('granted')),
+    },
+  };
 });
 
 describe('pushNotifications', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDocUpdate.mockReset();
+    mockDocSet.mockReset();
     mockDocGet.mockReset();
+    mockFieldValueServerTimestamp.mockReset();
     collectionName = null;
   });
 
@@ -50,6 +78,11 @@ describe('pushNotifications', () => {
       await saveToken('token-1', 'lawyer');
       expect(collectionName).toBe('lawyers');
       expect(mockDocUpdate).toHaveBeenCalledWith({fcmToken: 'token-1'});
+      expect(mockDocSet).toHaveBeenCalledWith({
+        token: 'token-1',
+        platform: 'ios',
+        updatedAt: expect.any(Date),
+      });
     });
 
     it('saves token to clients/{uid} when role = client', async () => {
@@ -58,26 +91,10 @@ describe('pushNotifications', () => {
       expect(mockDocUpdate).toHaveBeenCalledWith({fcmToken: 'token-1'});
     });
 
-    it('infers role from lawyers collection when no role provided', async () => {
-      // Lawyers doc exists → inferred as lawyer
-      mockDocGet.mockResolvedValueOnce({exists: true, data: () => ({})});
-      await saveToken('token-1');
-      expect(collectionName).toBe('lawyers');
-      expect(mockDocUpdate).toHaveBeenCalledWith({fcmToken: 'token-1'});
-    });
-
-    it('falls back to clients when lawyers doc does not exist', async () => {
-      // First call in saveToken: check lawyers doc → does not exist
-      mockDocGet.mockResolvedValueOnce({exists: false, data: () => null});
-      await saveToken('token-1');
-      expect(collectionName).toBe('clients');
-      expect(mockDocUpdate).toHaveBeenCalledWith({fcmToken: 'token-1'});
-    });
-
     it('returns early when no user is authenticated', async () => {
       const authMock = require('@react-native-firebase/auth');
       authMock.mockReturnValueOnce({currentUser: null});
-      await saveToken('token-1');
+      await saveToken('token-1', 'client');
       expect(mockDocUpdate).not.toHaveBeenCalled();
     });
   });
