@@ -1,0 +1,64 @@
+# This file contains the fastlane.tools configuration
+# Documentation: https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build staging iOS app (Ad Hoc distribution)"
+  lane :build_staging do
+    match(type: "adhoc", readonly: true)
+    build_app(
+      workspace: "LexTrack.xcworkspace",
+      scheme: "LexTrack",
+      configuration: "Release",
+      export_method: "ad-hoc",
+      output_directory: "build",
+      output_name: "LexTrack-staging.ipa",
+      xcargs: "-allowProvisioningUpdates",
+      build_settings: {
+        "CODE_SIGN_STYLE" => "Manual"
+      }
+    )
+  end
+
+  desc "Build production iOS app (App Store distribution)"
+  lane :build_release do
+    match(type: "appstore", readonly: true)
+    build_app(
+      workspace: "LexTrack.xcworkspace",
+      scheme: "LexTrack",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      output_name: "LexTrack-release.xcarchive",
+      archive_path: "build/LexTrack.xcarchive",
+      xcargs: "-allowProvisioningUpdates",
+      build_settings: {
+        "CODE_SIGN_STYLE" => "Manual"
+      }
+    )
+  end
+
+  desc "Upload to TestFlight"
+  lane :upload_testflight do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      in_house: false
+    )
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      notify_external_testers: false,
+      changelog: "Beta build #{ENV["GITHUB_RUN_NUMBER"]} — #{ENV["GITHUB_SHA"]}"
+    )
+  end
+
+  desc "Sync code signing certificates and provisioning profiles"
+  lane :sync_signing do
+    match(type: "development", readonly: true)
+    match(type: "adhoc", readonly: true)
+    match(type: "appstore", readonly: true)
+  end
+end

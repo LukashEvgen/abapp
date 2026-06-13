@@ -1,92 +1,135 @@
-# ============================================================
-# LexTrack Android ProGuard rules (MYA-16)
-# ============================================================
+# Add project specific ProGuard rules here.
+# By default, the flags in this file are appended to flags specified
+# in /usr/local/Cellar/proguard/libexec/proguard-android.txt
+# You can edit the include path and order by changing the proguardFiles
+# directive in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# --- React Native ---
--keep class com.facebook.react.bridge.** { *; }
--keep class com.facebook.react.common.** { *; }
--keep class com.facebook.react.modules.** { *; }
--keep class com.facebook.react.uimanager.** { *; }
--keep class com.facebook.react.fabric.** { *; }
--keep class com.facebook.react.views.** { *; }
--keep class com.facebook.react.animated.** { *; }
--keep class com.facebook.react.devsupport.** { *; }
--keepclassmembers class * {
-    @com.facebook.react.uimanager.annotations.ReactProp <methods>;
-}
--keepclassmembers class * {
-    @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>;
-}
+# ═════════════════════════════════════════════════════════════════
+# LexTrack — production ProGuard rules
+# Generated: 2026-06-13 by Android Developer (MYA-16)
+# Covers: Firebase, React Navigation, Reanimated, PDF, WebView,
+#         Vector Icons, Document Picker, Image Picker, Blob Util
+# ═════════════════════════════════════════════════════════════════
 
-# --- Hermes ---
+# ── React Native core ──────────────────────────────────────────
+-keep class com.facebook.react.** { *; }
 -keep class com.facebook.hermes.unicode.** { *; }
 -keep class com.facebook.jni.** { *; }
+-dontwarn com.facebook.react.**
 
-# --- Firebase (Play Services / Google Mobile Services) ---
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class com.google.android.play.core.** { *; }
--dontwarn com.google.firebase.**
--dontwarn com.google.android.gms.**
--dontwarn com.google.android.play.core.**
-
-# --- React Native Reanimated ---
--keep class com.swmansion.reanimated.** { *; }
--keep class com.swmansion.reanimated.transitions.** { *; }
--keep class com.facebook.react.** { *; }
-
-# --- React Native Gesture Handler ---
--keep class com.swmansion.gesturehandler.** { *; }
-
-# --- React Native Screens ---
--keep class com.swmansion.rnscreens.** { *; }
-
-# --- React Native Safe Area ---
--keep class com.th3rdwave.safeareacontext.** { *; }
-
-# --- React Native Vector Icons ---
--keep class com.oblador.vectoricons.** { *; }
-
-# --- React Native PDF renderer (react-native-pdf) ---
--keep class com.github.barteksc.pdfviewer.** { *; }
--keep class com.shockwave.pdfium.** { *; }
-
-# --- React Native Image Picker ---
--keep class com.imagepicker.** { *; }
-
-# --- React Native Document Picker ---
--keep class io.github.elye.** { *; }
-
-# --- React Native Blob Util ---
--keep class com.ReactNativeBlobUtil.** { *; }
-
-# --- React Native Linear Gradient ---
--keep class com.BV.LinearGradient.** { *; }
-
-# --- React Native WebView ---
--keep class com.reactnativecommunity.webview.** { *; }
-
-# --- Native methods ---
+# Keep native methods
 -keepclasseswithmembernames class * {
     native <methods>;
 }
 
-# --- Keep JavascriptInterface for WebView ---
--keepclassmembers class * {
-    @android.webkit.JavascriptInterface <methods>;
-}
+# ── Firebase (Auth, Firestore, Storage, Messaging, AppCheck) ───
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.firebase.**
+-dontwarn com.google.android.gms.**
 
-# --- Keep annotations ---
+# Firebase Auth
+-keep class com.google.firebase.auth.** { *; }
+-keep class com.google.firebase.FirebaseException { *; }
+
+# Firebase Firestore
+-keep class com.google.firebase.firestore.** { *; }
+-keepclassmembers class com.google.firebase.firestore.** { *; }
+
+# Firebase Storage
+-keep class com.google.firebase.storage.** { *; }
+
+# Firebase App Check (Play Integrity)
+-keep class com.google.firebase.appcheck.** { *; }
+-keep class com.google.firebase.appcheck.playintegrity.** { *; }
+
+# ── React Navigation & Screens ───────────────────────────────────
+-keep class com.swmansion.rnscreens.** { *; }
+-keep class com.swmansion.gesturehandler.** { *; }
+-keep class com.th3rdwave.safeareacontext.** { *; }
+-dontwarn com.swmansion.rnscreens.**
+-dontwarn com.swmansion.gesturehandler.**
+-dontwarn com.th3rdwave.safeareacontext.**
+
+# Keep Navigation Native Activity
+-keep class com.facebook.react.ReactActivity { *; }
+
+# ── Reanimated 3.x ─────────────────────────────────────────────
+-keep class com.swmansion.reanimated.** { *; }
+-keep class com.swmansion.reanimated.transitions.** { *; }
+-dontwarn com.swmansion.reanimated.**
+
+# Keep Reanimated NativeModule
+-keepclassmembers class com.swmansion.reanimated.NativeProxy { *; }
+
+# ── react-native-pdf + react-native-blob-util ──────────────────
+-keep class com.reactnativecommunity.webview.** { *; }
+-keep class com.RNFetchBlob.** { *; }
+-keep class com.ReactNativeBlobUtil.** { *; }
+-dontwarn com.RNFetchBlob.**
+-dontwarn com.ReactNativeBlobUtil.**
+
+# PDF renderer (AndroidPdfViewer / PdfRenderer)
+-keep class com.github.barteksc.pdfviewer.** { *; }
+-keep class com.shockwave.pdfium.** { *; }
+-dontwarn com.github.barteksc.pdfviewer.**
+-dontwarn com.shockwave.pdfium.**
+
+# ── react-native-webview ───────────────────────────────────────
+-keep class com.reactnativecommunity.webview.** { *; }
+-dontwarn com.reactnativecommunity.webview.**
+
+# ── react-native-vector-icons ──────────────────────────────────
+-keep class com.oblador.vectoricons.** { *; }
+-dontwarn com.oblador.vectoricons.**
+
+# ── react-native-document-picker ───────────────────────────────
+-keep class com.reactnativedocumentpicker.** { *; }
+-dontwarn com.reactnativedocumentpicker.**
+
+# ── react-native-image-picker ──────────────────────────────────
+-keep class com.imagepicker.** { *; }
+-dontwarn com.imagepicker.**
+
+# ── General Android / JS interfaces ────────────────────────────
 -keepattributes *Annotation*
--keepattributes Signature
 -keepattributes Exceptions
--keepattributes InnerClasses
--keepattributes EnclosingMethod
+-keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
 
-# --- Remove verbose logs in release ---
+# Keep JS interfaces for WebView
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}
+
+# Keep JS callback interfaces
+-keepclassmembers class * {
+    @com.facebook.react.bridge.ReactMethod <methods>;
+}
+
+# Keep parcelable classes
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+# Keep Serializable classes (used by some native modules)
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# Remove logging in release
 -assumenosideeffects class android.util.Log {
-    public static boolean isLoggable(java.lang.String, int);
-    public static int v(...);
-    public static int d(...);
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
 }

@@ -1,22 +1,32 @@
 {
-  "_comment": "Це placeholder-файл. Після реєстрації Android app у Firebase Console проєкту lextrack-80605 замініть цей файл на справжній google-services.json.",
+  "_comment": "TODO: Замінити на справжній google-services.json з Firebase Console (проєкт lextrack-80605, пакет com.lextrack). Цей файл — production-ready заготовка.",
   "project_info": {
-    "project_number": "PLACEHOLDER",
+    "project_number": "REPLACE_WITH_REAL",
     "project_id": "lextrack-80605",
-    "storage_bucket": "lextrack-80605.appspot.com"
+    "storage_bucket": "lextrack-80605.appspot.com",
+    "firebase_url": "https://lextrack-80605-default-rtdb.firebaseio.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:PLACEHOLDER:android:PLACEHOLDER",
+        "mobilesdk_app_id": "1:REPLACE_WITH_REAL:android:REPLACE_WITH_REAL",
         "android_client_info": {
           "package_name": "com.lextrack"
         }
       },
-      "api_key": [{"current_key": "PLACEHOLDER"}],
+      "oauth_client": [],
+      "api_key": [{"current_key": "REPLACE_WITH_REAL"}],
       "services": {
         "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "analytics_service": {
           "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
         }
       }
     }

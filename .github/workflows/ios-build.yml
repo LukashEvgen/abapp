@@ -1,0 +1,244 @@
+name: iOS Build & Deploy
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'ios/**'
+      - 'src/**'
+      - 'package.json'
+      - 'ios-build.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      upload_to_testflight:
+        description: 'Upload to TestFlight'
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    name: Build iOS App
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Pods
+        run: cd ios && pod install --repo-update
+
+      - name: Setup Ruby & Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Setup Fastlane Match
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+        run: |
+          cd ios && bundle exec fastlane match appstore \
+            --readonly \
+            --git_url "${{ secrets.MATCH_GIT_URL }}" \
+            --git_branch "main" \
+            --team_id "${{ secrets.APPLE_TEAM_ID }}" \
+            --app_identifier "com.lextrack.app"
+
+      - name: Build archive (staging)
+        if: github.ref != 'refs/heads/main'
+        run: |
+          cd ios && bundle exec fastlane build_staging
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_IOS_APP_ID: ${{ secrets.FIREBASE_IOS_APP_ID }}
+
+      - name: Build archive (production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd ios && bundle exec fastlane build_release
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+
+      - name: Upload staging artifact
+        if: github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-staging-ipa
+          path: ios/build/*.ipa
+          retention-days: 7
+
+      - name: Upload production artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-archive
+          path: ios/build/*.xcarchive
+          retention-days: 14
+
+  firebase-distribution-ios:
+    name: Firebase App Distribution (iOS)
+    needs: build-ios
+    runs-on: macos-latest
+    timeout-minutes: 15
+    if: github.ref != 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Download staging IPA
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-staging-ipa
+          path: ios/build/
+
+      - name: Install Firebase CLI
+        run: curl -sL https://firebase.tools | bash
+
+      - name: Distribute to QA
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          firebase appdistribution:distribute ios/build/*.ipa \
+            --app "${{ secrets.FIREBASE_IOS_APP_ID }}" \
+            --groups "qa-team" \
+            --release-notes "iOS staging build ${{ github.run_number }} — ${{ github.sha }}" \
+            --project lextrack-staging
+
+  testflight-deploy:
+    name: Upload to TestFlight
+    needs: build-ios
+    runs-on: macos-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && inputs.upload_to_testflight)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Download production archive
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-release-archive
+          path: ios/build/
+
+      - name: Upload to TestFlight
+        run: cd ios && bundle exec fastlane upload_testflight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          PILOT_APP_IDENTIFIER: com.lextrack.app
+          PILIT_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          PILOT_SKIP_WAITING_FOR_BUILD_PROCESSING: true
+
+  ios-e2e-tests:
+    name: iOS E2E Tests
+    needs: build-ios
+    runs-on: macos-latest
+    timeout-minutes: 60
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Pods
+        run: cd ios && pod install
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          export PATH="$HOME/.maestro/bin:$PATH"
+
+      - name: Build simulator app
+        run: |
+          cd ios && xcodebuild \
+            -workspace LexTrack.xcworkspace \
+            -scheme LexTrack \
+            -sdk iphonesimulator \
+            -derivedDataPath build/derived \
+            clean build
+
+      - name: Launch simulator & run E2E
+        run: |
+          xcrun simctl boot "iPhone 15" || true
+          xcrun simctl install booted ios/build/derived/Build/Products/Debug-iphonesimulator/LexTrack.app
+          xcrun simctl launch booted com.lextrack.app
+          sleep 10
+          $HOME/.maestro/bin/maestro test e2e/ios/ --format junit
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results-ios
+          path: |
+            ~/.maestro/tests/
+            e2e/reports/
+          retention-days: 7

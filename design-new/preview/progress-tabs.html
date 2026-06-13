@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><link rel="stylesheet" href="../colors_and_type.css"><title>Progress & tabs</title><style>
+body{margin:0;padding:24px;display:flex;flex-direction:column;gap:18px;}
+.label{font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);margin-bottom:6px;}
+.bar{height:6px;background:var(--surface-base);border-radius:3px;overflow:hidden;}
+.fill{height:100%;border-radius:3px;}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.tab{padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;font-family:var(--font-sans);border:1px solid var(--border-subtle);background:transparent;color:var(--text-secondary);cursor:pointer;}
+.tab.on{background:var(--brand-primary);color:#fff;border-color:var(--brand-primary);}
+</style></head><body>
+<div><div class="label">PROGRESS · 65%</div><div class="bar"><div class="fill" style="width:65%;background:var(--brand-primary)"></div></div></div>
+<div><div class="label">PROGRESS · 35% (secondary)</div><div class="bar"><div class="fill" style="width:35%;background:var(--brand-secondary)"></div></div></div>
+<div><div class="label">FILTER TABS</div><div class="tabs"><button class="tab on">Всі</button><button class="tab">Активні</button><button class="tab">Очікують</button><button class="tab">Архів</button></div></div>
+</body></html>

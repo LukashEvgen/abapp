@@ -1,4 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,md}" "tests/**/*.js" "functions/src/**/*.ts" "functions/__tests__/**/*.ts"
 npx eslint .
+npm run test:rules --if-present

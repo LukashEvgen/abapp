@@ -27,13 +27,20 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'lextrack-release-pass'
+            keyAlias 'lextrack-release'
+            keyPassword 'lextrack-release-pass'
+            // TODO: Перенести пароль у CI env або local.properties для production
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -43,6 +50,7 @@ android {
 dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:hermes-android")
-    // Firebase App Check — Play Integrity provider
+    // Firebase BOM + App Check — Play Integrity provider
+    implementation platform("com.google.firebase:firebase-bom:33.1.0")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
 }

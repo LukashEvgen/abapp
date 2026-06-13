@@ -1,0 +1,17 @@
+# e2e/.maestro/config.yaml
+flows:
+  - "android/**/*"
+  - "ios/**/*"
+
+executionOrder:
+  continueOnFailure: false
+
+basics:
+  launchApp:
+    appId: "com.lextrack"
+    clearState: true
+
+notifications:
+  - "**/login.yaml"
+  - "**/dashboard.yaml"
+  - "**/case-flow.yaml"

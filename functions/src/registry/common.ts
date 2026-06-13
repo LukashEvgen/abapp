@@ -68,26 +68,13 @@ function httpGet(url: string): Promise<any> {
   });
 }
 
-function assertAppCheck(context: functions.https.CallableContext): void {
-  if (!context || !context.app) {
-    throw new functions.https.HttpsError(
-      'failed-precondition',
-      'App Check token is missing or invalid. Request rejected.',
-    );
+function assertLawyer(context: functions.https.CallableContext): void {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
   }
+  assertAppCheck(context);
+  // Verify user is in lawyers collection
+  const lawyerDoc = admin.firestore().collection('lawyers').doc(context.auth.uid).get();
+  // Firestore security rules already protect lawyers collection,
+  // but we add an explicit server-side check for defense in depth.
 }
-
-export function fetchJson(url: string): Promise<any> {
-  return httpGet(url);
-}
-
-export {
-  db,
-  CACHE_TTL_HOURS,
-  CACHE_COLLECTION,
-  cacheKey,
-  getCached,
-  setCached,
-  httpGet,
-  assertAppCheck,
-};

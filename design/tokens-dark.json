@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "name": "LexTrack Design Tokens — Dark",
+    "version": "3.1.0",
+    "platform": "react-native",
+    "colorScheme": "dark",
+    "source": "Canonical dark theme (mockup-matching): gold accents on deep grey surfaces"
+  },
+  "colors": {
+    "brand": {
+      "primary":       "#C8A96E",
+      "primaryLight":  "#E0C48F",
+      "primaryDark":   "#A6854A",
+      "primaryMuted":  "rgba(200,169,110,0.15)",
+      "primaryHover":  "rgba(200,169,110,0.08)",
+      "secondary":      "#9DA1A4",
+      "secondaryLight": "#B5B9BC",
+      "secondaryDark":  "#7C8084",
+      "secondaryMuted": "rgba(157,161,164,0.15)"
+    },
+    "semantic": {
+      "success":      "#5DBA87",
+      "successLight": "#7FD4A8",
+      "successDark":  "#3D8A5E",
+      "successBg":    "rgba(93,186,135,0.12)",
+      "warning":      "#D9A855",
+      "warningLight": "#F0C87A",
+      "warningDark":  "#B0803A",
+      "warningBg":    "rgba(217,168,85,0.12)",
+      "danger":       "#D95C5C",
+      "dangerLight":  "#E88A8A",
+      "dangerDark":   "#A84040",
+      "dangerBg":     "rgba(217,92,92,0.12)",
+      "info":         "#5A9BD0",
+      "infoLight":    "#7FB8E0",
+      "infoDark":     "#3E729F",
+      "infoBg":       "rgba(90,155,208,0.12)"
+    },
+    "neutral": {
+      "0":    "#0F1011",
+      "50":   "#1B1D1F",
+      "100":  "#242729",
+      "200":  "#2C2F31",
+      "300":  "#424649",
+      "400":  "#5C6164",
+      "500":  "#7C8084",
+      "600":  "#9DA1A4",
+      "700":  "#B5B9BC",
+      "800":  "#C9CDD0",
+      "900":  "#E4E7E9",
+      "1000": "#F8F9FA"
+    },
+    "surface": {
+      "bg":      "#0F1011",
+      "base":    "#1B1D1F",
+      "raised":  "#242729",
+      "sunken":  "#121314",
+      "overlay": "rgba(0,0,0,0.60)",
+      "inverse": "#F8F9FA"
+    },
+    "border": {
+      "subtle":  "#2C2F31",
+      "default": "#424649",
+      "strong":  "#5C6164"
+    },
+    "text": {
+      "primary":   "#E4E7E9",
+      "secondary": "#9DA1A4",
+      "tertiary":  "#7C8084",
+      "disabled":  "#5C6164",
+      "inverse":   "#0F1011",
+      "accent":    "#C8A96E",
+      "link":      "#5A9BD0"
+    }
+  },
+  "spacing": {
+    "unit": 4,
+    "scale": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "7": 32, "8": 40, "9": 48, "10": 64 },
+    "alias": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32, "2xl": 48 }
+  },
+  "radius": { "none": 0, "sm": 6, "md": 10, "lg": 16, "xl": 24, "full": 9999 },
+  "shadows": {
+    "0": { "android": { "elevation": 0 }, "ios": { "shadowColor": "#000000", "shadowOffset": { "width": 0, "height": 0 }, "shadowOpacity": 0, "shadowRadius": 0 } },
+    "1": { "android": { "elevation": 1 }, "ios": { "shadowColor": "#000000", "shadowOffset": { "width": 0, "height": 1 }, "shadowOpacity": 0.12, "shadowRadius": 2 } },
+    "2": { "android": { "elevation": 3 }, "ios": { "shadowColor": "#000000", "shadowOffset": { "width": 0, "height": 2 }, "shadowOpacity": 0.16, "shadowRadius": 6 } },
+    "3": { "android": { "elevation": 8 }, "ios": { "shadowColor": "#000000", "shadowOffset": { "width": 0, "height": 8 }, "shadowOpacity": 0.20, "shadowRadius": 24 } }
+  },
+  "typography": {
+    "family": { "sans": "Inter", "mono": "JetBrainsMono" },
+    "weight": { "regular": "400", "medium": "500", "semibold": "600", "bold": "700", "black": "800" },
+    "size": { "xs": 11, "sm": 12, "base": 14, "md": 16, "lg": 18, "xl": 22, "2xl": 28, "3xl": 34 },
+    "lineHeight": { "tight": 1.2, "snug": 1.3, "normal": 1.5, "relaxed": 1.625 },
+    "letterSpacing": { "tight": -0.3, "normal": 0, "wide": 0.5, "wider": 1.2 }
+  }
+}

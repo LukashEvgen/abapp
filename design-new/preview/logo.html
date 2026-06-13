@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><link rel="stylesheet" href="../colors_and_type.css"><title>Logo</title><style>
+body{margin:0;padding:32px;display:flex;flex-direction:column;gap:24px;align-items:flex-start;background:var(--surface-bg);}
+.row{display:flex;align-items:center;gap:18px;}
+.lockup{display:flex;align-items:center;gap:12px;}
+.mark{display:block;}
+.word{font-weight:800;color:var(--brand-primary);letter-spacing:-.3px;line-height:1;font-family:var(--font-sans);}
+.meta{font-size:11px;color:var(--text-secondary);font-family:var(--font-mono);}
+.invert{background:var(--brand-primary);padding:14px 18px;border-radius:10px;}
+.invert .word{color:#fff;}
+.invert .mark{filter:brightness(0) invert(1);}
+</style></head><body>
+<div class="row"><div class="lockup"><img class="mark" src="../assets/logo.png" width="56" height="53" alt="LexTrack"><div class="word" style="font-size:34px">LexTrack</div></div><div class="meta">primary lockup · 56px mark + wordmark</div></div>
+<div class="row"><img class="mark" src="../assets/logo.png" width="80" height="75" alt="LexTrack"><div class="meta">mark only · 80px · app icon</div></div>
+<div class="row"><img class="mark" src="../assets/logo.png" width="32" height="30" alt="LexTrack"><div class="meta">mark only · 32px · header / nav</div></div>
+<div class="row"><div class="lockup invert"><img class="mark" src="../assets/logo.png" width="32" height="30" alt="LexTrack"><div class="word" style="font-size:22px">LexTrack</div></div><div class="meta">on-brand surface · banners / CTAs</div></div>
+</body></html>
