@@ -123,7 +123,7 @@ export default function RegistryDetail({route, navigation}) {
 
 const styles = StyleSheet.create({
   back: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.base,
     fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.md,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   linkButton: {
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
     borderRadius: radius.md,
     padding: spacing.md,
     alignItems: 'center',

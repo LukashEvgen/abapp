@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   bureauName: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.lg,
     fontWeight: tokens.typography.weight.bold,
     marginBottom: spacing.sm,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   bureauLink: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.base,
     fontWeight: tokens.typography.weight.semibold,
     marginTop: spacing.xs,

@@ -94,7 +94,7 @@ export default function MyInspections({navigation}) {
             <RefreshControl
               refreshing={isFetching}
               onRefresh={refetch}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   recommendation: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.sm,
     marginTop: spacing.sm,
   },

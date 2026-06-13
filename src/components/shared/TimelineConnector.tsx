@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
     borderColor: colors.surfaceRaised,
   },
   dotActive: {
-    backgroundColor: colors.gold,
-    borderColor: colors.goldMuted,
+    backgroundColor: colors.primary,
+    borderColor: colors.brand.primaryMuted,
   },
   line: {
     width: 2,
@@ -43,6 +43,6 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   lineActive: {
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
   },
 });

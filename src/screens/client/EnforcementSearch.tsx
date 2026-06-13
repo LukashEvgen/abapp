@@ -100,7 +100,7 @@ export default function EnforcementSearch({navigation}) {
             <RefreshControl
               refreshing={loading}
               onRefresh={() => query.trim().length >= 2 && search(query)}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={

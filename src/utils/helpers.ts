@@ -36,12 +36,12 @@ export const formatCurrency = (amount: number | string | null | undefined): stri
 };
 
 export const statusColors: Record<string, string> = {
-  Розглядається: colors.gold,
+  Розглядається: colors.primary,
   'Очікує рішення': colors.warning,
   Вирішено: colors.success,
   pending: colors.warning,
   paid: colors.success,
-  new: colors.gold,
+  new: colors.primary,
   low: colors.success,
   medium: colors.warning,
   high: colors.danger,

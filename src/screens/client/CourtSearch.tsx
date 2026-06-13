@@ -94,7 +94,7 @@ export default function CourtSearch({navigation}) {
             <RefreshControl
               refreshing={loading}
               onRefresh={() => query.trim().length >= 2 && search(query)}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   link: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.sm,
     fontWeight: tokens.typography.weight.semibold,
   },

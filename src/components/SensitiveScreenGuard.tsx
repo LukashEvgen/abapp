@@ -31,7 +31,7 @@ export default function SensitiveScreenGuard({children}) {
   if (!ready) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.gold} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.text}>Перевірка безпеки…</Text>
       </View>
     );

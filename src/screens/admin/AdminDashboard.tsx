@@ -64,7 +64,7 @@ export default function AdminDashboard({navigation}) {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor={colors.gold}
+          tintColor={colors.primary}
         />
       }>
       <Text style={styles.header}>Адмін-панель</Text>

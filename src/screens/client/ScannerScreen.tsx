@@ -205,7 +205,7 @@ export default function ScannerScreen({route, navigation}) {
         {step === 4 && (
           <>
             <Text style={styles.subtitle}>🔍 Перевірка на віруси...</Text>
-            <ActivityIndicator size="large" color={colors.gold} />
+            <ActivityIndicator size="large" color={colors.primary} />
           </>
         )}
 
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   progressText: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.base,
     textAlign: 'center',
     marginTop: spacing.sm,

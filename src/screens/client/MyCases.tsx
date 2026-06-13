@@ -97,7 +97,7 @@ export default function MyCases({navigation}) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={

@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   tabActive: {
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
   },
   tabText: {
     color: colors.muted,

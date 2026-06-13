@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   iconActive: {
-    color: colors.gold,
+    color: colors.primary,
   },
   label: {
     ...typography.caption,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   labelActive: {
-    color: colors.gold,
+    color: colors.primary,
     fontWeight: '600',
   },
 });

@@ -127,7 +127,7 @@ export default function MyInvoices({navigation}) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={
@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   chipActive: {
-    backgroundColor: colors.gold,
-    borderColor: colors.gold,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   chipText: {
     color: colors.muted,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   amount: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: 18,
     fontWeight: '700',
     marginTop: spacing.sm,

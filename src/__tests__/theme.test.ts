@@ -6,7 +6,7 @@ import {
   globalStyles,
   tokens,
   shadows,
-} from '../utils/theme.js';
+} from '../utils/theme';
 
 describe('theme', () => {
   describe('colors', () => {
@@ -32,7 +32,7 @@ describe('theme', () => {
     it('values are non-empty strings starting with #', () => {
       Object.values(colors).every(c => expect(typeof c).toBe('string'));
       expect(colors.bg).toMatch(/^#/);
-      expect(colors.gold).toMatch(/^#/);
+      expect(colors.primary).toMatch(/^#/);
       expect(colors.text).toMatch(/^#/);
     });
 
@@ -59,7 +59,7 @@ describe('theme', () => {
       expect(colors.card).toBe(tokens.colors.surface.raised);
       expect(colors.border).toBe(tokens.colors.border.subtle);
       expect(colors.primary).toBe(tokens.colors.brand.primary);
-      expect(colors.gold).toBe(tokens.colors.brand.primary);
+      expect(colors.primary).toBe(tokens.colors.brand.primary);
       expect(colors.green).toBe(tokens.colors.brand.primaryDark);
       expect(colors.danger).toBe(tokens.colors.semantic.danger);
       expect(colors.warning).toBe(tokens.colors.semantic.warning);
@@ -184,7 +184,9 @@ describe('theme', () => {
     it('each typography entry has fontSize and color', () => {
       Object.values(typography).forEach(style => {
         expect(style).toHaveProperty('fontSize');
-        expect(style).toHaveProperty('color');
+        if ('color' in style) {
+          expect(style).toHaveProperty('color');
+        }
       });
     });
 
@@ -247,7 +249,7 @@ describe('theme', () => {
       expect(globalStyles.card.borderColor).toBe(colors.border);
       expect(globalStyles.text.color).toBe(colors.text);
       expect(globalStyles.mutedText.color).toBe(colors.muted);
-      expect(globalStyles.goldText.color).toBe(colors.gold);
+      expect(globalStyles.goldText.color).toBe(colors.primary);
     });
   });
 

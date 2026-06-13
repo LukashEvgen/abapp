@@ -13,7 +13,7 @@ function SecurityOverlay({children}) {
     <>
       {children}
       <View style={styles.overlay}>
-        <ActivityIndicator size="large" color={colors.gold} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.overlayText}>Підтвердження особи…</Text>
       </View>
     </>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   overlayText: {
-    color: colors.gold,
+    color: colors.primary,
     marginTop: spacing.md,
     fontSize: tokens.typography.size.md,
     fontWeight: tokens.typography.weight.semibold,

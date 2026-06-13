@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: radius.sm,
   },
   bubbleOutbound: {
-    backgroundColor: colors.goldMuted,
+    backgroundColor: colors.brand.primaryMuted,
     borderWidth: 1,
-    borderColor: colors.gold,
+    borderColor: colors.primary,
     borderBottomRightRadius: radius.sm,
   },
   sender: {

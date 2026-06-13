@@ -105,7 +105,7 @@ export default function DocumentDetail({route, navigation}) {
         <RefreshControl
           refreshing={refreshing || sigsFetching}
           onRefresh={onRefresh}
-          tintColor={colors.gold}
+          tintColor={colors.primary}
         />
       }>
       <Text style={styles.title}>{document?.name || 'Документ'}</Text>

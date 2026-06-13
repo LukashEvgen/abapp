@@ -44,7 +44,7 @@ function ClientTabs() {
           backgroundColor: colors.bg,
           borderTopColor: colors.border,
         },
-        tabBarActiveTintColor: colors.gold,
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.muted,
       }}>
       <Tab.Screen
@@ -137,7 +137,7 @@ function AdminTabs() {
           backgroundColor: colors.bg,
           borderTopColor: colors.border,
         },
-        tabBarActiveTintColor: colors.gold,
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.muted,
       }}>
       <Tab.Screen

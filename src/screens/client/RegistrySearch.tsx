@@ -146,7 +146,7 @@ export default function RegistrySearch({navigation}) {
             <RefreshControl
               refreshing={loading}
               onRefresh={() => search(query)}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={

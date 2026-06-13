@@ -248,7 +248,7 @@ export default function DiiaSignScreen() {
           </>
         ) : (
           <>
-            <ActivityIndicator size="large" color={colors.gold} />
+            <ActivityIndicator size="large" color={colors.primary} />
             {statusText ? (
               <Text style={styles.statusText}>{statusText}</Text>
             ) : null}

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   cardTitle: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.base,
     fontWeight: tokens.typography.weight.bold,
     marginBottom: spacing.sm,

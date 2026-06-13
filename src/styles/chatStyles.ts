@@ -18,7 +18,7 @@ export const chatStyles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   bubbleMe: {
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
   },
   bubbleOther: {
     backgroundColor: colors.card,
@@ -63,7 +63,7 @@ export const chatStyles = StyleSheet.create({
   },
   sendBtn: {
     marginLeft: spacing.sm,
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
     borderRadius: radius.md,
     width: 40,
     height: 40,

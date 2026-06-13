@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   eventDate: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: 12,
     fontWeight: '600',
     marginBottom: spacing.xs,

@@ -105,7 +105,7 @@ export default function EdrSearch({navigation}) {
             <RefreshControl
               refreshing={loading}
               onRefresh={() => query.trim().length >= 2 && search(query)}
-              tintColor={colors.gold}
+              tintColor={colors.primary}
             />
           }
           ListEmptyComponent={

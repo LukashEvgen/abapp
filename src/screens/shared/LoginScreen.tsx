@@ -66,7 +66,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={globalStyles.container}>
       <View style={[globalStyles.screen, {justifyContent: 'center'}]}>
-        <Text style={styles.logo}>⚖ LexTrack</Text>
+        <Logo size={40} center style={{marginBottom: spacing.lg}} />
         <Text style={styles.subtitle}>
           {step === 'phone'
             ? 'Введіть номер телефону для входу'
@@ -126,13 +126,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    color: colors.gold,
-    fontSize: 32,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
   subtitle: {
     color: colors.muted,
     fontSize: 14,

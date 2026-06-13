@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   open: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '600',
   },

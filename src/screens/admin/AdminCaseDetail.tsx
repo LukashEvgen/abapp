@@ -96,7 +96,7 @@ export default function AdminCaseDetail({route}) {
         <RefreshControl
           refreshing={isFetching && !isFetchingNextPage}
           onRefresh={refetch}
-          tintColor={colors.gold}
+          tintColor={colors.primary}
         />
       }>
       <View style={globalStyles.rowBetween}>
@@ -160,7 +160,7 @@ export default function AdminCaseDetail({route}) {
           onPress={() => fetchNextPage()}
           disabled={isFetchingNextPage}>
           {isFetchingNextPage ? (
-            <ActivityIndicator color={colors.gold} />
+            <ActivityIndicator color={colors.primary} />
           ) : (
             <Text style={styles.loadMoreText}>Завантажити ще ↓</Text>
           )}
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   eventDate: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.sm,
     fontWeight: tokens.typography.weight.semibold,
     marginBottom: spacing.xs,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   loadMoreText: {
-    color: colors.gold,
+    color: colors.primary,
     fontSize: tokens.typography.size.base,
     fontWeight: tokens.typography.weight.semibold,
   },

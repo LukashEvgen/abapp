@@ -2,10 +2,12 @@ import {StyleSheet, Appearance} from 'react-native';
 import tokens from '../../design/tokens.json';
 import darkTokens from '../../design/tokens-dark.json';
 
+export {tokens, darkTokens};
+
 // ----------------------------------------------------------------
-// LexTrack Theme — V3.1 (Dual theme: Light + Dark)
-// Source of truth: design/tokens.json (light) + design/tokens-dark.json (dark)
-// Default: dark (matching canonical mockups)
+// LexTrack Theme — V3.2 (Light by default, teal brand)
+// Source of truth: design/tokens.json (light) — canonical Pantone 7459 C teal
+// Default: light (matching updated design system)
 // ----------------------------------------------------------------
 
 function buildTheme(dark) {
@@ -18,67 +20,85 @@ function buildTheme(dark) {
     elevation: sh[level]?.android?.elevation || 0,
   });
 
+  const tokenShadow = (level) => ({
+    ios: sh[level]?.ios || {},
+    android: sh[level]?.android || {elevation: 0},
+  });
+
   return {
     colors: {
-      // Brand (gold in dark, teal in light)
-      primary:       c.brand.primary,
-      primaryLight:  c.brand.primaryLight,
-      primaryDark:   c.brand.primaryDark,
-      primaryMuted:  c.brand.primaryMuted,
-      primaryHover:  c.brand.primaryHover,
-      secondary:     c.brand.secondary,
+      // Legacy flat keys (kept for backwards compatibility across screens)
+      bg: c.surface.bg,
+      surface: c.surface.base,
+      card: c.surface.raised,
+      border: c.border.subtle,
+      text: c.text.primary,
+      muted: c.text.secondary,
+      primary: c.brand.primary,
+      // gold is now an alias to the teal brand primary (V3 redesign)
+      gold: c.brand.primary,
+      green: c.brand.primaryDark,
+      danger: c.semantic.danger,
+      warning: c.semantic.warning,
+      success: c.semantic.success,
+      info: c.semantic.info,
+
+      // Brand
+      primaryLight: c.brand.primaryLight,
+      primaryDark: c.brand.primaryDark,
+      primaryMuted: c.brand.primaryMuted,
+      primaryHover: c.brand.primaryHover,
+      secondary: c.brand.secondary,
       secondaryDark: c.brand.secondaryDark,
       secondaryMuted: c.brand.secondaryMuted,
 
-      // Gold accent (canonical in dark; teal alias in light for backwards compat)
-      gold:          dark ? c.brand.primary : '#C8A96E',
-      goldLight:     '#E0C48F',
-      goldDark:      '#A6854A',
-      goldMuted:     'rgba(200,169,110,0.15)',
+      // Legacy gold aliases (now point to teal)
+      goldLight: c.brand.primaryLight,
+      goldDark: c.brand.primaryDark,
+      goldMuted: c.brand.primaryMuted,
 
       // Surfaces
-      background:   c.surface.bg,
-      surface:      c.surface.base,
+      background: c.surface.bg,
       surfaceRaised: c.surface.raised,
       surfaceSunken: c.surface.sunken,
-      card:         c.surface.raised,
-      inputBg:      c.surface.base,
+      inputBg: c.surface.base,
 
       // Border
-      border:        c.border.subtle,
       borderDefault: c.border.default,
-      borderStrong:  c.border.strong,
+      borderStrong: c.border.strong,
 
       // Text
-      text:         c.text.primary,
-      textPrimary:  c.text.primary,
+      textPrimary: c.text.primary,
       textSecondary: c.text.secondary,
       textTertiary: c.text.tertiary,
-      textMuted:    c.text.tertiary,
       textDisabled: c.text.disabled,
-      textInverse:  c.text.inverse,
-      textAccent:   c.text.accent,
-      textLink:     c.text.link,
+      textInverse: c.text.inverse,
+      textAccent: c.text.accent,
+      textLink: c.text.link,
 
       // Semantic
-      success:     c.semantic.success,
       successDark: c.semantic.successDark,
-      successBg:   c.semantic.successBg,
-      warning:     c.semantic.warning,
+      successBg: c.semantic.successBg,
       warningDark: c.semantic.warningDark,
-      warningBg:   c.semantic.warningBg,
-      danger:      c.semantic.danger,
-      dangerDark:  c.semantic.dangerDark,
-      dangerBg:    c.semantic.dangerBg,
-      error:       c.semantic.danger,
-      info:        c.semantic.info,
-      infoBg:      c.semantic.infoBg,
+      warningBg: c.semantic.warningBg,
+      dangerDark: c.semantic.dangerDark,
+      dangerBg: c.semantic.dangerBg,
+      error: c.semantic.danger,
+      infoBg: c.semantic.infoBg,
 
       // Neutrals
       ...c.neutral,
+      neutral: c.neutral,
 
       // Overlay
       overlay: c.surface.overlay,
+
+      // Nested semantic palettes (for tests and new components)
+      brand: c.brand,
+      semantic: c.semantic,
+      surfaceSemantic: c.surface,
+      borderSemantic: c.border,
+      textSemantic: c.text,
     },
     spacing: {
       ...t.spacing.scale,
@@ -89,17 +109,17 @@ function buildTheme(dark) {
       h1: { fontSize: 28, fontWeight: '700', letterSpacing: 0.5, color: c.text.primary },
       h2: { fontSize: 22, fontWeight: '600', letterSpacing: 0.5, color: c.text.primary },
       h3: { fontSize: 18, fontWeight: '600', color: c.text.primary },
-      body: { fontSize: 14, color: c.text.primary },
-      bodyLg: { fontSize: 16, color: c.text.primary },
-      caption: { fontSize: 12, color: c.text.secondary },
+      body: { fontSize: 14, fontWeight: '400', color: c.text.primary },
+      bodyLg: { fontSize: 16, fontWeight: '400', color: c.text.primary },
+      caption: { fontSize: 12, fontWeight: '400', color: c.text.secondary },
       label: { fontSize: 11, fontWeight: '600', color: c.text.accent, textTransform: 'uppercase', letterSpacing: 1.2 },
       mono: { fontSize: 12, fontFamily: 'JetBrainsMono' },
     },
     shadows: {
-      none: flatShadow(0),
-      sm:   flatShadow(1),
-      md:   flatShadow(2),
-      lg:   flatShadow(3),
+      '0': tokenShadow(0),
+      '1': tokenShadow(1),
+      '2': tokenShadow(2),
+      '3': tokenShadow(3),
     },
     globalStyles: StyleSheet.create({
       screen: {
@@ -158,11 +178,42 @@ function buildTheme(dark) {
         backgroundColor: c.border.subtle,
         marginVertical: t.spacing.alias.md,
       },
+      // Legacy global style keys used by tests and some screens
+      container: {
+        flex: 1,
+        backgroundColor: c.surface.bg,
+        padding: t.spacing.alias.md,
+      },
+      row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+      rowBetween: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      },
+      center: {
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      text: {
+        color: c.text.primary,
+        fontSize: 14,
+      },
+      mutedText: {
+        color: c.text.secondary,
+        fontSize: 14,
+      },
+      goldText: {
+        color: c.brand.primary,
+        fontSize: 14,
+      },
     }),
   };
 }
 
-export const isDarkDefault = true;
+export const isDarkDefault = false;
 let _dark = isDarkDefault;
 
 try {
