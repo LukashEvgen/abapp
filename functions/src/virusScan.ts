@@ -1,8 +1,5 @@
 import * as admin from 'firebase-admin';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const VIRUSTOTAL_API_KEY = process.env.VIRUSTOTAL_API_KEY;
-
 import * as crypto from 'crypto';
 
 export type ScanStatus = 'pending' | 'clean' | 'infected';
