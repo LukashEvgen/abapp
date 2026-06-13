@@ -10,7 +10,7 @@ function cacheKey(registry: string, query: string): string {
   return `${registry}:${query.trim().toLowerCase()}`;
 }
 
-async function getCached(registry: string, query: string): Promise<any | null> {
+export async function getCached(registry: string, query: string): Promise<any | null> {
   const key = cacheKey(registry, query);
   const doc = await db.collection(CACHE_COLLECTION).doc(key).get();
   if (!doc.exists) {
@@ -27,7 +27,7 @@ async function getCached(registry: string, query: string): Promise<any | null> {
   return data.result;
 }
 
-async function setCached(
+export async function setCached(
   registry: string,
   query: string,
   result: any,
@@ -41,7 +41,7 @@ async function setCached(
   });
 }
 
-function httpGet(url: string): Promise<any> {
+export function fetchJson(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     const req = https.get(url, {timeout: 15000}, res => {
       let body = '';
@@ -68,13 +68,26 @@ function httpGet(url: string): Promise<any> {
   });
 }
 
-function assertLawyer(context: functions.https.CallableContext): void {
+export function assertAppCheck(context: functions.https.CallableContext): void {
+  if (!context || !context.app) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'App Check token is missing or invalid. Request rejected.',
+    );
+  }
+}
+
+export async function assertLawyer(context: functions.https.CallableContext): Promise<void> {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
   }
   assertAppCheck(context);
-  // Verify user is in lawyers collection
-  const lawyerDoc = admin.firestore().collection('lawyers').doc(context.auth.uid).get();
-  // Firestore security rules already protect lawyers collection,
-  // but we add an explicit server-side check for defense in depth.
+  const lawyerDoc = await admin
+    .firestore()
+    .collection('lawyers')
+    .doc(context.auth.uid)
+    .get();
+  if (!lawyerDoc.exists) {
+    throw new functions.https.HttpsError('permission-denied', 'Access restricted to lawyers');
+  }
 }

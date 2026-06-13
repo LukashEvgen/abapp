@@ -1,14 +1,11 @@
 import * as functions from 'firebase-functions';
-import {getCached, setCached, fetchJson, assertAppCheck} from './common';
+import {getCached, setCached, fetchJson, assertLawyer} from './common';
 
 // Opendatabot free API for basic company lookup (no auth key needed for limited queries)
 const ODB_API_BASE = 'https://opendatabot.ua/api/v2';
 
 export async function searchEdrHandler(data: any, context: functions.https.CallableContext) {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-  }
-  assertAppCheck(context);
+  await assertLawyer(context);
 
   const query: string = (data.query || '').toString().trim();
   if (!query || query.length < 2) {

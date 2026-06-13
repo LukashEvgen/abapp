@@ -1,14 +1,11 @@
 import * as functions from 'firebase-functions';
-import {getCached, setCached, fetchJson, assertAppCheck} from './common';
+import {getCached, setCached, fetchJson, assertLawyer} from './common';
 
 // Court decisions registry open API (Reyestr)
 const COURT_API_BASE = 'https://public-api.reyestr.court.gov.ua';
 
 export async function searchCourtHandler(data: any, context: functions.https.CallableContext) {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-  }
-  assertAppCheck(context);
+  await assertLawyer(context);
 
   const query: string = (data.query || '').toString().trim();
   if (!query || query.length < 2) {

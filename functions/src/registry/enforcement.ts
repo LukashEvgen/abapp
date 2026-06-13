@@ -1,14 +1,11 @@
 import * as functions from 'firebase-functions';
-import {getCached, setCached, fetchJson, assertAppCheck} from './common';
+import {getCached, setCached, fetchJson, assertLawyer} from './common';
 
 // Ministry of Justice open data API for enforcement proceedings
 const MINJUST_API_BASE = 'https://public-api.minjust.gov.ua/api/open_data/v1';
 
 export async function searchEnforcementHandler(data: any, context: functions.https.CallableContext) {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-  }
-  assertAppCheck(context);
+  await assertLawyer(context);
 
   const query: string = (data.query || '').toString().trim();
   if (!query || query.length < 2) {
