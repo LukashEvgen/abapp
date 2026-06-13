@@ -1,25 +1,47 @@
 {
-  "_comment": "TODO: Замінити на справжній google-services.json з Firebase Console (проєкт lextrack-80605, пакет com.lextrack). Цей файл — production-ready заготовка.",
+  "_comment": "PRODUCTION TEMPLATE: Replace REPLACE_* placeholders with real values from Firebase Console > Project Settings > General > Your apps > Android. File is gitignored — do not commit production credentials.",
   "project_info": {
-    "project_number": "REPLACE_WITH_REAL",
+    "project_number": "REPLACE_WITH_PROJECT_NUMBER",
+    "firebase_url": "https://lextrack-80605-default-rtdb.firebaseio.com",
     "project_id": "lextrack-80605",
-    "storage_bucket": "lextrack-80605.appspot.com",
-    "firebase_url": "https://lextrack-80605-default-rtdb.firebaseio.com"
+    "storage_bucket": "lextrack-80605.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:REPLACE_WITH_REAL:android:REPLACE_WITH_REAL",
+        "mobilesdk_app_id": "1:REPLACE_WITH_PROJECT_NUMBER:android:REPLACE_WITH_APP_HASH",
         "android_client_info": {
           "package_name": "com.lextrack"
         }
       },
-      "oauth_client": [],
-      "api_key": [{"current_key": "REPLACE_WITH_REAL"}],
+      "oauth_client": [
+        {
+          "client_id": "REPLACE_WITH_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lextrack",
+            "certificate_hash": "REPLACE_WITH_SHA1_CERT_HASH"
+          }
+        },
+        {
+          "client_id": "REPLACE_WITH_WEB_CLIENT_ID.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "REPLACE_WITH_API_KEY"
+        }
+      ],
       "services": {
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "REPLACE_WITH_WEB_CLIENT_ID.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "analytics_service": {
           "status": 1

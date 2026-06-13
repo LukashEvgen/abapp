@@ -29,8 +29,6 @@ temp/
 .env.*.local
 android/local.properties
 .DS_Store
-local.properties
-.DS_Store
 *.swp
 *.swo
 *~
