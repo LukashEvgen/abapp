@@ -1,22 +1,26 @@
 {
   "meta": {
     "name": "LexTrack Design Tokens — Dark",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "platform": "react-native",
     "colorScheme": "dark",
-    "source": "Canonical dark theme (mockup-matching): gold accents on deep grey surfaces"
+    "source": "Canonical dark theme (mockup-matching): gold accents on deep grey surfaces — WCAG AA compliant"
   },
   "colors": {
     "brand": {
-      "primary":       "#C8A96E",
-      "primaryLight":  "#E0C48F",
-      "primaryDark":   "#A6854A",
-      "primaryMuted":  "rgba(200,169,110,0.15)",
-      "primaryHover":  "rgba(200,169,110,0.08)",
+      "primary":       "#A6854A",
+      "primaryLight":  "#C8A96E",
+      "primaryDark":   "#856534",
+      "primaryMuted":  "rgba(166,133,74,0.15)",
+      "primaryHover":  "rgba(166,133,74,0.08)",
       "secondary":      "#9DA1A4",
       "secondaryLight": "#B5B9BC",
       "secondaryDark":  "#7C8084",
-      "secondaryMuted": "rgba(157,161,164,0.15)"
+      "secondaryMuted": "rgba(157,161,164,0.15)",
+      "accent":         "#A6854A",
+      "accentLight":    "#C8A96E",
+      "accentDark":     "#856534",
+      "accentMuted":    "rgba(166,133,74,0.15)"
     },
     "semantic": {
       "success":      "#5DBA87",

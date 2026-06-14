@@ -37,16 +37,18 @@ describe('theme', () => {
     });
 
     it('exposes Palette V3 primary, info, and semantic keys', () => {
-      expect(colors.primary).toBe('#2A8FA8');
+      expect(colors.primary).toBe('#1F6F84');
       expect(colors.info).toBe('#3D7AA8');
       expect(colors.danger).toBe('#B84545');
-      expect(colors.warning).toBe('#C28B3C');
-      expect(colors.success).toBe('#4A9B6E');
+      // Updated to WCAG AA compliant warning
+      expect(colors.warning).toBe('#956022');
+      // Updated to WCAG AA compliant success
+      expect(colors.success).toBe('#367846');
     });
 
     it('exposes V3 nested palettes (brand, semantic, neutral)', () => {
       expect(typeof colors.brand).toBe('object');
-      expect(colors.brand.primary).toBe('#2A8FA8');
+      expect(colors.brand.primary).toBe('#1F6F84');
       expect(typeof colors.semantic).toBe('object');
       expect(colors.semantic.info).toBe('#3D7AA8');
       // neutral surface bg
@@ -62,22 +64,26 @@ describe('theme', () => {
       expect(colors.primary).toBe(tokens.colors.brand.primary);
       expect(colors.green).toBe(tokens.colors.brand.primaryDark);
       expect(colors.danger).toBe(tokens.colors.semantic.danger);
+      // Updated to WCAG AA compliant warning
       expect(colors.warning).toBe(tokens.colors.semantic.warning);
+      // Updated to WCAG AA compliant success
       expect(colors.success).toBe(tokens.colors.semantic.success);
       expect(colors.info).toBe(tokens.colors.semantic.info);
       expect(colors.text).toBe(tokens.colors.text.primary);
       expect(colors.muted).toBe(tokens.colors.text.secondary);
     });
 
-    it('nested semantic palette includes all V3 keys', () => {
-      expect(colors.semantic.success).toBe('#4A9B6E');
-      expect(colors.semantic.successLight).toBe('#6EB48C');
-      expect(colors.semantic.successDark).toBe('#366E4F');
-      expect(colors.semantic.successBg).toBe('rgba(74,155,110,0.10)');
-      expect(colors.semantic.warning).toBe('#C28B3C');
-      expect(colors.semantic.warningLight).toBe('#D4A865');
-      expect(colors.semantic.warningDark).toBe('#8C622A');
-      expect(colors.semantic.warningBg).toBe('rgba(194,139,60,0.10)');
+    it('nested semantic palette includes all V3 keys (WCAG AA updated)', () => {
+      // Updated to WCAG AA compliant success
+      expect(colors.semantic.success).toBe('#367846');
+      expect(colors.semantic.successLight).toBe('#5DBA87');
+      expect(colors.semantic.successDark).toBe('#2E6B3E');
+      expect(colors.semantic.successBg).toBe('rgba(54,120,70,0.10)');
+      // Updated to WCAG AA compliant warning
+      expect(colors.semantic.warning).toBe('#956022');
+      expect(colors.semantic.warningLight).toBe('#C28B3C');
+      expect(colors.semantic.warningDark).toBe('#7A4D1C');
+      expect(colors.semantic.warningBg).toBe('rgba(149,96,34,0.10)');
       expect(colors.semantic.danger).toBe('#B84545');
       expect(colors.semantic.dangerLight).toBe('#CF6E6E');
       expect(colors.semantic.dangerDark).toBe('#8A3232');
@@ -110,11 +116,12 @@ describe('theme', () => {
       expect(colors.borderSemantic.strong).toBe('#9DA1A4');
     });
 
-    it('text semantic palette matches token values', () => {
+    it('text semantic palette matches token values (WCAG AA updated)', () => {
       expect(colors.textSemantic.primary).toBe('#1B1D1F');
       expect(colors.textSemantic.secondary).toBe('#5C6164');
       expect(colors.textSemantic.disabled).toBe('#9DA1A4');
-      expect(colors.textSemantic.accent).toBe('#2A8FA8');
+      // Updated to gold/accent for WCAG AA
+      expect(colors.textSemantic.accent).toBe('#856534');
       expect(colors.textSemantic.link).toBe('#3D7AA8');
     });
 
@@ -249,14 +256,16 @@ describe('theme', () => {
       expect(globalStyles.card.borderColor).toBe(colors.border);
       expect(globalStyles.text.color).toBe(colors.text);
       expect(globalStyles.mutedText.color).toBe(colors.muted);
-      expect(globalStyles.goldText.color).toBe(colors.primary);
+      // goldText uses accent (gold) not primary (teal)
+      expect(globalStyles.goldText.color).toBe(colors.accent);
     });
   });
 
   describe('tokens', () => {
     it('exposes raw token object', () => {
       expect(typeof tokens).toBe('object');
-      expect(tokens.meta.version).toBe('3.0.0');
+      // Updated version
+      expect(tokens.meta.version).toBe('3.1.0');
     });
 
     it('token color scheme is light', () => {

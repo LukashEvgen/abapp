@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider} from './context/AuthContext';
+import {ThemeProvider} from './context/ThemeContext';
 import AppNavigator from './navigation/AppNavigator';
 import PushNotificationsProvider from './components/PushNotificationsProvider';
 import SecurityGate from './components/SecurityGate';
@@ -28,11 +29,13 @@ export default function App() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <SecurityGate>
-            <PushNotificationsProvider>
-              <AppNavigator />
-            </PushNotificationsProvider>
-          </SecurityGate>
+          <ThemeProvider>
+            <SecurityGate>
+              <PushNotificationsProvider>
+                <AppNavigator />
+              </PushNotificationsProvider>
+            </SecurityGate>
+          </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

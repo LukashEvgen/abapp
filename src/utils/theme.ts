@@ -10,20 +10,26 @@ export {tokens, darkTokens};
 // Default: light (matching updated design system)
 // ----------------------------------------------------------------
 
-function buildTheme(dark) {
+function buildTheme(dark: boolean) {
   const t = dark ? darkTokens : tokens;
   const c = t.colors;
   const sh = t.shadows;
 
-  const flatShadow = (level) => ({
-    ...(sh[level]?.ios || {}),
-    elevation: sh[level]?.android?.elevation || 0,
-  });
+  const flatShadow = (level: number) => {
+    const shadow = sh[level as keyof typeof sh];
+    return {
+      ...(shadow?.ios || {}),
+      elevation: shadow?.android?.elevation || 0,
+    };
+  };
 
-  const tokenShadow = (level) => ({
-    ios: sh[level]?.ios || {},
-    android: sh[level]?.android || {elevation: 0},
-  });
+  const tokenShadow = (level: number) => {
+    const shadow = sh[level as keyof typeof sh];
+    return {
+      ios: shadow?.ios || {},
+      android: shadow?.android || {elevation: 0},
+    };
+  };
 
   return {
     colors: {
@@ -35,8 +41,8 @@ function buildTheme(dark) {
       text: c.text.primary,
       muted: c.text.secondary,
       primary: c.brand.primary,
-      // gold is now an alias to the teal brand primary (V3 redesign)
-      gold: c.brand.primary,
+      // gold is now an alias to the accent (gold color) for premium look
+      gold: c.brand.accent,
       green: c.brand.primaryDark,
       danger: c.semantic.danger,
       warning: c.semantic.warning,
@@ -52,10 +58,16 @@ function buildTheme(dark) {
       secondaryDark: c.brand.secondaryDark,
       secondaryMuted: c.brand.secondaryMuted,
 
-      // Legacy gold aliases (now point to teal)
-      goldLight: c.brand.primaryLight,
-      goldDark: c.brand.primaryDark,
-      goldMuted: c.brand.primaryMuted,
+      // Accent/Gold (separate from brand primary)
+      accent: c.brand.accent,
+      accentLight: c.brand.accentLight,
+      accentDark: c.brand.accentDark,
+      accentMuted: c.brand.accentMuted,
+
+      // Gold tokens (explicit, for premium look) - map to accent
+      goldLight: c.brand.accentLight,
+      goldDark: c.brand.accentDark,
+      goldMuted: c.brand.accentMuted,
 
       // Surfaces
       background: c.surface.bg,
@@ -106,13 +118,13 @@ function buildTheme(dark) {
     },
     radius: t.radius,
     typography: {
-      h1: { fontSize: 28, fontWeight: '700', letterSpacing: 0.5, color: c.text.primary },
-      h2: { fontSize: 22, fontWeight: '600', letterSpacing: 0.5, color: c.text.primary },
-      h3: { fontSize: 18, fontWeight: '600', color: c.text.primary },
-      body: { fontSize: 14, fontWeight: '400', color: c.text.primary },
-      bodyLg: { fontSize: 16, fontWeight: '400', color: c.text.primary },
-      caption: { fontSize: 12, fontWeight: '400', color: c.text.secondary },
-      label: { fontSize: 11, fontWeight: '600', color: c.text.accent, textTransform: 'uppercase', letterSpacing: 1.2 },
+      h1: { fontSize: 28, fontWeight: '700' as const, letterSpacing: 0.5, color: c.text.primary },
+      h2: { fontSize: 22, fontWeight: '600' as const, letterSpacing: 0.5, color: c.text.primary },
+      h3: { fontSize: 18, fontWeight: '600' as const, color: c.text.primary },
+      body: { fontSize: 14, fontWeight: '400' as const, color: c.text.primary },
+      bodyLg: { fontSize: 16, fontWeight: '400' as const, color: c.text.primary },
+      caption: { fontSize: 12, fontWeight: '400' as const, color: c.text.secondary },
+      label: { fontSize: 11, fontWeight: '600' as const, color: c.text.accent, textTransform: 'uppercase', letterSpacing: 1.2 },
       mono: { fontSize: 12, fontFamily: 'JetBrainsMono' },
     },
     shadows: {
@@ -206,7 +218,7 @@ function buildTheme(dark) {
         fontSize: 14,
       },
       goldText: {
-        color: c.brand.primary,
+        color: c.brand.accent,
         fontSize: 14,
       },
     }),
@@ -232,7 +244,7 @@ export const typography = _theme.typography;
 export const shadows = _theme.shadows;
 export const globalStyles = _theme.globalStyles;
 
-export function setTheme(dark) {
+export function setTheme(dark: boolean) {
   _dark = dark;
   _theme = buildTheme(dark);
   Object.assign(colors, _theme.colors);
