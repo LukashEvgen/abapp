@@ -2117,6 +2117,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2334,6 +2335,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2516,6 +2518,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2730,6 +2733,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2769,6 +2773,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2847,6 +2852,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2921,6 +2927,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -3010,6 +3017,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -3081,6 +3089,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#1B1D1F",
+        "fontFamily": "Inter-Bold",
         "fontSize": 28,
         "fontWeight": "700",
         "letterSpacing": 0.5,
@@ -3093,6 +3102,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#1B1D1F",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 22,
         "fontWeight": "600",
         "letterSpacing": 0.5,
@@ -3105,6 +3115,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#1B1D1F",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 18,
         "fontWeight": "600",
       }
@@ -3116,6 +3127,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#1B1D1F",
+        "fontFamily": "Inter-Regular",
         "fontSize": 14,
         "fontWeight": "400",
       }
@@ -3127,6 +3139,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#5C6164",
+        "fontFamily": "Inter-Regular",
         "fontSize": 12,
         "fontWeight": "400",
       }
@@ -3138,6 +3151,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
     style={
       {
         "color": "#856534",
+        "fontFamily": "Inter-SemiBold",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
