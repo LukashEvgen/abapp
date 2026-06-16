@@ -52,7 +52,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#2A8FA8",
+              "backgroundColor": "#1F6F84",
             },
           ]
         }
@@ -68,6 +68,54 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         }
       >
         primary
+      </Text>
+      <Text
+        numberOfLines={1}
+        style={
+          {
+            "color": "#5C6164",
+            "fontSize": 11,
+            "maxWidth": 60,
+          }
+        }
+      >
+        #1F6F84
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginBottom": 8,
+        }
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "borderRadius": 6,
+              "height": 48,
+              "marginBottom": 4,
+              "width": 48,
+            },
+            {
+              "backgroundColor": "#2A8FA8",
+            },
+          ]
+        }
+      />
+      <Text
+        numberOfLines={1}
+        style={
+          {
+            "color": "#1B1D1F",
+            "fontSize": 11,
+            "maxWidth": 60,
+          }
+        }
+      >
+        primaryLight
       </Text>
       <Text
         numberOfLines={1}
@@ -100,55 +148,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#4FA9BF",
-            },
-          ]
-        }
-      />
-      <Text
-        numberOfLines={1}
-        style={
-          {
-            "color": "#1B1D1F",
-            "fontSize": 11,
-            "maxWidth": 60,
-          }
-        }
-      >
-        primaryLight
-      </Text>
-      <Text
-        numberOfLines={1}
-        style={
-          {
-            "color": "#5C6164",
-            "fontSize": 11,
-            "maxWidth": 60,
-          }
-        }
-      >
-        #4FA9BF
-      </Text>
-    </View>
-    <View
-      style={
-        {
-          "alignItems": "center",
-          "marginBottom": 8,
-        }
-      }
-    >
-      <View
-        style={
-          [
-            {
-              "borderRadius": 6,
-              "height": 48,
-              "marginBottom": 4,
-              "width": 48,
-            },
-            {
-              "backgroundColor": "#1F6F84",
+              "backgroundColor": "#15586B",
             },
           ]
         }
@@ -175,7 +175,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #1F6F84
+        #15586B
       </Text>
     </View>
   </View>
@@ -268,7 +268,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#C28B3C",
+              "backgroundColor": "#956022",
             },
           ]
         }
@@ -295,7 +295,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #C28B3C
+        #956022
       </Text>
     </View>
     <View
@@ -316,7 +316,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#4A9B6E",
+              "backgroundColor": "#367846",
             },
           ]
         }
@@ -343,7 +343,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #4A9B6E
+        #367846
       </Text>
     </View>
     <View
@@ -1373,7 +1373,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#2A8FA8",
+              "backgroundColor": "#856534",
             },
           ]
         }
@@ -1400,7 +1400,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #2A8FA8
+        #856534
       </Text>
     </View>
     <View
@@ -1685,7 +1685,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#2A8FA8",
+              "backgroundColor": "#1F6F84",
             },
           ]
         }
@@ -1712,7 +1712,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #2A8FA8
+        #1F6F84
       </Text>
     </View>
     <View
@@ -1733,7 +1733,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#2A8FA8",
+              "backgroundColor": "#856534",
             },
           ]
         }
@@ -1760,7 +1760,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #2A8FA8
+        #856534
       </Text>
     </View>
     <View
@@ -1781,7 +1781,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#1F6F84",
+              "backgroundColor": "#15586B",
             },
           ]
         }
@@ -1808,7 +1808,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #1F6F84
+        #15586B
       </Text>
     </View>
     <View
@@ -1877,7 +1877,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#C28B3C",
+              "backgroundColor": "#956022",
             },
           ]
         }
@@ -1904,7 +1904,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #C28B3C
+        #956022
       </Text>
     </View>
     <View
@@ -1925,7 +1925,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "width": 48,
             },
             {
-              "backgroundColor": "#4A9B6E",
+              "backgroundColor": "#367846",
             },
           ]
         }
@@ -1952,7 +1952,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           }
         }
       >
-        #4A9B6E
+        #367846
       </Text>
     </View>
     <View
@@ -2116,7 +2116,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2149,7 +2149,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "paddingVertical": 6,
           },
           {
-            "backgroundColor": "rgba(194,139,60,0.10)",
+            "backgroundColor": "rgba(149,96,34,0.10)",
           },
         ]
       }
@@ -2197,7 +2197,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "paddingVertical": 6,
           },
           {
-            "backgroundColor": "rgba(194,139,60,0.10)",
+            "backgroundColor": "rgba(149,96,34,0.10)",
           },
         ]
       }
@@ -2245,7 +2245,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "paddingVertical": 6,
           },
           {
-            "backgroundColor": "rgba(194,139,60,0.10)",
+            "backgroundColor": "rgba(149,96,34,0.10)",
           },
         ]
       }
@@ -2293,7 +2293,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "paddingVertical": 6,
           },
           {
-            "backgroundColor": "rgba(194,139,60,0.10)",
+            "backgroundColor": "rgba(149,96,34,0.10)",
           },
         ]
       }
@@ -2333,7 +2333,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2361,7 +2361,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "borderRadius": 10,
             "justifyContent": "center",
             "paddingHorizontal": 24,
@@ -2397,7 +2397,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "borderRadius": 10,
             "justifyContent": "center",
             "paddingHorizontal": 24,
@@ -2405,7 +2405,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           },
           {
             "backgroundColor": "transparent",
-            "borderColor": "#2A8FA8",
+            "borderColor": "#1F6F84",
             "borderWidth": 1,
           },
           false,
@@ -2423,7 +2423,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
               "fontWeight": "700",
             },
             {
-              "color": "#2A8FA8",
+              "color": "#1F6F84",
             },
             false,
           ]
@@ -2439,7 +2439,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "borderRadius": 10,
             "justifyContent": "center",
             "paddingHorizontal": 24,
@@ -2477,7 +2477,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "borderRadius": 10,
             "justifyContent": "center",
             "paddingHorizontal": 24,
@@ -2515,7 +2515,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2588,7 +2588,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           "padding": 16,
         },
         {
-          "backgroundColor": "rgba(194,139,60,0.10)",
+          "backgroundColor": "rgba(149,96,34,0.10)",
         },
       ]
     }
@@ -2602,7 +2602,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "fontWeight": "600",
           },
           {
-            "color": "#C28B3C",
+            "color": "#956022",
           },
         ]
       }
@@ -2618,7 +2618,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "marginLeft": 8,
           },
           {
-            "color": "#C28B3C",
+            "color": "#956022",
           },
         ]
       }
@@ -2638,7 +2638,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           "padding": 16,
         },
         {
-          "backgroundColor": "rgba(74,155,110,0.10)",
+          "backgroundColor": "rgba(54,120,70,0.10)",
         },
       ]
     }
@@ -2652,7 +2652,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "fontWeight": "600",
           },
           {
-            "color": "#4A9B6E",
+            "color": "#367846",
           },
         ]
       }
@@ -2668,7 +2668,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "marginLeft": 8,
           },
           {
-            "color": "#4A9B6E",
+            "color": "#367846",
           },
         ]
       }
@@ -2688,7 +2688,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
           "padding": 16,
         },
         {
-          "backgroundColor": "rgba(42,143,168,0.12)",
+          "backgroundColor": "rgba(31,111,132,0.12)",
         },
       ]
     }
@@ -2702,7 +2702,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "fontWeight": "600",
           },
           {
-            "color": "#2A8FA8",
+            "color": "#1F6F84",
           },
         ]
       }
@@ -2718,7 +2718,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "marginLeft": 8,
           },
           {
-            "color": "#2A8FA8",
+            "color": "#1F6F84",
           },
         ]
       }
@@ -2729,7 +2729,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2768,7 +2768,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2846,7 +2846,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2879,7 +2879,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
             "borderRadius": 3,
           },
           {
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "height": 6,
             "width": "25%",
           },
@@ -2920,7 +2920,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -2946,7 +2946,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "justifyContent": "center",
           },
           {
@@ -2978,7 +2978,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
         [
           {
             "alignItems": "center",
-            "backgroundColor": "#2A8FA8",
+            "backgroundColor": "#1F6F84",
             "justifyContent": "center",
           },
           {
@@ -3009,7 +3009,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,
@@ -3137,7 +3137,7 @@ exports[`Palette V2 Visual Regression matches snapshot (V2 palette, typography, 
   <Text
     style={
       {
-        "color": "#2A8FA8",
+        "color": "#856534",
         "fontSize": 11,
         "fontWeight": "600",
         "letterSpacing": 1.2,

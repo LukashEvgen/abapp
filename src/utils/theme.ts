@@ -10,21 +10,23 @@ export {tokens, darkTokens};
 // Default: light (matching updated design system)
 // ----------------------------------------------------------------
 
+type ShadowLevel = '0' | '1' | '2' | '3';
+
 function buildTheme(dark: boolean) {
   const t = dark ? darkTokens : tokens;
   const c = t.colors;
   const sh = t.shadows;
 
-  const flatShadow = (level: number) => {
-    const shadow = sh[level as keyof typeof sh];
+  const flatShadow = (level: ShadowLevel) => {
+    const shadow = sh[level];
     return {
       ...(shadow?.ios || {}),
       elevation: shadow?.android?.elevation || 0,
     };
   };
 
-  const tokenShadow = (level: number) => {
-    const shadow = sh[level as keyof typeof sh];
+  const tokenShadow = (level: ShadowLevel) => {
+    const shadow = sh[level];
     return {
       ios: shadow?.ios || {},
       android: shadow?.android || {elevation: 0},
@@ -124,14 +126,14 @@ function buildTheme(dark: boolean) {
       body: { fontSize: 14, fontWeight: '400' as const, color: c.text.primary },
       bodyLg: { fontSize: 16, fontWeight: '400' as const, color: c.text.primary },
       caption: { fontSize: 12, fontWeight: '400' as const, color: c.text.secondary },
-      label: { fontSize: 11, fontWeight: '600' as const, color: c.text.accent, textTransform: 'uppercase', letterSpacing: 1.2 },
+      label: { fontSize: 11, fontWeight: '600' as const, color: c.text.accent, textTransform: 'uppercase' as const, letterSpacing: 1.2 },
       mono: { fontSize: 12, fontFamily: 'JetBrainsMono' },
     },
     shadows: {
-      '0': tokenShadow(0),
-      '1': tokenShadow(1),
-      '2': tokenShadow(2),
-      '3': tokenShadow(3),
+      '0': tokenShadow('0'),
+      '1': tokenShadow('1'),
+      '2': tokenShadow('2'),
+      '3': tokenShadow('3'),
     },
     globalStyles: StyleSheet.create({
       screen: {
@@ -145,7 +147,7 @@ function buildTheme(dark: boolean) {
         borderWidth: 1,
         borderColor: c.border.subtle,
         padding: t.spacing.alias.md,
-        ...flatShadow(1),
+        ...flatShadow('1'),
       },
       input: {
         backgroundColor: c.surface.base,

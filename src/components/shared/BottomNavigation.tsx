@@ -1,11 +1,23 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {colors, spacing, typography, radius} from '../utils/theme';
+import {colors, spacing, typography} from '../../utils/theme';
 
-export default function BottomNavigation({tabs, active, onChange}) {
+interface TabItem {
+  key: string;
+  icon: string;
+  label: string;
+}
+
+interface BottomNavigationProps {
+  tabs: TabItem[];
+  active: string;
+  onChange: (key: string) => void;
+}
+
+export default function BottomNavigation({tabs, active, onChange}: BottomNavigationProps) {
   return (
     <View style={styles.container}>
-      {tabs.map((tab, idx) => {
+      {tabs.map((tab: TabItem) => {
         const isActive = active === tab.key;
         return (
           <TouchableOpacity

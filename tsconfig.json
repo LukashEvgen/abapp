@@ -2,7 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "es2015",
     "lib": ["ES2020"],
     "jsx": "react-native",
     "strict": true,
@@ -11,7 +11,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -29,7 +29,8 @@
       "@context/*": ["src/context/*"],
       "@screens/*": ["src/screens/*"],
       "@navigation/*": ["src/navigation/*"]
-    }
+    },
+    "types": ["jest", "react-native", "react"]
   },
   "include": [
     "src/**/*",

@@ -12,7 +12,7 @@ export const colors = {
   card: tokens.colors.surface.raised,
   border: tokens.colors.border.subtle,
   primary: tokens.colors.brand.primary,
-  gold: tokens.colors.brand.primary,
+  gold: tokens.colors.brand.accent,
   green: tokens.colors.brand.primaryDark,
   danger: tokens.colors.semantic.danger,
   warning: tokens.colors.semantic.warning,
@@ -20,6 +20,7 @@ export const colors = {
   info: tokens.colors.semantic.info,
   text: tokens.colors.text.primary,
   muted: tokens.colors.text.secondary,
+  inputBg: tokens.colors.surface.base,
 
   // --- new systematic palettes ---
   brand: tokens.colors.brand,

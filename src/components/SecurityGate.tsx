@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     marginTop: spacing.md,
     fontSize: tokens.typography.size.md,
-    fontWeight: tokens.typography.weight.semibold,
+    fontWeight: tokens.typography.weight.semibold as const,
   },
 });

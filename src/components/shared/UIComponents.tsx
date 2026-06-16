@@ -12,7 +12,11 @@ import {statusColors, statusBgColors} from '../../utils/helpers';
 
 export {default as Logo} from './Logo';
 
-export const Badge = ({status}) => {
+interface BadgeProps {
+  status: string;
+}
+
+export const Badge = ({status}: BadgeProps) => {
   const color = statusColors[status] || colors.muted;
   const bg = statusBgColors[status] || colors.semantic.warningBg;
   return (
@@ -27,6 +31,16 @@ export const Badge = ({status}) => {
  * GoldButton — primary CTA. Name kept for back-compat from V1
  * (palette is now teal, not gold).
  */
+interface GoldButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'filled' | 'ghost';
+  size?: 'normal' | 'small';
+  disabled?: boolean;
+  loading?: boolean;
+  style?: any;
+}
+
 export const GoldButton = ({
   title,
   onPress,
@@ -35,7 +49,7 @@ export const GoldButton = ({
   disabled = false,
   loading = false,
   style,
-}) => {
+}: GoldButtonProps) => {
   const isGhost = variant === 'ghost';
   const isSmall = size === 'small';
   return (
@@ -65,18 +79,42 @@ export const GoldButton = ({
   );
 };
 
-export const Card = ({children, onPress, style}) => {
-  const Wrapper = onPress ? TouchableOpacity : View;
+interface CardProps {
+  children: React.ReactNode;
+  onPress?: () => void;
+  style?: any;
+}
+
+export const Card = ({children, onPress, style}: CardProps) => {
   return (
-    <Wrapper onPress={onPress} style={[styles.card, style]}>
-      {children}
-    </Wrapper>
+    <View style={[styles.card, style]}>
+      {onPress ? (
+        <TouchableOpacity onPress={onPress} style={{flex: 1}}>
+          {children}
+        </TouchableOpacity>
+      ) : (
+        children
+      )}
+    </View>
   );
 };
 
-export const SectionLabel = ({text}) => (
+interface SectionLabelProps {
+  text: string;
+}
+
+export const SectionLabel = ({text}: SectionLabelProps) => (
   <Text style={styles.sectionLabel}>{text}</Text>
 );
+
+interface InputProps {
+  placeholder?: string;
+  value?: string;
+  onChangeText?: (text: string) => void;
+  multiline?: boolean;
+  numberOfLines?: number;
+  style?: any;
+}
 
 export const Input = ({
   placeholder,
@@ -85,7 +123,7 @@ export const Input = ({
   multiline,
   numberOfLines,
   style,
-}) => (
+}: InputProps) => (
   <View style={[styles.inputWrap, style]}>
     <TextInput
       placeholder={placeholder}
@@ -105,27 +143,41 @@ export const Input = ({
   </View>
 );
 
-export const AlertBanner = ({type, text, onPress}) => {
-  const palette = {
+interface AlertBannerProps {
+  type: 'danger' | 'warning' | 'brand' | 'gold' | 'success';
+  text: string;
+  onPress?: () => void;
+}
+
+export const AlertBanner = ({type, text, onPress}: AlertBannerProps) => {
+  const palette: Record<string, {bg: string; color: string}> = {
     danger: {bg: colors.semantic.dangerBg, color: colors.danger},
     warning: {bg: colors.semantic.warningBg, color: colors.warning},
     brand: {bg: colors.brand.primaryMuted, color: colors.brand.primary},
     // legacy alias
     gold: {bg: colors.brand.primaryMuted, color: colors.brand.primary},
     success: {bg: colors.semantic.successBg, color: colors.success},
-  }[type] || {bg: colors.brand.primaryMuted, color: colors.brand.primary};
+  };
+
+  const selectedPalette = palette[type] || palette.brand;
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.alertBanner, {backgroundColor: palette.bg}]}>
-      <Text style={[styles.alertText, {color: palette.color}]}>{text}</Text>
-      <Text style={[styles.alertArrow, {color: palette.color}]}>→</Text>
+      style={[styles.alertBanner, {backgroundColor: selectedPalette.bg}]}>
+      <Text style={[styles.alertText, {color: selectedPalette.color}]}>{text}</Text>
+      <Text style={[styles.alertArrow, {color: selectedPalette.color}]}>→</Text>
     </TouchableOpacity>
   );
 };
 
-export const StatCard = ({icon, label, value}) => (
+interface StatCardProps {
+  icon: string;
+  label: string;
+  value: string | number;
+}
+
+export const StatCard = ({icon, label, value}: StatCardProps) => (
   <View style={styles.statCard}>
     <Text style={styles.statIcon}>{icon}</Text>
     <Text style={styles.statValue}>{value}</Text>
@@ -133,7 +185,12 @@ export const StatCard = ({icon, label, value}) => (
   </View>
 );
 
-export const Avatar = ({name, size = 40}) => {
+interface AvatarProps {
+  name: string;
+  size?: number;
+}
+
+export const Avatar = ({name, size = 40}: AvatarProps) => {
   const {initials: getInitials} = require('../../utils/helpers');
   return (
     <View
@@ -154,7 +211,13 @@ export const LoadingScreen = () => (
   </View>
 );
 
-export const EmptyState = ({icon = '📭', title, subtitle}) => (
+interface EmptyStateProps {
+  icon?: string;
+  title: string;
+  subtitle?: string;
+}
+
+export const EmptyState = ({icon = '📭', title, subtitle}: EmptyStateProps) => (
   <View style={styles.emptyState}>
     <Text style={styles.emptyIcon}>{icon}</Text>
     <Text style={styles.emptyTitle}>{title}</Text>
@@ -162,7 +225,13 @@ export const EmptyState = ({icon = '📭', title, subtitle}) => (
   </View>
 );
 
-export const ProgressBar = ({progress, color = colors.brand.primary, height = 6}) => (
+interface ProgressBarProps {
+  progress: number;
+  color?: string;
+  height?: number;
+}
+
+export const ProgressBar = ({progress, color = colors.brand.primary, height = 6}: ProgressBarProps) => (
   <View style={[styles.progressTrack, {height}]}>
     <View
       style={[
@@ -194,7 +263,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
   button: {
     backgroundColor: colors.brand.primary,
@@ -218,7 +287,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.bg,
-    fontWeight: '700',
+    fontWeight: '700' as const,
     fontSize: 14,
   },
   ghostText: {
@@ -262,12 +331,12 @@ const styles = StyleSheet.create({
   },
   alertText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600' as const,
     flex: 1,
   },
   alertArrow: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '700' as const,
     marginLeft: spacing.sm,
   },
   statCard: {
@@ -287,7 +356,7 @@ const styles = StyleSheet.create({
   statValue: {
     color: colors.text,
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: '700' as const,
   },
   statLabel: {
     color: colors.muted,
@@ -301,7 +370,7 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     color: colors.bg,
-    fontWeight: '700',
+    fontWeight: '700' as const,
   },
   loadingScreen: {
     flex: 1,
@@ -321,7 +390,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     color: colors.text,
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '600' as const,
     textAlign: 'center',
   },
   emptySubtitle: {

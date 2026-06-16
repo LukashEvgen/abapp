@@ -1,5 +1,6 @@
-import firestore from '@react-native-firebase/firestore';
-import {DocumentReference, Query} from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {PaginatedResult} from './clients';
 import {PAGE_SIZE} from './constants';
 
@@ -24,9 +25,9 @@ export async function getInspections(clientId: string): Promise<Inspection[]> {
 
 export async function getInspectionsPaginated(
   clientId: string,
-  cursor?: firestore.DocumentSnapshot,
+  cursor?: FirebaseFirestoreTypes.DocumentSnapshot,
 ): Promise<PaginatedResult<Inspection>> {
-  let q: Query = firestore()
+  let q: FirebaseFirestoreTypes.Query = firestore()
     .collection('clients')
     .doc(clientId)
     .collection('inspections')

@@ -16,6 +16,12 @@ const StyleSheet = {
   create: styles => styles,
 };
 
+const Appearance = {
+  getColorScheme: () => 'light',
+  addChangeListener: () => () => {},
+  removeChangeListener: () => {},
+};
+
 module.exports = {
   __esModule: true,
   default: {},
@@ -26,4 +32,5 @@ module.exports = {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
+  Appearance,
 };

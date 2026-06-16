@@ -13,7 +13,9 @@
   },
   "jest": {
     "preset": "./jest-preset.js",
-    "setupFiles": ["./jest/setup.js"],
+    "setupFiles": [
+      "./jest/setup.js"
+    ],
     "moduleFileExtensions": [
       "js",
       "jsx",
@@ -81,9 +83,11 @@
     "@firebase/firestore-compat": "^0.4.8",
     "@firebase/rules-unit-testing": "^5.0.0",
     "@firebase/storage-compat": "^0.4.2",
+    "@jest/globals": "^30.4.1",
     "@react-native/babel-preset": "0.73.21",
     "@react-native/metro-config": "0.73.5",
     "@react-native/typescript-config": "0.73.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^18.2.75",
     "@types/react-test-renderer": "^18.0.7",
     "babel-jest": "^29.7.0",

@@ -1,5 +1,6 @@
-import firestore from '@react-native-firebase/firestore';
-import {DocumentReference, Query} from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {PaginatedResult} from './clients';
 import {PAGE_SIZE} from './constants';
 
@@ -29,9 +30,9 @@ export async function getInvoices(clientId: string): Promise<Invoice[]> {
 
 export async function getInvoicesPaginated(
   clientId: string,
-  cursor?: firestore.DocumentSnapshot,
+  cursor?: FirebaseFirestoreTypes.DocumentSnapshot,
 ): Promise<PaginatedResult<Invoice>> {
-  let q: Query = firestore()
+  let q: FirebaseFirestoreTypes.Query = firestore()
     .collection('clients')
     .doc(clientId)
     .collection('invoices')
@@ -53,7 +54,7 @@ export async function createInvoice(
   clientId: string,
   data: Omit<Invoice, 'id' | 'createdAt' | 'status'>,
 ): Promise<string> {
-  const ref: DocumentReference = firestore()
+  const ref: FirebaseFirestoreTypes.DocumentReference = firestore()
     .collection('clients')
     .doc(clientId)
     .collection('invoices')
