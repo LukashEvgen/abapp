@@ -6,8 +6,8 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 applyNativeModulesAppBuildGradle(project)
 
 // Project-level properties (fallback for RN CLI autolinking)
-reactNativeDir = file("../node_modules/react-native")
-androidAppDir = file(".")
+// reactNativeDir = file("../node_modules/react-native")
+// androidAppDir = file(".")
 
 // Load signing secrets from local.properties if available (CI or local dev).
 // Never commit passwords to git. Keep local.properties in .gitignore.

@@ -4,12 +4,14 @@ export {
   createClient,
   updateClientLastMessage,
   getAllClients,
+  getAdminMessagesSummary,
   getAdminMessagesSummaryPaginated,
   getClientsRealtime,
   Client,
   PaginatedResult,
 } from './clients';
 export {
+  getCases,
   getCasesPaginated,
   getCasesRealtime,
   getCaseById,
@@ -25,25 +27,27 @@ export {
   CaseEvent,
 } from './cases';
 export {
+  getDocuments,
   getDocumentsPaginated,
-  uploadDocument,
   DocumentItem,
   ScanStatus,
   ScanDocumentResult,
+  uploadDocument,
   updateDocumentScanStatus,
 } from './documents';
-export {getInvoicesPaginated, createInvoice, Invoice} from './invoices';
+export {getInvoices, getInvoicesPaginated, createInvoice, Invoice} from './invoices';
 export {
+  getInspections,
   getInspectionsPaginated,
   getInspectionById,
   Inspection,
 } from './inspections';
 export {
-  getMessagesRealtime,
+  getMessagesRealtime as getMessages,
   sendMessage,
   markMessagesRead,
   Message,
 } from './messages';
-export {getInquiriesPaginated, submitInquiry, Inquiry} from './inquiries';
+export {getInquiries, getInquiriesPaginated, submitInquiry, Inquiry} from './inquiries';
 export {payInvoice, openPaymentUrl, PaymentGateway} from './payments';
 export * from './queries';
