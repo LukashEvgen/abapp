@@ -28,3 +28,11 @@ allprojects {
         mavenCentral()
     }
 }
+
+subprojects {
+    afterEvaluate {
+        if (it.hasProperty("android")) {
+            extensions.android.buildFeatures.buildConfig = true
+        }
+    }
+}
